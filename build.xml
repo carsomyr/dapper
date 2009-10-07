@@ -26,6 +26,8 @@
 
     <target name="init">
         <mkdir dir="bin" />
+        <mkdir dir="distrib/jars" />
+        <mkdir dir="distrib/sources" />
         <available file=".dependencies" property="build.dependencies" />
         <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="Dapper.classpath" />
     </target>
@@ -162,19 +164,21 @@
         <delete file=".javadoc" />
         <delete file=".publish" />
         <delete dir="bin" />
+        <delete dir="distrib" />
         <delete dir="javadoc" />
         <delete>
             <fileset dir="." includes="*.jar" />
-            <fileset dir="distrib" includes="**/*/*" />
         </delete>
     </target>
 
     <target name="distclean" depends="clean">
-        <delete dir="src/shared" />
-        <delete>
-            <fileset dir="build" includes="**/*/*" />
-        </delete>
         <delete file=".dependencies" />
+        <delete dir="build/ant" />
+        <delete dir="build/auxlib" />
+        <delete dir="build/checkstyle" />
+        <delete dir="build/conf" />
+        <delete dir="build/lib" />
+        <delete dir="src/shared" />
     </target>
 
 </project>
