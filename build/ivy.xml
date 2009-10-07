@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+    <info organisation="dapper" module="dapper" />
+
+    <configurations>
+        <conf name="ant" />
+        <conf name="auxlib" />
+        <conf name="checkstyle" />
+        <conf name="base" />
+        <conf name="ex" extends="base" />
+        <conf name="lib" extends="base" />
+    </configurations>
+
+    <publications>
+        <artifact name="dapper-base" type="jar" conf="base" ext="jar" />
+        <artifact name="dapper-ex" type="jar" conf="ex" ext="jar" />
+    </publications>
+
+    <dependencies>
+        <dependency org="shared" name="shared" rev="latest.integration"
+            conf="ant->ant; auxlib->base; auxlib->build-conf; checkstyle->checkstyle; base->base; base->commons; base->net"
+            changing="true" />
+    </dependencies>
+
+</ivy-module>

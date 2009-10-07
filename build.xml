@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project basedir="." default="build" name="Dapper" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
+
+    <property environment="env" />
+    <property file="src/dapper/project.properties" />
+
+    <property name="target" value="1.6" />
+    <property name="source" value="1.6" />
+    <property name="ivy.install.version" value="2.1.0-rc2" />
+
+    <!-- Source and class paths. -->
+
+    <path id="Dapper.sourcepath">
+        <pathelement location="src" />
+        <pathelement location="src_examples" />
+    </path>
+
+    <path id="Dapper.classpath">
+        <pathelement location="bin" />
+        <pathelement location="build/conf" />
+        <fileset dir="build" includes="**/*/*.jar" />
+    </path>
+
+    <!-- Build project. -->
+
+    <target name="init">
+        <mkdir dir="bin" />
+        <available file=".dependencies" property="build.dependencies" />
+        <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="Dapper.classpath" />
+    </target>
+
+    <target name="ivy-install" depends="init" unless="ivy.install">
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="build/ant/ivy.jar" usetimestamp="true" />
+    </target>
+
+    <target name="ivy-prepare" depends="ivy-install" unless="ivy.settings.file">
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="Dapper.classpath" />
+        <ivy:configure file="build/ivysettings.xml" />
+    </target>
+
+    <target name="ivy-resolve" depends="ivy-prepare" unless="ivy.module.dapper-dapper">
+        <ivy:resolve />
+    </target>
+
+    <target name="ivy-retrieve" depends="ivy-prepare" unless="build.dependencies">
+        <ivy:retrieve conf="ant, checkstyle, lib" type="jar" />
+        <ivy:retrieve conf="auxlib" type="resource, source" />
+        <unzip src="build/auxlib/sst-build-conf.jar" dest="build">
+            <patternset includes="conf/**" />
+        </unzip>
+        <unzip src="build/auxlib/sst-base-src.jar" dest="src">
+            <patternset includes="shared/metaclass/*.java, shared/util/*.java" />
+        </unzip>
+        <touch file=".dependencies" />
+    </target>
+
+    <target name="build-prepare" depends="ivy-retrieve">
+        <taskdef resource="checkstyletask.properties" uri="antlib:com.puppycrawl.tools.checkstyle" classpathref="Dapper.classpath" />
+    </target>
+
+    <target name="build-project" depends="build-prepare">
+        <javac debug="true" debuglevel="source,lines,vars" destdir="bin" source="${source}" target="${target}">
+            <src refid="Dapper.sourcepath" />
+            <classpath refid="Dapper.classpath" />
+        </javac>
+    </target>
+
+    <target name="build-resource" depends="build-prepare">
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src" excludes="**/*.java" />
+            <fileset dir="src_examples" excludes="**/*.java" />
+            <fileset dir="build" includes="lib/**" />
+        </copy>
+    </target>
+
+    <target name="build" depends="build-project, build-resource">
+        <touch file=".bin" />
+    </target>
+
+    <!-- Jar targets. -->
+
+    <fileset id="Dapper.metainf" dir=".">
+        <include name="README" />
+        <include name="license.txt" />
+        <include name="license/license_*.txt" />
+    </fileset>
+
+    <target name="jars" depends="build-project, build-resource">
+        <jar destfile="dapper.jar" basedir="bin" includes="dapper/**, shared/**, lib/**">
+            <manifest>
+                <attribute name="Main-Class" value="dapper/ui/FlowManagerDriver" />
+            </manifest>
+            <metainf refid="Dapper.metainf" />
+        </jar>
+        <jar destfile="dapper-ex.jar" basedir="bin" includes="ex/**">
+            <metainf refid="Dapper.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-base" depends="build-project, build-resource">
+        <jar destfile="distrib/jars/dapper-base-${build.version}.jar" basedir="bin" includes="dapper/**">
+            <metainf refid="Dapper.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-base-src" depends="build-project, build-resource">
+        <jar destfile="distrib/sources/dapper-base-src-${build.version}.jar" basedir="src" includes="dapper/**">
+            <metainf refid="Dapper.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-ex" depends="build-project, build-resource">
+        <jar destfile="distrib/jars/dapper-ex-${build.version}.jar" basedir="bin" includes="ex/**">
+            <metainf refid="Dapper.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-ex-src" depends="build-project, build-resource">
+        <jar destfile="distrib/sources/dapper-ex-src-${build.version}.jar" basedir="src_examples" includes="ex/**">
+            <metainf refid="Dapper.metainf" />
+        </jar>
+    </target>
+
+    <!-- Publish Jars. -->
+
+    <target name="ivy-publish" depends="ivy-resolve, jar-base, jar-base-src, jar-ex, jar-ex-src">
+        <ivy:publish resolver="local" overwrite="true" forcedeliver="true" />
+        <touch file=".publish" />
+    </target>
+
+    <!-- Javadoc target. -->
+
+    <target name="javadoc" depends="build-project">
+        <javadoc access="protected" destdir="javadoc" packagenames="*" source="${source}" splitindex="true" failonerror="true" author="true" use="true" version="true">
+            <sourcepath refid="Dapper.sourcepath" />
+            <classpath refid="Dapper.classpath" />
+            <link href="http://java.sun.com/javase/6/docs/api/" />
+            <link href="http://shared.sourceforge.net/javadoc/" />
+            <doclet name="org.jboss.apiviz.APIviz" pathref="Dapper.classpath" />
+        </javadoc>
+        <touch file=".javadoc" />
+    </target>
+
+    <!-- Checkstyle target. -->
+
+    <target name="checkstyle" depends="build-prepare">
+        <cs:checkstyle config="build/checkstyle.xml">
+            <fileset dir="native/src" includes="**/*.cpp" />
+            <fileset dir="native/include" includes="**/*.hpp" />
+            <fileset dir="src" includes="**/*.java" excludes="shared/**/*.java" />
+            <fileset dir="src_examples" includes="**/*.java" />
+        </cs:checkstyle>
+        <touch file=".checkstyle" />
+    </target>
+
+    <!-- Wipe clean. -->
+
+    <target name="clean">
+        <delete file=".bin" />
+        <delete file=".checkstyle" />
+        <delete file=".javadoc" />
+        <delete file=".publish" />
+        <delete dir="bin" />
+        <delete dir="javadoc" />
+        <delete>
+            <fileset dir="." includes="*.jar" />
+            <fileset dir="distrib" includes="**/*/*" />
+        </delete>
+    </target>
+
+    <target name="distclean" depends="clean">
+        <delete dir="src/shared" />
+        <delete>
+            <fileset dir="build" includes="**/*/*" />
+        </delete>
+        <delete file=".dependencies" />
+    </target>
+
+</project>
