@@ -33,7 +33,7 @@ LIB_DIR             = native/$(OS)$(WORD_SIZE)
 
 MAKE_BUILD_AND_TEST	= \
 	$(MAKE) -C native/ BuildAndTest \
-	&& cp $(LIB_DIR)/BuildAndTest.exe ./
+	&& cp $(LIB_DIR)/BuildAndTest.exe .
 
 #------------------------------------------------------------------------------#
 # Make the high level targets.                                                 #
