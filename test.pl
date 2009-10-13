@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 my $java = "java -ea -Xmx128M -cp dapper.jar";
 
