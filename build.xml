@@ -18,8 +18,8 @@
 
     <path id="Dapper.classpath">
         <pathelement location="bin" />
-        <pathelement location="build/conf" />
         <pathelement location="build/ivy.jar" />
+        <pathelement location="build/conf" />
         <fileset dir="build" includes="**/*/*.jar" />
     </path>
 
@@ -160,27 +160,27 @@
     <!-- Wipe clean. -->
 
     <target name="clean">
-        <delete dir="bin" />
-        <delete dir="distrib" />
-        <delete dir="javadoc" />
         <delete file=".bin" />
         <delete file=".checkstyle" />
         <delete file=".javadoc" />
         <delete file=".publish" />
+        <delete dir="bin" />
+        <delete dir="distrib" />
+        <delete dir="javadoc" />
         <delete>
             <fileset dir="." includes="*.jar" />
         </delete>
     </target>
 
     <target name="distclean" depends="clean">
+        <delete file=".dependencies" />
+        <delete file="build/ivy.jar" />
         <delete dir="build/ant" />
         <delete dir="build/auxlib" />
         <delete dir="build/checkstyle" />
         <delete dir="build/conf" />
         <delete dir="build/lib" />
         <delete dir="src/shared" />
-        <delete file=".dependencies" />
-        <delete file="build/ivy.jar" />
     </target>
 
 </project>
