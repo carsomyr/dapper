@@ -11,7 +11,7 @@
 /distrib/
 /doxydoc/
 /javadoc/
-/build/*.jar
+/build/ivy.jar
 /build/ant/
 /build/auxlib/
 /build/checkstyle/
