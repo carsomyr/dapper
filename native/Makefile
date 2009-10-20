@@ -39,9 +39,10 @@ endif
 # Make the high level targets.                                                 #
 #------------------------------------------------------------------------------#
 
-.PHONY: all cmake BuildAndTest doxygen clean
+.INTERMEDIATE: $(ICON_PNGS)
+.PHONY: all cmake buildandtest doxygen clean
 
-all: BuildAndTest
+all: buildandtest
 
 #------------------------------------------------------------------------------#
 # Make the native libraries and executables.                                   #
@@ -53,8 +54,8 @@ $(OS)$(WORD_SIZE)/Makefile: CMakeLists.txt
 	mkdir -p $(OS)$(WORD_SIZE)/
 	cd $(OS)$(WORD_SIZE)/ && $(CMAKE) ../ $(CMAKE_FLAGS)
 
-BuildAndTest: cmake $(ICON_ICO)
-	$(MAKE) -C $(OS)$(WORD_SIZE)/ BuildAndTest
+buildandtest: cmake $(ICON_ICO)
+	$(MAKE) -C $(OS)$(WORD_SIZE)/ buildandtest
 
 doxygen: cmake
 	$(MAKE) -C $(OS)$(WORD_SIZE)/ doxygen
@@ -79,4 +80,4 @@ $(ICON_ICO): $(ICON_PNGS)
 
 clean:
 	rm -rf $(OS)$(WORD_SIZE)/
-	rm -f *.png $(ICON_ICO)
+	rm -f $(ICON_ICO)

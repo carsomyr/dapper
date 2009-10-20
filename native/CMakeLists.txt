@@ -15,9 +15,9 @@ aux_source_directory("src/win32" SRC_WIN32)
 
 include_directories("include/dapper" "include/win32")
 
-# Add the 'BuildAndTest' build target.
+# Add the 'buildandtest' build target.
 
-add_executable("BuildAndTest" ${SRC_WIN32} "src/icon/icon.rc")
-set_target_properties("BuildAndTest" PROPERTIES VERSION ${VERSION})
-set_target_properties("BuildAndTest" PROPERTIES COMPILE_FLAGS "-Wall -Werror -pedantic -Wno-long-long")
-set_target_properties("BuildAndTest" PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias")
+add_executable("buildandtest" ${SRC_WIN32} "src/icon/icon.rc")
+set_target_properties("buildandtest" PROPERTIES VERSION ${VERSION})
+set_target_properties("buildandtest" PROPERTIES COMPILE_FLAGS "-Wall -Werror -pedantic -Wno-long-long")
+set_target_properties("buildandtest" PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias")

@@ -16,7 +16,6 @@ JSRCS				= $(wildcard src*/*/*.java) \
 # C++ Headers, Sources, and Objects
 
 CSRCS				= $(wildcard native/src/*/*.cpp)
-
 CHEADERS			= $(wildcard native/include/*/*.hpp)
 
 # Tokens
@@ -32,15 +31,15 @@ PUBLISH_TOKEN		= .publish
 LIB_DIR             = native/$(OS)$(WORD_SIZE)
 
 MAKE_BUILD_AND_TEST	= \
-	$(MAKE) -C native/ BuildAndTest \
-	&& cp $(LIB_DIR)/BuildAndTest.exe .
+	$(MAKE) -C native/ buildandtest \
+	&& cp $(LIB_DIR)/buildandtest.exe .
 
 #------------------------------------------------------------------------------#
 # Make the high level targets.                                                 #
 #------------------------------------------------------------------------------#
 
-.PHONY: all win32 java jar jar-ex javadoc doxydoc checkstyle \
-	publish clean distclean
+.PHONY: all win32 java jars javadoc doxydoc checkstyle publish \
+	clean clean_win32 distclean
 
 all: java
 
@@ -53,9 +52,9 @@ all: java
 win32: OS = Windows
 win32: LIB_PREFIX =
 win32: LIB_SUFFIX = dll
-win32: BuildAndTest.exe
+win32: buildandtest.exe
 
-BuildAndTest.exe: $(BUILD_TOKEN) $(CSRCS) $(CHEADERS)
+buildandtest.exe: $(CSRCS) $(CHEADERS)
 	$(MAKE_BUILD_AND_TEST)
 
 #------------------------------------------------------------------------------#
