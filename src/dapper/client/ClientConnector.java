@@ -121,7 +121,7 @@ public class ClientConnector extends CoreThread implements Closeable {
 
         Client.getLog().info("Connect failure.", t);
 
-        ResetEvent resetEvent = new ResetEvent("Connect failure", t.getStackTrace(), this.callback);
+        ResetEvent resetEvent = new ResetEvent("Connect failure", t, this.callback);
         resetEvent.set(this);
 
         this.callback.onLocal(resetEvent);

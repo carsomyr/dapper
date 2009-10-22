@@ -102,7 +102,7 @@ public class ClientLogic {
         } else if (source == this.server && tag == null) {
 
             Client.getLog().info(String.format("Received error from server: %s.", //
-                    evt.getError().getMessage()));
+                    evt.getException().getMessage()));
 
         } else {
 

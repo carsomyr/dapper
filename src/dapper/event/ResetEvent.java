@@ -27,6 +27,7 @@ import org.w3c.dom.NodeList;
 
 import shared.event.Source;
 import shared.parallel.Handle;
+import shared.util.Control;
 import dapper.DapperException;
 
 /**
@@ -36,29 +37,25 @@ import dapper.DapperException;
  */
 public class ResetEvent extends ControlEvent implements Handle<Object> {
 
-    final DapperException error;
+    /**
+     * An empty array of {@link StackTraceElement}s.
+     */
+    final protected static StackTraceElement[] EmptyStackTraceElements = new StackTraceElement[] {};
+
+    final DapperException exception;
 
     Object tag;
 
     /**
      * Default constructor.
      */
-    public ResetEvent(DapperException exception, Source<ControlEvent, SourceType> source) {
+    public ResetEvent(String message, Throwable t, Source<ControlEvent, SourceType> source) {
         super(RESET, source);
 
-        this.error = exception;
+        Control.checkTrue(t != null, //
+                "Please provide the cause of this event");
 
-        this.tag = null;
-    }
-
-    /**
-     * Alternate constructor.
-     */
-    public ResetEvent(String message, StackTraceElement[] stackTrace, Source<ControlEvent, SourceType> source) {
-        super(RESET, source);
-
-        this.error = new DapperException(message);
-        this.error.setStackTrace(stackTrace);
+        this.exception = new DapperException(message, t);
 
         this.tag = null;
     }
@@ -71,9 +68,32 @@ public class ResetEvent extends ControlEvent implements Handle<Object> {
 
         NodeList l1 = node.getChildNodes();
 
-        this.error = new DapperException(l1.item(0).getTextContent());
+        String message = l1.item(0).getTextContent();
+        String causeClassName = l1.item(1).getTextContent();
+        String causeMessage = l1.item(2).getTextContent();
 
-        NodeList l2 = l1.item(1).getChildNodes();
+        Throwable cause = null;
+
+        // Attempt to load the appropriate Throwable class.
+        try {
+
+            Class<?> clazz = Class.forName(causeClassName, true, //
+                    Thread.currentThread().getContextClassLoader());
+
+            if (Throwable.class.isAssignableFrom(clazz)) {
+                cause = (Throwable) clazz.getConstructor(String.class).newInstance(causeMessage);
+            }
+
+        } catch (Exception e) {
+
+            // Loading failed; pass through.
+        }
+
+        if (cause == null) {
+            cause = new RuntimeException(causeMessage);
+        }
+
+        NodeList l2 = l1.item(3).getChildNodes();
 
         ArrayList<StackTraceElement> tmpList = new ArrayList<StackTraceElement>();
 
@@ -88,14 +108,17 @@ public class ResetEvent extends ControlEvent implements Handle<Object> {
                     Integer.parseInt(l3.item(3).getTextContent())));
         }
 
-        this.error.setStackTrace(tmpList.toArray(new StackTraceElement[] {}));
+        cause.setStackTrace(tmpList.toArray(EmptyStackTraceElements));
+
+        this.exception = new DapperException(message, cause);
+        this.exception.setStackTrace(EmptyStackTraceElements);
     }
 
     /**
      * Gets the cause of the reset.
      */
-    public DapperException getError() {
-        return this.error;
+    public DapperException getException() {
+        return this.exception;
     }
 
     @Override
@@ -104,13 +127,20 @@ public class ResetEvent extends ControlEvent implements Handle<Object> {
         Document doc = contentNode.getOwnerDocument();
 
         contentNode.appendChild(doc.createElement("message")) //
-                .setTextContent(String.valueOf(this.error.getMessage()));
+                .setTextContent(String.valueOf(this.exception.getMessage()));
 
-        Node n1 = contentNode.appendChild(doc.createElement("elements"));
+        Throwable cause = this.exception.getCause();
 
-        for (StackTraceElement element : this.error.getStackTrace()) {
+        contentNode.appendChild(doc.createElement("cause_class_name")) //
+                .setTextContent(String.valueOf(cause.getClass().getName()));
+        contentNode.appendChild(doc.createElement("cause_message")) //
+                .setTextContent(String.valueOf(cause.getMessage()));
 
-            Node n2 = n1.appendChild(doc.createElement("element"));
+        Node n1 = contentNode.appendChild(doc.createElement("cause_elements"));
+
+        for (StackTraceElement element : cause.getStackTrace()) {
+
+            Node n2 = n1.appendChild(doc.createElement("cause_element"));
 
             n2.appendChild(doc.createElement("class_name")) //
                     .setTextContent(element.getClassName());

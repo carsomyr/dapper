@@ -41,7 +41,7 @@ public class Error implements Codelet {
             new Runnable() {
 
                 public void run() {
-                    throw new RuntimeException("This exception was artificially induced");
+                    throw new IllegalStateException("This exception was artificially induced");
                 }
 
             }.run();

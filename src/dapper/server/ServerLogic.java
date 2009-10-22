@@ -148,8 +148,8 @@ public class ServerLogic {
                 csh.setFlowNode(null);
                 flowNode.setClientState(null);
 
-                csh.getConnection().onRemote(new ResetEvent(new DapperException( //
-                        "One client failed in its execution"), null));
+                csh.getConnection().onRemote(new ResetEvent("One client failed in its execution", //
+                        new RuntimeException(), null));
                 csh.setStatus(ClientStatus.WAIT);
             }
         }
@@ -589,7 +589,7 @@ public class ServerLogic {
 
         ClientState csh = (ClientState) evt.getSource().getHandler();
 
-        Throwable error = evt.getError();
+        Throwable error = evt.getException();
 
         Server.getLog().info(String.format("Received error from client %s.", csh.getAddress()), error);
 
@@ -704,8 +704,7 @@ public class ServerLogic {
 
         } catch (Exception e) {
 
-            handleReset(new ResetEvent(new DapperException( //
-                    String.format("Requested data \"%s\" could not be retrieved", identifier)), //
+            handleReset(new ResetEvent(String.format("Requested data \"%s\" could not be retrieved", identifier), e, //
                     evt.getSource()));
         }
     }
@@ -763,7 +762,7 @@ public class ServerLogic {
 
         } catch (DapperException e) {
 
-            handleReset(new ResetEvent(e, evt.getSource()));
+            handleReset(new ResetEvent("Failed to assign embedding parameters", e, evt.getSource()));
 
             this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
 
