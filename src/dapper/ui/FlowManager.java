@@ -153,6 +153,8 @@ public class FlowManager extends JFrame {
                 FlowManager.this.codeletTree.runSelected();
             }
         });
+        runButton.setMinimumSize(new Dimension(50, runButton.getMinimumSize().height));
+        runButton.setPreferredSize(new Dimension(50, runButton.getPreferredSize().height));
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.CENTER;
@@ -174,6 +176,8 @@ public class FlowManager extends JFrame {
                 FlowManager.this.codeletTree.removeSelected();
             }
         });
+        removeButton.setMinimumSize(new Dimension(50, removeButton.getMinimumSize().height));
+        removeButton.setPreferredSize(new Dimension(50, removeButton.getPreferredSize().height));
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.CENTER;

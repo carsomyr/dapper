@@ -150,7 +150,6 @@ public class CodeletTree extends JTree implements DropTargetListener {
                     dtde.dropComplete(true);
 
                     break;
-
                 }
             }
 

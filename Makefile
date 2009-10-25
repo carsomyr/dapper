@@ -74,6 +74,7 @@ jars: dapper.jar dapper-ex.jar
 
 dapper.jar dapper-ex.jar: $(BUILD_TOKEN)
 	$(ANT) jars
+	touch $@
 
 #------------------------------------------------------------------------------#
 # Make the Javadoc.                                                            #
