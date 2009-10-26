@@ -111,7 +111,6 @@ public class ResetEvent extends ControlEvent implements Handle<Object> {
         cause.setStackTrace(tmpList.toArray(EmptyStackTraceElements));
 
         this.exception = new DapperException(message, cause);
-        this.exception.setStackTrace(EmptyStackTraceElements);
     }
 
     /**

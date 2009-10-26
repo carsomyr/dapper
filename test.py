@@ -12,6 +12,8 @@ def main():
     The main method body.
     """
 
+    subprocess.Popen(["make", "jars"]).wait()
+
     javacmd = ["java", "-ea", "-Xmx128M", "-cp", "dapper.jar"];
 
     processes = []

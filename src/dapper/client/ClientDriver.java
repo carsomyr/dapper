@@ -18,11 +18,9 @@
 package dapper.client;
 
 import shared.log.Logging;
-import shared.util.LoadableResources;
-import shared.util.Loader;
-import shared.util.LoadableResources.Resource;
-import shared.util.LoadableResources.ResourceType;
-import shared.util.Loader.EntryPoint;
+import shared.metaclass.Loader;
+import shared.metaclass.Loader.EntryPoint;
+import shared.metaclass.Loader.LoadableResources;
 
 /**
  * A driver class for the Dapper client.
@@ -32,15 +30,15 @@ import shared.util.Loader.EntryPoint;
  */
 @LoadableResources(resources = {
 //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "commons-cli"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "commons-codec"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "log4j"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "slf4j-api"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "slf4j-log4j12"), //
+        "jar:lib.commons-cli", //
+        "jar:lib.commons-codec", //
+        "jar:lib.log4j", //
+        "jar:lib.slf4j-api", //
+        "jar:lib.slf4j-log4j12", //
         //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "sst-base"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "sst-commons"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "sst-net") //
+        "jar:lib.sst-base", //
+        "jar:lib.sst-commons", //
+        "jar:lib.sst-net" //
 }, //
 //
 packages = {

@@ -53,7 +53,7 @@
             <patternset includes="conf/**" />
         </unzip>
         <unzip src="build/auxlib/sst-base-src.jar" dest="src">
-            <patternset includes="shared/metaclass/*.java, shared/util/*.java" />
+            <patternset includes="shared/metaclass/*.java" />
         </unzip>
         <touch file=".dependencies" />
     </target>
