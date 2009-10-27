@@ -50,13 +50,13 @@ packages = {
 public class FlowManagerDriver {
 
     /**
-     * The program main method that delegates to {@link Loader#start(String, Object)}.
+     * The program main method that delegates to {@link Loader#run(String, Object)}.
      * 
      * @throws Exception
      *             when something goes awry.
      */
     public static void main(final String[] args) throws Exception {
-        Loader.start(FlowManagerDriver.class.getName(), args);
+        Loader.run(FlowManagerDriver.class.getName(), args);
     }
 
     /**

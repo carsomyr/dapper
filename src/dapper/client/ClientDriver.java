@@ -48,13 +48,13 @@ packages = {
 public class ClientDriver {
 
     /**
-     * The program main method that delegates to {@link Loader#start(String, Object)}.
+     * The program main method that delegates to {@link Loader#run(String, Object)}.
      * 
      * @throws Exception
      *             when something goes awry.
      */
     public static void main(final String[] args) throws Exception {
-        Loader.start(ClientDriver.class.getName(), args);
+        Loader.run(ClientDriver.class.getName(), args);
     }
 
     /**
