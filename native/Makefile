@@ -51,14 +51,14 @@ all: buildandtest
 cmake: $(OS)$(WORD_SIZE)/Makefile
 
 $(OS)$(WORD_SIZE)/Makefile: CMakeLists.txt
-	mkdir -p $(OS)$(WORD_SIZE)/
-	cd $(OS)$(WORD_SIZE)/ && $(CMAKE) ../ $(CMAKE_FLAGS)
+	mkdir -p $(OS)$(WORD_SIZE)
+	cd $(OS)$(WORD_SIZE) && $(CMAKE) .. $(CMAKE_FLAGS)
 
 buildandtest: cmake $(ICON_ICO)
-	$(MAKE) -C $(OS)$(WORD_SIZE)/ buildandtest
+	$(MAKE) -C $(OS)$(WORD_SIZE) buildandtest
 
 doxygen: cmake
-	$(MAKE) -C $(OS)$(WORD_SIZE)/ doxygen
+	$(MAKE) -C $(OS)$(WORD_SIZE) doxygen
 
 #------------------------------------------------------------------------------#
 # Make the icon stack.                                                         #
@@ -79,5 +79,5 @@ $(ICON_ICO): $(ICON_PNGS)
 #------------------------------------------------------------------------------#
 
 clean:
-	rm -rf $(OS)$(WORD_SIZE)/
+	rm -rf $(OS)$(WORD_SIZE)
 	rm -f $(ICON_ICO)
