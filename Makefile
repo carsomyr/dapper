@@ -54,7 +54,7 @@ win32: LIB_PREFIX =
 win32: LIB_SUFFIX = dll
 win32: buildandtest.exe
 
-buildandtest.exe: $(CSRCS) $(CHEADERS)
+buildandtest.exe: $(BUILD_TOKEN) $(CSRCS) $(CHEADERS)
 	$(MAKE_BUILD_AND_TEST)
 
 #------------------------------------------------------------------------------#
