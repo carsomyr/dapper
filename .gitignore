@@ -7,6 +7,7 @@
 /.doxydoc
 /.javadoc
 /.publish
+/.settings/
 /bin/
 /distrib/
 /doxydoc/
