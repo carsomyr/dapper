@@ -15,7 +15,7 @@ def main():
 
     subprocess.Popen(["make", "jars"]).wait()
 
-    javacmd = ["java", "-ea", "-Xmx128M", "-cp", "dapper.jar"];
+    javacmd = ["java", "-ea", "-Xmx128M", "-cp", "dapper.jar"]
 
     processes = []
     processes.append(subprocess.Popen(javacmd + ["dapper.ui.FlowManagerDriver", "--port", "12121", "--archive", "dapper-ex.jar", "ex.SimpleTest"]))
