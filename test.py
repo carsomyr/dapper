@@ -13,7 +13,7 @@ def main():
     The main method body.
     """
 
-    subprocess.Popen(["make", "jars"]).wait()
+    subprocess.call(["make", "jars"])
 
     javacmd = ["java", "-ea", "-Xmx128M", "-cp", "dapper.jar"]
 
