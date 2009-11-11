@@ -84,7 +84,6 @@
     <!-- Jar targets. -->
 
     <fileset id="Dapper.metainf" dir=".">
-        <include name="README" />
         <include name="license.txt" />
         <include name="license/license_*.txt" />
     </fileset>
@@ -92,7 +91,7 @@
     <target name="jars" depends="build-project, build-resource">
         <jar destfile="dapper.jar" basedir="bin" includes="dapper/**, shared/**, lib/**">
             <manifest>
-                <attribute name="Main-Class" value="dapper/ui/FlowManagerDriver" />
+                <attribute name="Main-Class" value="dapper.ui.FlowManagerDriver" />
             </manifest>
             <metainf refid="Dapper.metainf" />
         </jar>
