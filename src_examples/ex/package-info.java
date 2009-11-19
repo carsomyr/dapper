@@ -18,6 +18,8 @@
 /**
  * A package of exemplar Dapper programs.
  */
-@shared.metaclass.Policy(recursive = true)
+@Policy(recursive = true)
 package ex;
+
+import shared.metaclass.Policy;
 

@@ -18,6 +18,8 @@
 /**
  * A package for Dapper common classes.
  */
-@shared.metaclass.Policy(recursive = true)
+@Policy(recursive = true)
 package dapper;
+
+import shared.metaclass.Policy;
 
