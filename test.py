@@ -11,8 +11,7 @@ import time
 from subprocess import Popen
 
 def main():
-    """
-    The main method body.
+    """The main method body.
     """
 
     subprocess.call(["make", "jars"])
