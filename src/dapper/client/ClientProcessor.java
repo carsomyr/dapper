@@ -113,9 +113,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         this.status = status;
     }
 
-    /*
-     * @ INTERNAL LOGIC
-     */
+    // INTERNAL LOGIC
 
     @Transitions(transitions = {
     //
@@ -190,9 +188,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    /*
-     * @ EXTERNAL LOGIC
-     */
+    // EXTERNAL LOGIC
 
     @Transitions(transitions = {
     //

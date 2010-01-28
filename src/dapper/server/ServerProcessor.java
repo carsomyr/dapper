@@ -153,9 +153,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         this.status = status;
     }
 
-    /*
-     * @ INTERNAL LOGIC
-     */
+    // INTERNAL LOGIC
 
     // Refresh computation state and kicks off any newly eligible computations.
     @Transition(currentState = "RUN", eventType = "REFRESH", group = "internal")
@@ -226,9 +224,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    /*
-     * @ CLIENT LOGIC
-     */
+    // CLIENT LOGIC
 
     @Transitions(transitions = {
     //

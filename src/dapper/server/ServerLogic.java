@@ -127,9 +127,7 @@ public class ServerLogic {
         this.autoClose = false;
     }
 
-    /*
-     * @ HELPER METHODS
-     */
+    // HELPER METHODS
 
     /**
      * Resets the given {@link LogicalNode} because some one of its equivalence class members failed.
@@ -274,9 +272,7 @@ public class ServerLogic {
         return nflowNodes;
     }
 
-    /*
-     * @ INTERNAL LOGIC
-     */
+    // INTERNAL LOGIC
 
     /**
      * Refreshes the computation state and sees if any work can be executed.
@@ -487,19 +483,17 @@ public class ServerLogic {
      * Gets the number of additional clients required to saturate pending computations.
      */
     protected void handleQueryPendingCount(QueryEvent<Object, Integer> evt) {
-        evt.setOutput(Math.max(getPendingCount() - this.clientWaitSet.size(), 0));
+        evt.setOutput(getPendingCount());
     }
 
     /**
      * Gets the number of additional clients required to saturate pending computations on the given {@link Flow}.
      */
     protected void handleQueryFlowPendingCount(QueryEvent<Flow, Integer> evt) {
-        evt.setOutput(Math.max(getPendingCount(evt.getInput()) - this.clientWaitSet.size(), 0));
+        evt.setOutput(getPendingCount(evt.getInput()));
     }
 
-    /*
-     * @ CLIENT LOGIC
-     */
+    // CLIENT LOGIC
 
     /**
      * Handles an end-of-stream.

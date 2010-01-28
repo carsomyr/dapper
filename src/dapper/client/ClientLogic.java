@@ -82,9 +82,7 @@ public class ClientLogic {
         this.connector = null;
     }
 
-    /*
-     * @ INTERNAL LOGIC
-     */
+    // INTERNAL LOGIC
 
     /**
      * Handles a {@link ResetEvent}.
@@ -203,9 +201,7 @@ public class ClientLogic {
         this.cp.setStatus(ClientStatus.WAIT);
     }
 
-    /*
-     * @ EXTERNAL LOGIC
-     */
+    // EXTERNAL LOGIC
 
     /**
      * Handles an end-of-stream.
