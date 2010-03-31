@@ -64,7 +64,6 @@ import dapper.server.flow.EmbeddingCodelet;
 import dapper.server.flow.Flow;
 import dapper.server.flow.FlowBuilder;
 import dapper.server.flow.FlowEdge;
-import dapper.server.flow.FlowListener;
 import dapper.server.flow.FlowNode;
 import dapper.server.flow.FlowStatus;
 import dapper.server.flow.FlowUtilities;
@@ -354,7 +353,6 @@ public class ServerLogic {
     /**
      * Performs initialization of {@link Flow}s from within the processing thread.
      */
-    @SuppressWarnings("unchecked")
     protected void handleQueryInit(QueryEvent<FlowBuildRequest, FlowProxy> evt) {
 
         FlowBuildRequest fbr = evt.getInput();
@@ -381,8 +379,7 @@ public class ServerLogic {
         this.executeList.addAll(FlowUtilities.buildCountDowns(flow));
 
         // Create and register the flow proxy.
-        FlowProxy fp = this.sp.new FlowProxy(flow, //
-                (fbr.listener != null) ? (FlowListener<Object, Object>) fbr.listener : FlowUtilities.NullListener);
+        FlowProxy fp = this.sp.new FlowProxy(flow, fbr.flowFlags);
         fp.onFlowBegin(fp.getAttachment());
 
         assertTrue(this.allFlowsMap.put(flow, fp) == null);
@@ -521,8 +518,7 @@ public class ServerLogic {
             FlowNode flowNode = csh.getFlowNode();
 
             purgeFlow(flowNode.getLogicalNode().getFlow(), new IllegalStateException( //
-                    String.format("Maximum execution time limit of " //
-                            + "%d milliseconds exceeded", //
+                    String.format("Maximum execution time limit of %d milliseconds exceeded", //
                             flowNode.getTimeout())));
 
             this.sp.onLocal(new ControlEvent(REFRESH, this.sp));

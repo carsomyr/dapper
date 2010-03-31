@@ -48,36 +48,6 @@ abstract public class FlowUtilities {
     final protected static Map<Class<?>, AtomicInteger> CounterMap = new WeakHashMap<Class<?>, AtomicInteger>();
 
     /**
-     * A {@link FlowListener} that does nothing.
-     */
-    final public static FlowListener<Object, Object> NullListener = new FlowListener<Object, Object>() {
-
-        public void onFlowBegin(Object flowAttachment) {
-            // Do nothing.
-        }
-
-        public void onFlowEnd(Object flowAttachment) {
-            // Do nothing.
-        }
-
-        public void onFlowError(Object flowAttachment, Throwable error) {
-            // Do nothing.
-        }
-
-        public void onFlowNodeBegin(Object flowAttachment, Object flowNodeAttachment) {
-            // Do nothing.
-        }
-
-        public void onFlowNodeEnd(Object flowAttachment, Object flowNodeAttachment) {
-            // Do nothing.
-        }
-
-        public void onFlowNodeError(Object flowAttachment, Object flowNodeAttachment, Throwable error) {
-            // Do nothing.
-        }
-    };
-
-    /**
      * Creates a unique identifier for the given class.
      */
     final public static String createIdentifier(Class<?> clazz) {

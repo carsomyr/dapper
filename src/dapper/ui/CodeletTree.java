@@ -51,6 +51,7 @@ import shared.metaclass.JarRegistry;
 import shared.metaclass.RegistryClassLoader;
 import shared.util.Control;
 import dapper.codelet.Codelet;
+import dapper.event.FlowEvent;
 import dapper.server.ServerProcessor.FlowBuildRequest;
 import dapper.server.flow.Flow;
 import dapper.server.flow.FlowBuilder;
@@ -261,9 +262,7 @@ public class CodeletTree extends JTree implements DropTargetListener {
     /**
      * Derives a {@link RunnableNode} from the contents of a Jar file.
      */
-    protected void runFromJar( //
-            Class<? extends FlowBuilder> clazz, //
-            ClassLoader cl) {
+    protected void runFromJar(Class<? extends FlowBuilder> clazz, ClassLoader cl) {
 
         String[] args = clazz.getAnnotation(Program.class).arguments();
 
@@ -288,7 +287,7 @@ public class CodeletTree extends JTree implements DropTargetListener {
         try {
 
             sfo.notifyObservers(new FlowBuildRequest(clazz.getConstructor(String[].class) //
-                    .newInstance(new Object[] { args }), cl, null));
+                    .newInstance(new Object[] { args }), cl, FlowEvent.F_ALL));
 
         } catch (Exception e) {
 

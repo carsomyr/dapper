@@ -27,15 +27,17 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.BlockingQueue;
 
 import javax.swing.JTabbedPane;
 import javax.swing.Timer;
 
 import shared.util.Control;
+import shared.util.CoreThread;
+import dapper.event.FlowEvent;
 import dapper.server.Server;
 import dapper.server.ServerProcessor.FlowBuildRequest;
 import dapper.server.flow.Flow;
-import dapper.server.flow.FlowListener;
 import dapper.server.flow.FlowStatus;
 
 /**
@@ -60,7 +62,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Default constructor.
      */
-    public FlowPane(Server server) {
+    public FlowPane(final Server server) {
 
         setBackground(Color.white);
         setForeground(Color.black);
@@ -75,6 +77,53 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
         this.active = true;
 
         this.server = server;
+
+        new CoreThread("Flow Event Logger") {
+
+            @Override
+            protected void runUnchecked() throws Exception {
+
+                BlockingQueue<FlowEvent<Object, Object>> queue = server.createFlowEventQueue();
+
+                for (FlowEvent<Object, Object> evt; (evt = queue.take()) != null;) {
+
+                    Object f = evt.getFlowAttachment();
+                    Object n = evt.getFlowNodeAttachment();
+                    Throwable e = evt.getError();
+
+                    switch (evt.getType()) {
+
+                    case FLOW_BEGIN:
+                        FlowManager.Log.info(String.format("Flow '%s' begin.", f));
+                        break;
+
+                    case FLOW_END:
+                        FlowManager.Log.info(String.format("Flow '%s' end.", f));
+                        break;
+
+                    case FLOW_ERROR:
+                        FlowManager.Log.info(String.format("Flow '%s' error.", f), e);
+                        break;
+
+                    case FLOW_NODE_BEGIN:
+                        FlowManager.Log.info(String.format("Flow '%s', FlowNode '%s' begin.", f, n));
+                        break;
+
+                    case FLOW_NODE_END:
+                        FlowManager.Log.info(String.format("Flow '%s', FlowNode '%s' end.", f, n));
+                        break;
+
+                    case FLOW_NODE_ERROR:
+                        FlowManager.Log.info(String.format("Flow '%s', FlowNode '%s' error.", f, n), e);
+                        break;
+
+                    default:
+                        throw new AssertionError("Control should never reach here");
+                    }
+                }
+            }
+
+        }.start();
     }
 
     /**
@@ -131,10 +180,8 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
         try {
 
             FlowBuildRequest fbr = (FlowBuildRequest) arg;
-            addTab(fbr.flowBuilder.toString(), new FlowTab( //
-                    !(fbr.flowBuilder instanceof FlowListener<?, ?>) ? this.server.createFlow( //
-                            fbr.flowBuilder, fbr.classLoader) : this.server.createFlow( //
-                            fbr.flowBuilder, fbr.classLoader, (FlowListener<?, ?>) fbr.flowBuilder)));
+            addTab(fbr.flowBuilder.toString(), //
+                    new FlowTab(this.server.createFlow(fbr.flowBuilder, fbr.classLoader, fbr.flowFlags)));
 
         } catch (Exception e) {
 

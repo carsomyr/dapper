@@ -90,6 +90,11 @@ public class Constants {
      */
     final public static long TIMER_PURGE_INTERVAL = 120000;
 
+    /**
+     * The maximum allowable size of the server's internal event queues.
+     */
+    final public static int INTERNAL_EVENT_BACKLOG = 128;
+
     // Declare some colors.
 
     /**

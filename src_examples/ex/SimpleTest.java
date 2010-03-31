@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import dapper.server.flow.Flow;
 import dapper.server.flow.FlowBuilder;
 import dapper.server.flow.FlowEdge;
-import dapper.server.flow.FlowListener;
 import dapper.server.flow.FlowNode;
 import dapper.server.flow.HandleEdge;
 import dapper.server.flow.StreamEdge;
@@ -39,7 +38,7 @@ import dapper.ui.Program;
  * @author Roy Liu
  */
 @Program
-public class SimpleTest implements FlowBuilder, FlowListener<String, String> {
+public class SimpleTest implements FlowBuilder {
 
     /**
      * The static {@link Logger} instance.
@@ -86,29 +85,5 @@ public class SimpleTest implements FlowBuilder, FlowListener<String, String> {
     @Override
     public String toString() {
         return "Simple Test";
-    }
-
-    public void onFlowBegin(String flowAttachment) {
-        Log.info(String.format("Flow '%s' begin.", flowAttachment));
-    }
-
-    public void onFlowEnd(String flowAttachment) {
-        Log.info(String.format("Flow '%s' end.", flowAttachment));
-    }
-
-    public void onFlowError(String flowAttachment, Throwable error) {
-        Log.info(String.format("Flow '%s' error.", flowAttachment), error);
-    }
-
-    public void onFlowNodeBegin(String flowAttachment, String flowNodeAttachment) {
-        Log.info(String.format("Flow '%s', FlowNode '%s' begin.", flowAttachment, flowNodeAttachment));
-    }
-
-    public void onFlowNodeEnd(String flowAttachment, String flowNodeAttachment) {
-        Log.info(String.format("Flow '%s', FlowNode '%s' end.", flowAttachment, flowNodeAttachment));
-    }
-
-    public void onFlowNodeError(String flowAttachment, String flowNodeAttachment, Throwable error) {
-        Log.info(String.format("Flow '%s', FlowNode '%s' error.", flowAttachment, flowNodeAttachment), error);
     }
 }

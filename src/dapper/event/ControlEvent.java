@@ -216,7 +216,23 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
          * Indicates a query for the number of additional clients required to saturate all pending computations on
          * individual {@link Flow}s.
          */
-        QUERY_FLOW_PENDING_COUNT;
+        QUERY_FLOW_PENDING_COUNT, //
+
+        /**
+         * Indicates a query for creating a new user-facing {@link FlowEvent} queue.
+         */
+        QUERY_CREATE_USER_QUEUE, //
+
+        /**
+         * Indicates a request for the server to suspend operations by ceasing to assign clients to pending
+         * computations.
+         */
+        SUSPEND, //
+
+        /**
+         * Indicates a request for the server to resume operations.
+         */
+        RESUME;
 
         /**
          * Parses a {@link ControlEvent} from the given root DOM {@link Node}.

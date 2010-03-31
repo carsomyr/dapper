@@ -339,8 +339,7 @@ public class FlowManager extends JFrame {
 
             if (archiveValues != null) {
                 fm.getCodeletTree().registerJar(new File(archiveValues[0]), archiveValues[1], //
-                        Arrays.copyOfRange(archiveValues, //
-                                2, archiveValues.length, String[].class));
+                        Arrays.copyOfRange(archiveValues, 2, archiveValues.length, String[].class));
             }
 
             fm.getFlowPane().setAutoCloseIdle(autoCloseIdle);

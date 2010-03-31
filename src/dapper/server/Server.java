@@ -20,6 +20,7 @@ package dapper.server;
 import static dapper.Constants.BACKLOG;
 import static dapper.Constants.PORT;
 import static dapper.event.ControlEvent.ControlEventType.QUERY_CLOSE_IDLE;
+import static dapper.event.ControlEvent.ControlEventType.QUERY_CREATE_USER_QUEUE;
 import static dapper.event.ControlEvent.ControlEventType.QUERY_INIT;
 import static dapper.event.ControlEvent.ControlEventType.QUERY_PENDING_COUNT;
 import static dapper.event.ControlEvent.ControlEventType.QUERY_REFRESH;
@@ -32,6 +33,8 @@ import java.net.UnknownHostException;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ServerSocketChannel;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
@@ -42,11 +45,12 @@ import shared.util.CoreThread;
 import dapper.AsynchronousBase;
 import dapper.Constants;
 import dapper.event.ControlEventConnection;
+import dapper.event.FlowEvent;
 import dapper.server.ServerProcessor.FlowBuildRequest;
 import dapper.server.ServerProcessor.FlowProxy;
 import dapper.server.flow.Flow;
 import dapper.server.flow.FlowBuilder;
-import dapper.server.flow.FlowListener;
+import dapper.server.flow.FlowNode;
 
 /**
  * The Dapper server class.
@@ -120,37 +124,36 @@ public class Server extends CoreThread implements Closeable {
     }
 
     /**
-     * A facade for {@link #createFlow(FlowBuilder, ClassLoader, FlowListener)}.
+     * A facade for {@link #createFlow(FlowBuilder, ClassLoader, int)}.
      * 
      * @throws InterruptedException
-     *             when this operation was interrupted.
+     *             when this operation is interrupted.
      * @throws ExecutionException
      *             when something goes awry.
      */
     public FlowProxy createFlow(FlowBuilder builder, ClassLoader cl) //
             throws InterruptedException, ExecutionException {
-        return createFlow(builder, cl, null);
+        return createFlow(builder, cl, FlowEvent.F_NONE);
     }
 
     /**
      * Creates a {@link Flow}.
      * 
      * @throws InterruptedException
-     *             when this operation was interrupted.
+     *             when this operation is interrupted.
      * @throws ExecutionException
      *             when something goes awry.
      */
-    @SuppressWarnings("unchecked")
-    public FlowProxy createFlow(FlowBuilder builder, ClassLoader cl, FlowListener<?, ?> listener) //
+    public FlowProxy createFlow(FlowBuilder builder, ClassLoader cl, int flowFlags) //
             throws InterruptedException, ExecutionException {
-        return this.processor.query(QUERY_INIT, new FlowBuildRequest(builder, cl, (FlowListener<Object, ?>) listener));
+        return this.processor.query(QUERY_INIT, new FlowBuildRequest(builder, cl, flowFlags));
     }
 
     /**
      * Refreshes all {@link Flow}s.
      * 
      * @throws InterruptedException
-     *             when this operation was interrupted.
+     *             when this operation is interrupted.
      * @throws ExecutionException
      *             when something goes awry.
      */
@@ -162,7 +165,7 @@ public class Server extends CoreThread implements Closeable {
      * Closes all idle clients.
      * 
      * @throws InterruptedException
-     *             when this operation was interrupted.
+     *             when this operation is interrupted.
      * @throws ExecutionException
      *             when something goes awry.
      */
@@ -174,7 +177,7 @@ public class Server extends CoreThread implements Closeable {
      * Sets whether idle clients should be automatically closed.
      * 
      * @throws InterruptedException
-     *             when this operation was interrupted.
+     *             when this operation is interrupted.
      * @throws ExecutionException
      *             when something goes awry.
      */
@@ -189,12 +192,29 @@ public class Server extends CoreThread implements Closeable {
      * Gets the number of additional clients required to saturate all pending computations.
      * 
      * @throws InterruptedException
-     *             when this operation was interrupted.
+     *             when this operation is interrupted.
      * @throws ExecutionException
      *             when something goes awry.
      */
     public int getPendingCount() throws InterruptedException, ExecutionException {
         return (Integer) this.processor.query(QUERY_PENDING_COUNT, (Object) null);
+    }
+
+    /**
+     * Creates a new {@link Queue} for subscribing to {@link FlowEvent}s.
+     * 
+     * @param <F>
+     *            the {@link Flow} attachment type.
+     * @param <N>
+     *            the {@link FlowNode} attachment type.
+     * @throws InterruptedException
+     *             when this operation is interrupted.
+     * @throws ExecutionException
+     *             when something goes awry.
+     */
+    @SuppressWarnings("unchecked")
+    public <F, N> BlockingQueue<FlowEvent<F, N>> createFlowEventQueue() throws InterruptedException, ExecutionException {
+        return (BlockingQueue<FlowEvent<F, N>>) this.processor.query(QUERY_CREATE_USER_QUEUE, (Object) null);
     }
 
     /**

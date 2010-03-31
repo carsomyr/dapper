@@ -17,6 +17,7 @@
 
 package dapper.server;
 
+import static dapper.Constants.INTERNAL_EVENT_BACKLOG;
 import static dapper.event.ControlEvent.ControlEventType.QUERY_FLOW_PENDING_COUNT;
 import static dapper.event.ControlEvent.ControlEventType.QUERY_PURGE;
 import static dapper.event.ControlEvent.ControlEventType.QUERY_REFRESH;
@@ -28,6 +29,7 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 
 import shared.event.EnumStatus;
@@ -46,13 +48,16 @@ import dapper.event.ControlEventConnection;
 import dapper.event.DataRequestEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
+import dapper.event.FlowEvent;
 import dapper.event.ResetEvent;
 import dapper.event.SourceType;
 import dapper.event.TimeoutEvent;
 import dapper.event.ControlEvent.ControlEventType;
+import dapper.event.FlowEvent.FlowEventType;
 import dapper.server.flow.Flow;
 import dapper.server.flow.FlowBuilder;
-import dapper.server.flow.FlowListener;
+import dapper.server.flow.FlowEventBroadcaster;
+import dapper.server.flow.FlowNode;
 
 /**
  * The Dapper server processor.
@@ -70,6 +75,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     final ServerLogic logic;
     final StateTable<ServerStatus, ControlEventType, ControlEvent> fsmInternal;
     final StateTable<ClientStatus, ControlEventType, ControlEvent> fsmClient;
+    final FlowEventBroadcaster feb;
     final Set<RequestFuture<?>> futures;
 
     ServerStatus status;
@@ -97,6 +103,8 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
                     sp.notifyAll();
                 }
 
+                Control.close(sp.feb);
+
                 finalizer.run();
             }
         });
@@ -109,6 +117,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
                 ClientStatus.class, ControlEventType.class, //
                 "client");
 
+        this.feb = new FlowEventBroadcaster(INTERNAL_EVENT_BACKLOG, this);
         this.futures = Collections.newSetFromMap(new WeakHashMap<RequestFuture<?>, Boolean>());
 
         this.status = ServerStatus.RUN;
@@ -221,6 +230,17 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         @SuppressWarnings("unchecked")
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleQueryFlowPendingCount((QueryEvent<Flow, Integer>) evt);
+        }
+    };
+
+    // Create a new user-facing flow event queue.
+    @Transition(currentState = "RUN", eventType = "QUERY_CREATE_USER_QUEUE", group = "internal")
+    final Handler<ControlEvent> queryCreateUserQueue = new Handler<ControlEvent>() {
+
+        @SuppressWarnings("unchecked")
+        public void handle(ControlEvent evt) {
+            ((QueryEvent<Flow, BlockingQueue<FlowEvent<Object, Object>>>) evt) //
+                    .setOutput(ServerProcessor.this.feb.createUserQueue());
         }
     };
 
@@ -340,7 +360,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
      * @param <T>
      *            the output type.
      * @throws InterruptedException
-     *             when this operation was interrupted.
+     *             when this operation is interrupted.
      * @throws ExecutionException
      *             when something goes awry.
      */
@@ -374,8 +394,18 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     }
 
     /**
-     * {@link QueryEvent}.java <br />
-     * <br />
+     * Broadcasts a {@link FlowEvent} constructed from the given information.
+     * 
+     * @param <F>
+     *            the {@link Flow} attachment type.
+     * @param <N>
+     *            the {@link FlowNode} attachment type.
+     */
+    public <F, N> void broadcast(FlowEventType type, F flowAttachment, N flowNodeAttachment, Throwable error) {
+        this.feb.add(new FlowEvent<F, N>(type, flowAttachment, flowNodeAttachment, error));
+    }
+
+    /**
      * A subclass of {@link ControlEvent} for asynchronously querying the internal state of the {@link ServerLogic} in a
      * thread-safe way.
      * 
@@ -424,98 +454,24 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     /**
      * A wrapper for {@link Flow}s gotten from the server.
      */
-    public class FlowProxy implements FlowListener<Object, Object>, Taggable<Object> {
+    public class FlowProxy implements Taggable<Object> {
 
         Flow flow;
 
         final Flow originalFlow;
+        final int flowFlags;
         final RequestFuture<Object> future;
-
-        final FlowListener<Object, Object> listener;
 
         /**
          * Default constructor.
          */
-        protected FlowProxy(Flow originalFlow, FlowListener<Object, Object> listener) {
+        protected FlowProxy(Flow originalFlow, int flowFlags) {
 
             this.originalFlow = originalFlow;
-
-            this.listener = listener;
+            this.flowFlags = flowFlags;
 
             this.flow = originalFlow.clone();
             this.future = createFuture();
-        }
-
-        public void onFlowBegin(Object flowAttachment) {
-
-            try {
-
-                this.listener.onFlowBegin(flowAttachment);
-
-            } catch (Throwable t) {
-
-                Server.getLog().info("Caught unexpected exception on listener invocation.", t);
-            }
-        }
-
-        public void onFlowEnd(Object flowAttachment) {
-
-            try {
-
-                this.listener.onFlowEnd(flowAttachment);
-
-            } catch (Throwable t) {
-
-                Server.getLog().info("Caught unexpected exception on listener invocation.", t);
-            }
-        }
-
-        public void onFlowError(Object flowAttachment, Throwable error) {
-
-            try {
-
-                this.listener.onFlowError(flowAttachment, error);
-
-            } catch (Throwable t) {
-
-                Server.getLog().info("Caught unexpected exception on listener invocation.", t);
-            }
-        }
-
-        public void onFlowNodeBegin(Object flowAttachment, Object flowNodeAttachment) {
-
-            try {
-
-                this.listener.onFlowNodeBegin(flowAttachment, flowNodeAttachment);
-
-            } catch (Throwable t) {
-
-                Server.getLog().info("Caught unexpected exception on listener invocation.", t);
-            }
-        }
-
-        public void onFlowNodeEnd(Object flowAttachment, Object flowNodeAttachment) {
-
-            try {
-
-                this.listener.onFlowNodeEnd(flowAttachment, flowNodeAttachment);
-
-            } catch (Throwable t) {
-
-                Server.getLog().info("Caught unexpected exception on listener invocation.", t);
-            }
-        }
-
-        public void onFlowNodeError(Object flowAttachment, Object flowNodeAttachment, Throwable error) {
-
-            try {
-
-                this.listener.onFlowNodeError(flowAttachment, flowNodeAttachment, error);
-
-            } catch (Throwable t) {
-
-                Server.getLog().info("Caught unexpected exception on listener invocation.", t);
-            }
         }
 
         public Object getAttachment() {
@@ -559,7 +515,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
          * Purges the {@link Flow}.
          * 
          * @throws InterruptedException
-         *             when this operation was interrupted.
+         *             when this operation is interrupted.
          * @throws ExecutionException
          *             when something goes awry.
          */
@@ -571,7 +527,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
          * Refreshes the {@link Flow}.
          * 
          * @throws InterruptedException
-         *             when this operation was interrupted.
+         *             when this operation is interrupted.
          * @throws ExecutionException
          *             when something goes awry.
          */
@@ -583,7 +539,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
          * Gets the number of additional clients required to saturate all pending computations on the {@link Flow}.
          * 
          * @throws InterruptedException
-         *             when this operation was interrupted.
+         *             when this operation is interrupted.
          * @throws ExecutionException
          *             when something goes awry.
          */
@@ -595,7 +551,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
          * Waits for the {@link Flow} to finish.
          * 
          * @throws InterruptedException
-         *             when this operation was interrupted.
+         *             when this operation is interrupted.
          * @throws ExecutionException
          *             when something goes awry.
          */
@@ -616,6 +572,66 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         protected void setException(Throwable t) {
             this.future.setException(t);
         }
+
+        /**
+         * On {@link Flow} begin.
+         */
+        protected void onFlowBegin(Object flowAttachment) {
+
+            if ((this.flowFlags & FlowEvent.F_FLOW) != 0) {
+                broadcast(FlowEventType.FLOW_BEGIN, flowAttachment, (Object) null, null);
+            }
+        }
+
+        /**
+         * On {@link Flow} end.
+         */
+        protected void onFlowEnd(Object flowAttachment) {
+
+            if ((this.flowFlags & FlowEvent.F_FLOW) != 0) {
+                broadcast(FlowEventType.FLOW_END, flowAttachment, (Object) null, null);
+            }
+        }
+
+        /**
+         * On {@link Flow} error.
+         */
+        protected void onFlowError(Object flowAttachment, Throwable error) {
+
+            if ((this.flowFlags & FlowEvent.F_FLOW) != 0) {
+                broadcast(FlowEventType.FLOW_ERROR, flowAttachment, (Object) null, error);
+            }
+        }
+
+        /**
+         * On {@link FlowNode} begin.
+         */
+        protected void onFlowNodeBegin(Object flowAttachment, Object flowNodeAttachment) {
+
+            if ((this.flowFlags & FlowEvent.F_FLOW_NODE) != 0) {
+                broadcast(FlowEventType.FLOW_NODE_BEGIN, flowAttachment, flowNodeAttachment, null);
+            }
+        }
+
+        /**
+         * On {@link FlowNode} end.
+         */
+        protected void onFlowNodeEnd(Object flowAttachment, Object flowNodeAttachment) {
+
+            if ((this.flowFlags & FlowEvent.F_FLOW_NODE) != 0) {
+                broadcast(FlowEventType.FLOW_NODE_END, flowAttachment, flowNodeAttachment, null);
+            }
+        }
+
+        /**
+         * On {@link FlowNode} error.
+         */
+        protected void onFlowNodeError(Object flowAttachment, Object flowNodeAttachment, Throwable error) {
+
+            if ((this.flowFlags & FlowEvent.F_FLOW_NODE) != 0) {
+                broadcast(FlowEventType.FLOW_NODE_ERROR, flowAttachment, flowNodeAttachment, error);
+            }
+        }
     }
 
     /**
@@ -634,18 +650,18 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         final public ClassLoader classLoader;
 
         /**
-         * The {@link FlowListener}.
+         * The bit vector of {@link FlowEvent} interest indicators.
          */
-        final public FlowListener<Object, ?> listener;
+        final public int flowFlags;
 
         /**
          * Default constructor.
          */
-        public FlowBuildRequest(FlowBuilder flowBuilder, ClassLoader classLoader, FlowListener<Object, ?> listener) {
+        public FlowBuildRequest(FlowBuilder flowBuilder, ClassLoader classLoader, int flowFlags) {
 
             this.flowBuilder = flowBuilder;
             this.classLoader = classLoader;
-            this.listener = listener;
+            this.flowFlags = flowFlags;
         }
     }
 }
