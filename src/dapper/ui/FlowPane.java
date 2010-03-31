@@ -59,6 +59,8 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     boolean removeFinished;
     boolean active;
 
+    int flowFlags;
+
     /**
      * Default constructor.
      */
@@ -75,6 +77,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
         this.timer = null;
         this.removeFinished = false;
         this.active = true;
+        this.flowFlags = FlowEvent.F_NONE;
 
         this.server = server;
 
@@ -149,6 +152,13 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     }
 
     /**
+     * Sets the bit vector of {@link FlowEvent} interest flags.
+     */
+    protected void setFlowFlags(int flowFlags) {
+        this.flowFlags = flowFlags;
+    }
+
+    /**
      * Takes a screenshot of the underlying {@link Flow} of the current {@link FlowTab}.
      */
     public void takeScreenshot() {
@@ -181,7 +191,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
 
             FlowBuildRequest fbr = (FlowBuildRequest) arg;
             addTab(fbr.flowBuilder.toString(), //
-                    new FlowTab(this.server.createFlow(fbr.flowBuilder, fbr.classLoader, fbr.flowFlags)));
+                    new FlowTab(this.server.createFlow(fbr.flowBuilder, fbr.classLoader, this.flowFlags)));
 
         } catch (Exception e) {
 

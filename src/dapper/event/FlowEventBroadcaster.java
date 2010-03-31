@@ -15,14 +15,15 @@
  * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
  */
 
-package dapper.server.flow;
+package dapper.event;
 
 import static dapper.event.ControlEvent.ControlEventType.RESUME;
 import static dapper.event.ControlEvent.ControlEventType.SUSPEND;
 
 import java.io.Closeable;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -33,13 +34,13 @@ import java.util.concurrent.TimeUnit;
 import shared.event.Source;
 import shared.util.ReferenceReaper;
 import shared.util.ReferenceReaper.ReferenceType;
-import dapper.event.ControlEvent;
-import dapper.event.FlowEvent;
-import dapper.event.SourceType;
+import dapper.server.flow.Flow;
+import dapper.server.flow.FlowNode;
 
 /**
  * A mechanism for broadcasting {@link FlowEvent}s from the Dapper server to multiple subscribers in a thread-safe way.
  * 
+ * @apiviz.has dapper.event.FlowEvent - - - argument
  * @author Roy Liu
  */
 public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Closeable {
@@ -49,7 +50,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
     final ReferenceReaper<Queue<FlowEvent<?, ?>>> rr;
     final Set<Queue<FlowEvent<?, ?>>> queues;
 
-    int messageCount;
+    int eventCount;
 
     boolean closed;
 
@@ -62,9 +63,10 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
         this.processor = processor;
 
         this.rr = new ReferenceReaper<Queue<FlowEvent<?, ?>>>();
-        this.queues = new HashSet<Queue<FlowEvent<?, ?>>>();
+        // Use an IdentityHashMap to prevent comparison of contents based on list equality.
+        this.queues = Collections.newSetFromMap(new IdentityHashMap<Queue<FlowEvent<?, ?>>, Boolean>());
 
-        this.messageCount = 0;
+        this.eventCount = 0;
 
         this.closed = false;
     }
@@ -84,31 +86,31 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
     }
 
     /**
-     * Increments the message count.
+     * Increments the event count.
      */
-    public void incMsgCount(int amount) {
+    public void incrEventCount(int amount) {
 
         int queueCount = this.queues.size();
 
-        this.messageCount += amount;
+        this.eventCount += amount;
 
-        if (this.messageCount > queueCount * this.backlog //
-                && this.messageCount - amount <= queueCount * this.backlog) {
+        if (this.eventCount > queueCount * this.backlog //
+                && this.eventCount - amount <= queueCount * this.backlog) {
             this.processor.onLocal(new ControlEvent(SUSPEND, this.processor));
         }
     }
 
     /**
-     * Decrements the message count.
+     * Decrements the event count.
      */
-    public void decMsgCount(int amount) {
+    public void decrEventCount(int amount) {
 
         int queueCount = this.queues.size();
 
-        this.messageCount -= amount;
+        this.eventCount -= amount;
 
-        if (this.messageCount + amount > queueCount * this.backlog //
-                && this.messageCount <= queueCount * this.backlog) {
+        if (this.eventCount + amount > queueCount * this.backlog //
+                && this.eventCount <= queueCount * this.backlog) {
             this.processor.onLocal(new ControlEvent(RESUME, this.processor));
         }
     }
@@ -147,7 +149,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
                 synchronized (feb) {
 
-                    decMsgCount(Math.min(backing.size(), 1));
+                    decrEventCount(Math.min(backing.size(), 1));
 
                     return backing.poll();
                 }
@@ -163,7 +165,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                         feb.wait(remaining);
                     }
 
-                    decMsgCount(Math.min(backing.size(), 1));
+                    decrEventCount(Math.min(backing.size(), 1));
 
                     return backing.poll();
                 }
@@ -173,7 +175,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
                 synchronized (feb) {
 
-                    decMsgCount(Math.min(backing.size(), 1));
+                    decrEventCount(Math.min(backing.size(), 1));
 
                     return backing.remove();
                 }
@@ -187,7 +189,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                         feb.wait();
                     }
 
-                    decMsgCount(Math.min(backing.size(), 1));
+                    decrEventCount(Math.min(backing.size(), 1));
 
                     return backing.poll();
                 }
@@ -197,7 +199,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
                 synchronized (feb) {
 
-                    decMsgCount(backing.size());
+                    decrEventCount(backing.size());
 
                     backing.clear();
                 }
@@ -298,9 +300,9 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
                 synchronized (feb) {
 
-                    decMsgCount(backing.size());
-
                     feb.queues.remove(backing);
+
+                    decrEventCount(backing.size());
                 }
             }
         });
@@ -316,7 +318,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
         synchronized (this) {
 
-            incMsgCount(this.queues.size());
+            incrEventCount(this.queues.size());
 
             for (Queue<FlowEvent<?, ?>> queue : this.queues) {
                 queue.add(evt);
@@ -343,14 +345,14 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
     public int size() {
 
         synchronized (this) {
-            return this.messageCount;
+            return this.eventCount;
         }
     }
 
     public boolean isEmpty() {
 
         synchronized (this) {
-            return this.messageCount == 0;
+            return (this.eventCount == 0);
         }
     }
 
@@ -358,6 +360,9 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
         return Integer.MAX_VALUE;
     }
 
+    /**
+     * Creates a human-readable representation of this {@link Queue}.
+     */
     @Override
     public String toString() {
 

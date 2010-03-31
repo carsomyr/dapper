@@ -55,6 +55,7 @@ import shared.cli.CLI;
 import shared.cli.CLIOptions;
 import shared.cli.CLIOptions.CLIOption;
 import shared.log.Logging;
+import dapper.event.FlowEvent;
 import dapper.server.Server;
 import dapper.server.flow.Flow;
 
@@ -260,6 +261,17 @@ public class FlowManager extends JFrame {
             }
         });
         optionsMenu.add(autoCloseIdleItem);
+
+        JCheckBoxMenuItem logFlowEventsItem = new JCheckBoxMenuItem("Log Flow Events");
+        logFlowEventsItem.setSelected(false);
+        logFlowEventsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.ALT_MASK));
+        logFlowEventsItem.addItemListener(new ItemListener() {
+
+            public void itemStateChanged(ItemEvent e) {
+                FlowManager.this.flowPane.setFlowFlags(FlowEvent.F_ALL);
+            }
+        });
+        optionsMenu.add(logFlowEventsItem);
 
         menuBar.add(optionsMenu);
         setJMenuBar(menuBar);

@@ -105,6 +105,7 @@ public class ServerLogic {
     final List<LogicalNode> executeList;
 
     boolean autoClose;
+    boolean suspend;
 
     /**
      * Default constructor.
@@ -124,6 +125,7 @@ public class ServerLogic {
         this.executeList = new ArrayList<LogicalNode>();
 
         this.autoClose = false;
+        this.suspend = false;
     }
 
     // HELPER METHODS
@@ -277,6 +279,11 @@ public class ServerLogic {
      * Refreshes the computation state and sees if any work can be executed.
      */
     protected void handleRefresh() {
+
+        // Check if a suspension is in effect.
+        if (this.suspend) {
+            return;
+        }
 
         // Greedily pick small equivalence classes by sorting with a size-based comparator.
         Collections.sort(this.executeList, SizeComparator);
@@ -488,6 +495,29 @@ public class ServerLogic {
      */
     protected void handleQueryFlowPendingCount(QueryEvent<Flow, Integer> evt) {
         evt.setOutput(getPendingCount(evt.getInput()));
+    }
+
+    /**
+     * Suspends and resumes server activities.
+     */
+    protected void handleSuspendResume(ControlEvent evt) {
+
+        switch (evt.getType()) {
+
+        case SUSPEND:
+            this.suspend = true;
+            break;
+
+        case RESUME:
+
+            this.suspend = false;
+            this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+
+            break;
+
+        default:
+            throw new AssertionError("Control should never reach here");
+        }
     }
 
     // CLIENT LOGIC

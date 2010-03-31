@@ -71,7 +71,7 @@ public class Broadcast implements Codelet {
 
                     final StreamResource<InputStream> isr = (StreamResource<InputStream>) resource;
 
-                    for (final StreamResource<OutputStream> osr : CodeletUtilities.filter(outResources, //
+                    for (StreamResource<OutputStream> osr : CodeletUtilities.filter(outResources, //
                             name, StreamResource.class)) {
 
                         InputStream in = isr.get();

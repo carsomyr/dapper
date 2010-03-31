@@ -49,6 +49,7 @@ import dapper.event.DataRequestEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
 import dapper.event.FlowEvent;
+import dapper.event.FlowEventBroadcaster;
 import dapper.event.ResetEvent;
 import dapper.event.SourceType;
 import dapper.event.TimeoutEvent;
@@ -56,7 +57,6 @@ import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.FlowEvent.FlowEventType;
 import dapper.server.flow.Flow;
 import dapper.server.flow.FlowBuilder;
-import dapper.server.flow.FlowEventBroadcaster;
 import dapper.server.flow.FlowNode;
 
 /**
@@ -241,6 +241,19 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         public void handle(ControlEvent evt) {
             ((QueryEvent<Flow, BlockingQueue<FlowEvent<Object, Object>>>) evt) //
                     .setOutput(ServerProcessor.this.feb.createUserQueue());
+        }
+    };
+
+    // Suspend or resume the server.
+    @Transitions(transitions = {
+    //
+            @Transition(currentState = "RUN", eventType = "SUSPEND", group = "internal"), //
+            @Transition(currentState = "RUN", eventType = "RESUME", group = "internal") //
+    })
+    final Handler<ControlEvent> suspendResume = new Handler<ControlEvent>() {
+
+        public void handle(ControlEvent evt) {
+            ServerProcessor.this.logic.handleSuspendResume(evt);
         }
     };
 
@@ -650,7 +663,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         final public ClassLoader classLoader;
 
         /**
-         * The bit vector of {@link FlowEvent} interest indicators.
+         * The bit vector of {@link FlowEvent} interest flags.
          */
         final public int flowFlags;
 

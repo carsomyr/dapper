@@ -55,7 +55,7 @@ public class FlowManagerDriver {
      * @throws Exception
      *             when something goes awry.
      */
-    public static void main(final String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Loader.run(FlowManagerDriver.class.getName(), args);
     }
 

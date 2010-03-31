@@ -53,7 +53,7 @@ public class ClientDriver {
      * @throws Exception
      *             when something goes awry.
      */
-    public static void main(final String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Loader.run(ClientDriver.class.getName(), args);
     }
 
@@ -64,7 +64,7 @@ public class ClientDriver {
      *             when something goes awry.
      */
     @EntryPoint
-    public static void entryPoint(final String[] args) throws Exception {
+    public static void entryPoint(String[] args) throws Exception {
 
         Logging.configureLog4J("shared/log4j.xml");
         Logging.configureLog4J("shared/net/log4j.xml");
