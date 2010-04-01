@@ -40,7 +40,7 @@ import dapper.server.flow.FlowNode;
 /**
  * A mechanism for broadcasting {@link FlowEvent}s from the Dapper server to multiple subscribers in a thread-safe way.
  * 
- * @apiviz.has dapper.event.FlowEvent - - - argument
+ * @apiviz.has dapper.event.FlowEvent - - - event
  * @author Roy Liu
  */
 public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Closeable {

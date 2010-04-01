@@ -89,40 +89,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
                 BlockingQueue<FlowEvent<Object, Object>> queue = server.createFlowEventQueue();
 
                 for (FlowEvent<Object, Object> evt; (evt = queue.take()) != null;) {
-
-                    Object f = evt.getFlowAttachment();
-                    Object n = evt.getFlowNodeAttachment();
-                    Throwable e = evt.getError();
-
-                    switch (evt.getType()) {
-
-                    case FLOW_BEGIN:
-                        FlowManager.Log.info(String.format("Flow '%s' begin.", f));
-                        break;
-
-                    case FLOW_END:
-                        FlowManager.Log.info(String.format("Flow '%s' end.", f));
-                        break;
-
-                    case FLOW_ERROR:
-                        FlowManager.Log.info(String.format("Flow '%s' error.", f), e);
-                        break;
-
-                    case FLOW_NODE_BEGIN:
-                        FlowManager.Log.info(String.format("Flow '%s', FlowNode '%s' begin.", f, n));
-                        break;
-
-                    case FLOW_NODE_END:
-                        FlowManager.Log.info(String.format("Flow '%s', FlowNode '%s' end.", f, n));
-                        break;
-
-                    case FLOW_NODE_ERROR:
-                        FlowManager.Log.info(String.format("Flow '%s', FlowNode '%s' error.", f, n), e);
-                        break;
-
-                    default:
-                        throw new AssertionError("Control should never reach here");
-                    }
+                    FlowManager.Log.info(evt.toString(), evt.getError());
                 }
             }
 

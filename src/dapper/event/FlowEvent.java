@@ -114,6 +114,16 @@ public class FlowEvent<F, N> implements Event<FlowEvent<F, N>, FlowEvent.FlowEve
     }
 
     /**
+     * Creates a human-readable representation of this event.
+     */
+    @Override
+    public String toString() {
+        return String.format("%s[%s, %s, %s, %s]", //
+                FlowEvent.class.getSimpleName(), this.type, this.flowAttachment, this.flowNodeAttachment, //
+                (this.error != null) ? this.error.getClass().getSimpleName() : null);
+    }
+
+    /**
      * Gets the {@link Flow} attachment.
      */
     public F getFlowAttachment() {
