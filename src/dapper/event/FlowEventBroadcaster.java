@@ -157,11 +157,13 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
             public FlowEvent<F, N> poll(long timeout, TimeUnit unit) throws InterruptedException {
 
+                long timeoutMillis = unit.toMillis(timeout);
+
                 synchronized (feb) {
 
-                    for (long remaining, end = System.currentTimeMillis() + unit.toMillis(timeout); backing.size() == 0 //
-                            && (remaining = end - System.currentTimeMillis()) > 0 //
-                            && !feb.closed;) {
+                    for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
+                    remaining > 0 && backing.size() == 0 && !feb.closed; //
+                    remaining = end - System.currentTimeMillis()) {
                         feb.wait(remaining);
                     }
 
@@ -269,7 +271,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 throw new UnsupportedOperationException();
             }
 
-            public void put(FlowEvent<F, N> evt) throws InterruptedException {
+            public void put(FlowEvent<F, N> evt) {
                 throw new UnsupportedOperationException();
             }
 
@@ -318,11 +320,11 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
         synchronized (this) {
 
-            incrEventCount(this.queues.size());
-
             for (Queue<FlowEvent<?, ?>> queue : this.queues) {
                 queue.add(evt);
             }
+
+            incrEventCount(this.queues.size());
 
             notifyAll();
         }
@@ -352,7 +354,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
     public boolean isEmpty() {
 
         synchronized (this) {
-            return (this.eventCount == 0);
+            return this.eventCount == 0;
         }
     }
 

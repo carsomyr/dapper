@@ -71,7 +71,8 @@ import dapper.server.flow.HandleEdge;
 import dapper.server.flow.LogicalEdge;
 import dapper.server.flow.LogicalNode;
 import dapper.server.flow.LogicalNodeStatus;
-import dapper.util.RequirementsMatcher;
+import dapper.util.MatchingAlgorithm;
+import dapper.util.MaximumFlowMatching;
 
 /**
  * A class that houses the Dapper server logic.
@@ -85,8 +86,7 @@ public class ServerLogic {
      * A {@link Comparator} for comparing {@link LogicalNode}s based on the sizes of the {@link FlowNode} equivalence
      * classes they represent.
      */
-    final static protected Comparator<LogicalNode> SizeComparator = //
-    new Comparator<LogicalNode>() {
+    final static protected Comparator<LogicalNode> SizeComparator = new Comparator<LogicalNode>() {
 
         public int compare(LogicalNode l1, LogicalNode l2) {
             return l1.getFlowNodes().size() - l2.getFlowNodes().size();
@@ -103,6 +103,7 @@ public class ServerLogic {
     final Set<ClientState> clientWaitSet;
     final Map<Flow, FlowProxy> allFlowsMap;
     final List<LogicalNode> executeList;
+    final MatchingAlgorithm matching;
 
     boolean autoClose;
     boolean suspend;
@@ -123,6 +124,8 @@ public class ServerLogic {
 
         // The execute list holds everything currently eligible for execution.
         this.executeList = new ArrayList<LogicalNode>();
+
+        this.matching = new MaximumFlowMatching();
 
         this.autoClose = false;
         this.suspend = false;
@@ -299,15 +302,14 @@ public class ServerLogic {
                 break loop;
             }
 
-            Set<Entry<FlowNode, ClientState>> matchEntries = //
-            RequirementsMatcher.match(flowNodes, this.clientWaitSet);
+            Map<FlowNode, ClientState> matchMap = this.matching.match(flowNodes, this.clientWaitSet);
 
             // Skip the current iteration if not all requirements could be met.
-            if (flowNodes.size() != matchEntries.size()) {
+            if (flowNodes.size() != matchMap.size()) {
                 continue loop;
             }
 
-            for (Entry<FlowNode, ClientState> matchEntry : matchEntries) {
+            for (Entry<FlowNode, ClientState> matchEntry : matchMap.entrySet()) {
 
                 FlowNode flowNode = matchEntry.getKey();
                 ClientState csh = matchEntry.getValue();
@@ -331,7 +333,7 @@ public class ServerLogic {
             }
 
             // Some edges may query the client states at both ends, so create resources AFTER linking.
-            for (Entry<FlowNode, ClientState> matchEntry : matchEntries) {
+            for (Entry<FlowNode, ClientState> matchEntry : matchMap.entrySet()) {
 
                 FlowNode flowNode = matchEntry.getKey();
                 ClientState csh = matchEntry.getValue();
@@ -670,8 +672,10 @@ public class ServerLogic {
 
         } else {
 
+            String domain = evt.getDomain();
+
             csh.setAddress(new InetSocketAddress(this.address, address.getPort()));
-            csh.setDomain("local");
+            csh.setDomain((!domain.equals("") && !domain.equals("remote")) ? domain : "local");
         }
 
         // The client is now awaiting further instructions.

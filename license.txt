@@ -3,7 +3,4 @@ This library is covered under the GNU Lesser General Public License
 
 Other libraries have been incorporated to varying extents:
 
-  * The BipartiteMatcher class (license/license_Bipartite-Matcher.txt) is
-    included at:
-      * dapper/util/BipartiteMatcher.java
   * Please look into retrieved Jar dependencies for more license information.

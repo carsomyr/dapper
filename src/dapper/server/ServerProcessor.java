@@ -64,9 +64,9 @@ import dapper.server.flow.FlowNode;
  * 
  * @apiviz.composedOf dapper.server.ServerLogic
  * @apiviz.owns dapper.server.ServerStatus
- * @apiviz.has dapper.server.ServerProcessor.QueryEvent - - - argument
  * @apiviz.has dapper.server.ServerProcessor.FlowProxy - - - argument
  * @apiviz.has dapper.server.ServerProcessor.FlowBuildRequest - - - argument
+ * @apiviz.has dapper.server.ServerProcessor.QueryEvent - - - event
  * @author Roy Liu
  */
 public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventType, SourceType> implements

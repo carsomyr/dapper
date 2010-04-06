@@ -32,8 +32,14 @@ import shared.metaclass.Loader.LoadableResources;
  */
 @LoadableResources(resources = {
 //
+        "jar:lib.collections-generic", //
+        "jar:lib.colt", //
         "jar:lib.commons-cli", //
         "jar:lib.commons-codec", //
+        "jar:lib.concurrent", //
+        "jar:lib.jung-algorithms", //
+        "jar:lib.jung-api", //
+        "jar:lib.jung-graph-impl", //
         "jar:lib.log4j", //
         "jar:lib.slf4j-api", //
         "jar:lib.slf4j-log4j12", //
