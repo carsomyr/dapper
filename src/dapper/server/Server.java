@@ -32,6 +32,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -243,9 +244,11 @@ public class Server extends CoreThread implements Closeable {
             ControlEventConnection cec = this.base.createControlConnection(this.processor);
             cec.setHandler(new ClientState(cec, this.processor, this.base));
 
+            SocketChannel sChannel = this.ssChannel.accept();
+
             try {
 
-                cec.register(this.ssChannel.accept()).get();
+                cec.register(sChannel).get();
 
             } catch (Exception e) {
 

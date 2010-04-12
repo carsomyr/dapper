@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.concurrent.Semaphore;
 
 import org.apache.commons.cli.CommandLine;
@@ -153,9 +154,11 @@ public class Client extends CoreThread implements Closeable {
             // Attempt to accept a connection.
             final SynchronousManagedConnection smc = this.base.createStreamConnection();
 
+            SocketChannel sChannel = this.ssChannel.accept();
+
             try {
 
-                smc.register(this.ssChannel.accept()).get();
+                smc.register(sChannel).get();
 
             } catch (Exception e) {
 

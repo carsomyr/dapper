@@ -36,7 +36,7 @@ public:
      * @param cmd
      *      the command line.
      */
-    static HANDLE exec(const TCHAR *cmd);
+    static PROCESS_INFORMATION exec(const TCHAR *cmd);
 };
 
 #endif

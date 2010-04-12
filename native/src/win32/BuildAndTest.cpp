@@ -17,7 +17,10 @@
 
 #include <BuildAndTest.hpp>
 
-HANDLE BuildAndTest::exec(const TCHAR *cmd) {
+// The number of clients to spawn.
+static const int NCLIENTS = 4;
+
+PROCESS_INFORMATION BuildAndTest::exec(const TCHAR *cmd) {
 
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
@@ -27,7 +30,7 @@ HANDLE BuildAndTest::exec(const TCHAR *cmd) {
     ZeroMemory(&pi, sizeof(pi));
 
     // Start the child process.
-    if (CreateProcess(NULL, //
+    if (!CreateProcess(NULL, //
             (TCHAR *) cmd, //
             NULL, //
             NULL, //
@@ -38,62 +41,70 @@ HANDLE BuildAndTest::exec(const TCHAR *cmd) {
             &si, //
             &pi) //
     ) {
-
-        return pi.hProcess;
-
-    } else {
-
         printf("Could not create child process '%s'.\n", cmd);
-
-        return 0;
     }
+
+    return pi;
 }
 
 int _tmain(int argc, TCHAR *argv[]) {
 
-    HANDLE antHandle = BuildAndTest::exec("cmd /C java -Xmx128M " //
+    PROCESS_INFORMATION antPI = BuildAndTest::exec("java -Xmx128M " //
                 "-cp build/ant-launcher.jar " //
                 "org.apache.tools.ant.launch.Launcher jars");
 
-    if (!antHandle) {
+    if (antPI.hProcess == NULL) {
 
         printf("Could not execute Ant.\n");
 
         return 0;
     }
 
-    WaitForSingleObject(antHandle, INFINITE);
+    WaitForSingleObject(antPI.hProcess, INFINITE);
 
-    HANDLE handles[5];
+    CloseHandle(antPI.hProcess);
+    CloseHandle(antPI.hThread);
 
-    handles[0] = BuildAndTest::exec("cmd /C java -Xmx128M " //
+    //
+
+    PROCESS_INFORMATION pis[NCLIENTS + 1];
+
+    pis[0] = BuildAndTest::exec("java -Xmx128M " //
                 "-cp dapper.jar dapper.ui.FlowManagerDriver " //
                 "--port 12121 " //
                 "--archive dapper-ex.jar ex.SimpleTest");
 
     Sleep(2000);
 
-    for (int i = 1; i < 5; i++) {
-        handles[i] = BuildAndTest::exec("cmd /C java -Xmx128M " //
+    for (int i = 1; i <= NCLIENTS; i++) {
+        pis[i] = BuildAndTest::exec("java -Xmx128M " //
                     "-cp dapper.jar dapper.client.ClientDriver " //
                     "--host localhost:12121");
     }
+
+    //
 
     printf("\nPress ENTER to exit this test.\n");
 
     for (;;) {
 
-        switch (getch()) {
-        case '\r':
+        switch (getchar()) {
+        case '\n':
         case -1:
             goto end;
         }
     }
 
-    end: for (int i = 0; i < 5; i++) {
+    end: for (int i = 0; i <= NCLIENTS; i++) {
 
-        if (handles[i] != 0) {
-            TerminateProcess(handles[i], 0);
+        if (pis[i].hProcess != NULL) {
+
+            TerminateProcess(pis[i].hProcess, 0);
+
+            WaitForSingleObject(pis[i].hProcess, INFINITE);
+
+            CloseHandle(pis[i].hProcess);
+            CloseHandle(pis[i].hThread);
         }
     }
 

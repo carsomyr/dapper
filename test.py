@@ -4,11 +4,10 @@
 """A script for testing basic Dapper functionality.
 """
 
+from subprocess import Popen
 import subprocess
 import sys
 import time
-
-from subprocess import Popen
 
 def main():
     """The main method body.
