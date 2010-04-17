@@ -142,8 +142,7 @@ public class CodeletTree extends JTree implements DropTargetListener {
 
                     files = new ArrayList<File>();
 
-                    for (Scanner scanner = new Scanner((Reader) tr.getTransferData(df)); //
-                    scanner.hasNextLine();) {
+                    for (Scanner scanner = new Scanner((Reader) tr.getTransferData(df)); scanner.hasNextLine();) {
                         files.add(new File(new URL(scanner.nextLine()).toURI()));
                     }
 

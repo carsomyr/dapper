@@ -111,15 +111,15 @@ public class Client extends CoreThread implements Closeable {
 
         this.localAddress = new InetSocketAddress(this.ssChannel.socket().getLocalPort());
 
-        this.processor = new ClientProcessor(this.base, this.localAddress, //
-                address, domain, //
+        this.processor = new ClientProcessor(this.base, this.localAddress, address, domain, //
                 //
                 new Runnable() {
 
                     public void run() {
                         Control.close(Client.this);
                     }
-                });
+                } //
+        );
 
         // Prime the processor with an artificially generated event.
         this.processor.onLocal(new ControlEvent(INIT, this.processor));
@@ -196,8 +196,7 @@ public class Client extends CoreThread implements Closeable {
 
                     // Success! Notify the server processor.
 
-                    Client.this.processor.onLocal(new StreamReadyEvent( //
-                            new String(header), smc, Client.this.processor));
+                    Client.this.processor.onLocal(new StreamReadyEvent(new String(header), smc, Client.this.processor));
 
                     getLog().debug(String.format("Accepted: %s.", //
                             smc.getRemoteAddress()));

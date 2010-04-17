@@ -97,15 +97,15 @@ public class Server extends CoreThread implements Closeable {
 
         this.base = new AsynchronousBase();
 
-        this.processor = new ServerProcessor( //
-                AsynchronousBase.inferAddress(), //
+        this.processor = new ServerProcessor(AsynchronousBase.inferAddress(), //
                 //
                 new Runnable() {
 
                     public void run() {
                         Control.close(Server.this);
                     }
-                });
+                } //
+        );
 
         this.run = true;
 

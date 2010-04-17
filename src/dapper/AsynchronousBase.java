@@ -54,7 +54,6 @@ public class AsynchronousBase implements Closeable {
 
     final ConnectionManager manager;
     final Timer timer;
-
     final AtomicLong counter;
 
     /**
@@ -157,17 +156,14 @@ public class AsynchronousBase implements Closeable {
 
         try {
 
-            for (Enumeration<NetworkInterface> e1 = NetworkInterface.getNetworkInterfaces(); //
-            e1.hasMoreElements();) {
+            for (Enumeration<NetworkInterface> e1 = NetworkInterface.getNetworkInterfaces(); e1.hasMoreElements();) {
 
-                for (Enumeration<InetAddress> e2 = e1.nextElement().getInetAddresses(); //
-                e2.hasMoreElements();) {
+                for (Enumeration<InetAddress> e2 = e1.nextElement().getInetAddresses(); e2.hasMoreElements();) {
 
                     InetAddress addr = e2.nextElement();
 
                     // Match the first address that isn't the local host.
-                    if (addr.getAddress().length == 4 //
-                            && !Arrays.equals(LocalHost, addr.getAddress())) {
+                    if (addr.getAddress().length == 4 && !Arrays.equals(LocalHost, addr.getAddress())) {
                         return addr;
                     }
                 }

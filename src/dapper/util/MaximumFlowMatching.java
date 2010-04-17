@@ -52,8 +52,8 @@ public class MaximumFlowMatching implements MatchingAlgorithm {
 
     public <R extends Requirement<S>, S> Map<R, S> match(Collection<R> requirements, Collection<S> satisfiers) {
 
-        ArrayList<R> rList = new ArrayList<R>();
-        ArrayList<R> rListTrivial = new ArrayList<R>();
+        List<R> rList = new ArrayList<R>();
+        List<R> rListTrivial = new ArrayList<R>();
 
         // Consider only nontrivial requirements for matching.
         for (R requirement : requirements) {
@@ -107,6 +107,7 @@ public class MaximumFlowMatching implements MatchingAlgorithm {
         final int edgeFactoryOffset = ie;
 
         new EdmondsKarpMaxFlow<Integer, Integer>(dag, nr + ns, nr + ns + 1, //
+                //
                 new Transformer<Integer, Number>() {
 
                     public Number transform(Integer input) {
@@ -114,6 +115,7 @@ public class MaximumFlowMatching implements MatchingAlgorithm {
                     }
                 }, //
                 edgeFlowMap, //
+                //
                 new Factory<Integer>() {
 
                     int ie = edgeFactoryOffset;
@@ -121,7 +123,8 @@ public class MaximumFlowMatching implements MatchingAlgorithm {
                     public Integer create() {
                         return this.ie++;
                     }
-                } //
+                }
+
         ).evaluate();
 
         // Match requirements with satisfiers.
