@@ -1,5 +1,7 @@
-This library is covered under the GNU Lesser General Public License
-(license/license_LGPL.txt).
+Copyright (c) 2008-2010 The Regents of the University of California
+
+This software is distributed under the New BSD License
+(license/license_BSD.txt).
 
 Other libraries have been incorporated to varying extents:
 
