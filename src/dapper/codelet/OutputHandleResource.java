@@ -68,16 +68,16 @@ public class OutputHandleResource extends AbstractHandleResource<OutputHandleRes
      */
     public void put(String handle, String stem) {
 
-        if (this.nentries == this.handleArray.size(0)) {
+        if (this.nEntries == this.handleArray.size(0)) {
             this.handleArray = this.handleArray.map(new ObjectArray<String>(String.class, //
-                    (this.nentries << 1) + 1, 2), //
-                    0, 0, this.nentries, //
+                    (this.nEntries << 1) + 1, 2), //
+                    0, 0, this.nEntries, //
                     0, 0, 2);
         }
 
-        this.handleArray.set(handle, this.nentries, 0);
-        this.handleArray.set(stem, this.nentries, 1);
-        this.nentries++;
+        this.handleArray.set(handle, this.nEntries, 0);
+        this.handleArray.set(stem, this.nEntries, 1);
+        this.nEntries++;
     }
 
     /**
@@ -85,24 +85,24 @@ public class OutputHandleResource extends AbstractHandleResource<OutputHandleRes
      */
     public void put(ObjectArray<String> newEntries) {
 
-        Control.checkTrue(newEntries.ndims() == 2 && newEntries.size(1) == 2, //
+        Control.checkTrue(newEntries.nDims() == 2 && newEntries.size(1) == 2, //
                 "Invalid dimensions");
 
-        int nnewEntries = newEntries.size(0);
+        int nNewEntries = newEntries.size(0);
 
-        if (this.nentries + nnewEntries > this.handleArray.size(0)) {
+        if (this.nEntries + nNewEntries > this.handleArray.size(0)) {
             this.handleArray = this.handleArray.map( //
-                    new ObjectArray<String>(String.class, (this.nentries + nnewEntries) << 1, 2), //
-                    0, 0, this.nentries, //
+                    new ObjectArray<String>(String.class, (this.nEntries + nNewEntries) << 1, 2), //
+                    0, 0, this.nEntries, //
                     0, 0, 2);
         }
 
         newEntries.map( //
                 this.handleArray, //
-                0, this.nentries, nnewEntries, //
+                0, this.nEntries, nNewEntries, //
                 0, 0, 2);
 
-        this.nentries += nnewEntries;
+        this.nEntries += nNewEntries;
     }
 
     public ResourceType getType() {

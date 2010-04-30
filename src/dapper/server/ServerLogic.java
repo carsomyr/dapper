@@ -241,10 +241,10 @@ public class ServerLogic {
      */
     protected void closeIdleClients() {
 
-        int nflowNodes = getPendingCount();
+        int nFlowNodes = getPendingCount();
 
         for (ClientState csh : new LinkedList<ClientState>(this.clientWaitSet) //
-                .subList(0, Math.max(this.clientWaitSet.size() - nflowNodes, 0))) {
+                .subList(0, Math.max(this.clientWaitSet.size() - nFlowNodes, 0))) {
 
             this.clientWaitSet.remove(csh);
 
@@ -259,13 +259,13 @@ public class ServerLogic {
      */
     protected int getPendingCount() {
 
-        int nflowNodes = 0;
+        int nFlowNodes = 0;
 
         for (LogicalNode node : this.executeList) {
-            nflowNodes += node.getFlowNodes().size();
+            nFlowNodes += node.getFlowNodes().size();
         }
 
-        return nflowNodes;
+        return nFlowNodes;
     }
 
     /**
@@ -273,18 +273,18 @@ public class ServerLogic {
      */
     protected int getPendingCount(Flow flow) {
 
-        int nflowNodes = 0;
+        int nFlowNodes = 0;
 
         Set<LogicalNode> nodes = flow.getNodes();
 
         for (LogicalNode node : this.executeList) {
 
             if (nodes.contains(node)) {
-                nflowNodes += node.getFlowNodes().size();
+                nFlowNodes += node.getFlowNodes().size();
             }
         }
 
-        return nflowNodes;
+        return nFlowNodes;
     }
 
     // INTERNAL LOGIC

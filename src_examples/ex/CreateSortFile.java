@@ -55,11 +55,11 @@ public class CreateSortFile implements Codelet {
         NodeList children = parameters.getChildNodes();
 
         File file = new File(children.item(0).getTextContent());
-        int nlines = Integer.parseInt(children.item(1).getTextContent());
+        int nLines = Integer.parseInt(children.item(1).getTextContent());
 
         PrintStream ps = new PrintStream(file);
 
-        for (int i = 0; i < nlines; i++) {
+        for (int i = 0; i < nLines; i++) {
 
             ps.printf(Hex.bytesToHex(Arithmetic.nextBytes(LINE_LENGTH >>> 1)) //
                     .substring(0, LINE_LENGTH - 1));

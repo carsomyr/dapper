@@ -24,7 +24,7 @@
 #include <BuildAndTest.hpp>
 
 // The number of clients to spawn.
-static const int NCLIENTS = 4;
+static const int N_CLIENTS = 4;
 
 PROCESS_INFORMATION BuildAndTest::exec(const TCHAR *cmd) {
 
@@ -73,7 +73,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 
     //
 
-    PROCESS_INFORMATION pis[NCLIENTS + 1];
+    PROCESS_INFORMATION pis[N_CLIENTS + 1];
 
     pis[0] = BuildAndTest::exec("java -Xmx128M " //
                 "-cp dapper.jar dapper.ui.FlowManagerDriver " //
@@ -82,7 +82,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 
     Sleep(2000);
 
-    for (int i = 1; i <= NCLIENTS; i++) {
+    for (int i = 1; i <= N_CLIENTS; i++) {
         pis[i] = BuildAndTest::exec("java -Xmx128M " //
                     "-cp dapper.jar dapper.client.ClientDriver " //
                     "--host localhost:12121");
@@ -101,7 +101,7 @@ int _tmain(int argc, TCHAR *argv[]) {
         }
     }
 
-    end: for (int i = 0; i <= NCLIENTS; i++) {
+    end: for (int i = 0; i <= N_CLIENTS; i++) {
 
         if (pis[i].hProcess != NULL) {
 

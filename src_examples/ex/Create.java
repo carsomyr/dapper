@@ -55,11 +55,11 @@ public class Create implements Codelet {
 
             String stem = CodeletUtilities.createStem();
 
-            int nhandles = Arithmetic.nextInt(3) + 1;
+            int nHandles = Arithmetic.nextInt(3) + 1;
 
             if (Arithmetic.nextInt(2) == 0) {
 
-                for (int i = 0; i < nhandles; i++) {
+                for (int i = 0; i < nHandles; i++) {
 
                     String subidentifier = String.format("%s_%08x", stem, i);
                     ohr.put("file_".concat(subidentifier), subidentifier);
@@ -67,9 +67,9 @@ public class Create implements Codelet {
 
             } else {
 
-                ObjectArray<String> newEntries = new ObjectArray<String>(String.class, nhandles, 2);
+                ObjectArray<String> newEntries = new ObjectArray<String>(String.class, nHandles, 2);
 
-                for (int i = 0; i < nhandles; i++) {
+                for (int i = 0; i < nHandles; i++) {
 
                     String subidentifier = String.format("%s_%08x", stem, i);
                     newEntries.set("file_".concat(subidentifier), i, 0);

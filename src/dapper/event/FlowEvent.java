@@ -40,6 +40,7 @@ import dapper.server.flow.FlowNode;
  *            the {@link Flow} attachment type.
  * @param <N>
  *            the {@link FlowNode} attachment type.
+ * @apiviz.owns dapper.event.FlowEvent.FlowEventType
  * @author Roy Liu
  */
 public class FlowEvent<F, N> implements Event<FlowEvent<F, N>, FlowEvent.FlowEventType, SourceType> {

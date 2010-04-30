@@ -64,7 +64,6 @@ import dapper.server.flow.FlowEdge.FlowEdgeType;
  * @apiviz.composedOf dapper.server.flow.AbstractCountDown
  * @apiviz.composedOf dapper.server.flow.FlowNode
  * @apiviz.composedOf dapper.server.flow.FlowEdge
- * @apiviz.owns dapper.server.flow.FlowListener
  * @apiviz.owns dapper.server.flow.FlowStatus
  * @apiviz.uses dapper.server.flow.FlowUtilities
  * @author Roy Liu
@@ -471,9 +470,9 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
 
                     ObjectArray<String> handleArray = he.getHandleInformation();
 
-                    int nentries = handleArray.size(0);
+                    int nEntries = handleArray.size(0);
 
-                    for (int k = 0; k < nentries; k++) {
+                    for (int k = 0; k < nEntries; k++) {
 
                         HandleEdge newHE = he.clone().setHandleInformation( //
                                 handleArray.subarray(k, k + 1, 0, 2));
@@ -484,8 +483,8 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
                         neighborOut.add(outIndex + k, newHE);
                     }
 
-                    j += nentries - 1;
-                    m += nentries - 1;
+                    j += nEntries - 1;
+                    m += nEntries - 1;
                 }
             }
 

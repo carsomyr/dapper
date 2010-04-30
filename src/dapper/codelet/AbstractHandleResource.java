@@ -59,7 +59,7 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
     /**
      * Counts the number of handle entries.
      */
-    protected int nentries;
+    protected int nEntries;
 
     /**
      * Default constructor.
@@ -69,7 +69,7 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
         this.name = name;
 
         this.handleArray = handleArray;
-        this.nentries = this.handleArray.size(0);
+        this.nEntries = this.handleArray.size(0);
     }
 
     /**
@@ -87,12 +87,12 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
 
         NodeList handlesChildren = handlesNode.getChildNodes();
 
-        int nchildren = handlesChildren.getLength();
+        int nChildren = handlesChildren.getLength();
 
-        this.handleArray = new ObjectArray<String>(String.class, nchildren << 1, 2);
-        this.nentries = nchildren;
+        this.handleArray = new ObjectArray<String>(String.class, nChildren << 1, 2);
+        this.nEntries = nChildren;
 
-        for (int i = 0; i < nchildren; i++) {
+        for (int i = 0; i < nChildren; i++) {
 
             Node entryNode = handlesChildren.item(i);
             Control.checkTrue(entryNode.getNodeName().equals("entry"));
@@ -116,8 +116,8 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
     /**
      * Gets the number of handles.
      */
-    public int nhandles() {
-        return this.nentries;
+    public int nHandles() {
+        return this.nEntries;
     }
 
     /**
@@ -145,7 +145,7 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
      * Gets the {@link ObjectArray} of handle entries.
      */
     public ObjectArray<String> get() {
-        return this.handleArray.subarray(0, this.nentries, 0, 2);
+        return this.handleArray.subarray(0, this.nEntries, 0, 2);
     }
 
     /**
@@ -153,7 +153,7 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
      */
     protected String get(int i, int j) {
 
-        Control.checkTrue(i < this.nentries, //
+        Control.checkTrue(i < this.nEntries, //
                 "Index out of bounds");
 
         return this.handleArray.get(i, j);
@@ -169,7 +169,7 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
             int counter = 0;
 
             public boolean hasNext() {
-                return this.counter < AbstractHandleResource.this.nentries;
+                return this.counter < AbstractHandleResource.this.nEntries;
             }
 
             public String next() {
@@ -203,7 +203,7 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
 
         Node handlesNode = contentNode.appendChild(doc.createElement("handles"));
 
-        for (int i = 0, n = this.nentries; i < n; i++) {
+        for (int i = 0, n = this.nEntries; i < n; i++) {
 
             Node entryNode = handlesNode.appendChild(doc.createElement("entry"));
 
