@@ -30,8 +30,8 @@ package dapper.server.flow;
 
 import java.util.EnumSet;
 
-import dapper.event.ExecuteAckEvent;
 import dapper.event.ControlEvent.ControlEventType;
+import dapper.event.ExecuteAckEvent;
 
 /**
  * An enumeration of {@link LogicalNode} states.

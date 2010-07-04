@@ -134,7 +134,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
     @SuppressWarnings("unchecked")
     protected void registerStream(String identifier, SynchronousManagedConnection connection) {
 
-        StreamResource res = this.remaining.remove(identifier);
+        StreamResource<?> res = this.remaining.remove(identifier);
 
         if (res != null) {
 

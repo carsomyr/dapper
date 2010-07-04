@@ -42,6 +42,7 @@ import shared.event.Transitions.Transition;
 import shared.util.Control;
 import dapper.AsynchronousBase;
 import dapper.event.ControlEvent;
+import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.ControlEventConnection;
 import dapper.event.DataRequestEvent;
 import dapper.event.ErrorEvent;
@@ -50,7 +51,6 @@ import dapper.event.ResetEvent;
 import dapper.event.ResourceEvent;
 import dapper.event.SourceType;
 import dapper.event.StreamReadyEvent;
-import dapper.event.ControlEvent.ControlEventType;
 
 /**
  * The Dapper client processor.
@@ -127,7 +127,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     // INTERNAL LOGIC
 
     @Transitions(transitions = {
-    //
+            //
             // Resource acquisition failure.
             @Transition(currentState = "PREPARE", eventType = "RESET", group = "internal"), //
             // Execution failure.
@@ -156,7 +156,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "IDLE", eventType = "STREAM_READY", group = "internal"), //
             @Transition(currentState = "CONNECT", eventType = "STREAM_READY", group = "internal"), //
             @Transition(currentState = "WAIT", eventType = "STREAM_READY", group = "internal"), //
@@ -202,7 +202,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     // EXTERNAL LOGIC
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "CONNECT", eventType = "ERROR", group = "external"), //
             @Transition(currentState = "WAIT", eventType = "ERROR", group = "external"), //
             @Transition(currentState = "RESOURCE", eventType = "ERROR", group = "external"), //
@@ -217,7 +217,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "CONNECT", eventType = "END_OF_STREAM", group = "external"), //
             @Transition(currentState = "WAIT", eventType = "END_OF_STREAM", group = "external"), //
             @Transition(currentState = "RESOURCE", eventType = "END_OF_STREAM", group = "external"), //
@@ -268,7 +268,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transitions(transitions = {
-    //
+            //
             // Request for class data from the server.
             @Transition(currentState = "EXECUTE", eventType = "DATA_REQUEST", group = "internal"), //
             @Transition(currentState = "EXECUTE", eventType = "DATA_REQUEST", group = "external") //

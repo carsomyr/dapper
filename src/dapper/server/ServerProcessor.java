@@ -55,17 +55,17 @@ import dapper.client.ClientStatus;
 import dapper.codelet.Taggable;
 import dapper.event.AddressEvent;
 import dapper.event.ControlEvent;
+import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.ControlEventConnection;
 import dapper.event.DataRequestEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
 import dapper.event.FlowEvent;
+import dapper.event.FlowEvent.FlowEventType;
 import dapper.event.FlowEventBroadcaster;
 import dapper.event.ResetEvent;
 import dapper.event.SourceType;
 import dapper.event.TimeoutEvent;
-import dapper.event.ControlEvent.ControlEventType;
-import dapper.event.FlowEvent.FlowEventType;
 import dapper.server.flow.Flow;
 import dapper.server.flow.FlowBuilder;
 import dapper.server.flow.FlowNode;
@@ -257,7 +257,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
     // Suspend or resume the server.
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "RUN", eventType = "SUSPEND", group = "internal"), //
             @Transition(currentState = "RUN", eventType = "RESUME", group = "internal") //
     })
@@ -271,7 +271,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     // CLIENT LOGIC
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "WAIT", eventType = "END_OF_STREAM", group = "client"), //
             @Transition(currentState = "RESOURCE", eventType = "END_OF_STREAM", group = "client"), //
             @Transition(currentState = "RESOURCE_ACK", eventType = "END_OF_STREAM", group = "client"), //
@@ -287,7 +287,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "WAIT", eventType = "ERROR", group = "client"), //
             @Transition(currentState = "RESOURCE", eventType = "ERROR", group = "client"), //
             @Transition(currentState = "RESOURCE_ACK", eventType = "ERROR", group = "client"), //
@@ -348,7 +348,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transitions(transitions = {
-    //
+            //
             // Reset a node because some one of its clients failed to acquire resources.
             @Transition(currentState = "PREPARE", eventType = "RESET", group = "client"), //
             // Reset a node because some one of its clients failed to acquire resources.
@@ -364,7 +364,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "RESOURCE", eventType = "TIMEOUT", group = "client"), //
             @Transition(currentState = "PREPARE", eventType = "TIMEOUT", group = "client"), //
             @Transition(currentState = "EXECUTE", eventType = "TIMEOUT", group = "client") //
