@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<project basedir="." default="build" name="Dapper" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
+<project basedir="." default="build" name="dapper" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
 
     <property environment="env" />
     <property file="src/dapper/project.properties" />
 
     <property name="target" value="1.6" />
     <property name="source" value="1.6" />
-    <property name="ivy.install.version" value="2.1.0" />
+    <property name="ivy.install.version" value="2.2.0" />
 
     <!-- Source and class paths. -->
 
-    <path id="Dapper.sourcepath">
+    <path id="dapper.sourcepath">
         <pathelement location="src" />
         <pathelement location="src_examples" />
     </path>
 
-    <path id="Dapper.classpath">
+    <path id="dapper.classpath">
         <pathelement location="bin" />
         <pathelement location="build/ivy.jar" />
         <pathelement location="build/conf" />
@@ -30,7 +30,7 @@
         <mkdir dir="distrib/jars" />
         <mkdir dir="distrib/sources" />
         <available file=".dependencies" property="build.dependencies" />
-        <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="Dapper.classpath" />
+        <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="dapper.classpath" />
     </target>
 
     <target name="ivy-install" depends="init" unless="ivy.install">
@@ -38,7 +38,7 @@
     </target>
 
     <target name="ivy-prepare" depends="ivy-install" unless="ivy.settings.file">
-        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="Dapper.classpath" />
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="dapper.classpath" />
         <ivy:configure file="build/ivysettings.xml" />
     </target>
 
@@ -47,7 +47,7 @@
     </target>
 
     <target name="ivy-retrieve" depends="ivy-prepare" unless="build.dependencies">
-        <ivy:retrieve conf="ant, checkstyle, lib" type="jar" />
+        <ivy:retrieve conf="ant, checkstyle, lib" type="bundle, jar" />
         <ivy:retrieve conf="auxlib" type="resource, source" />
         <unzip src="build/auxlib/sst-build-conf.jar" dest="build">
             <patternset includes="conf/**" />
@@ -59,13 +59,13 @@
     </target>
 
     <target name="build-prepare" depends="ivy-retrieve">
-        <taskdef resource="checkstyletask.properties" uri="antlib:com.puppycrawl.tools.checkstyle" classpathref="Dapper.classpath" />
+        <taskdef resource="checkstyletask.properties" uri="antlib:com.puppycrawl.tools.checkstyle" classpathref="dapper.classpath" />
     </target>
 
     <target name="build-project" depends="build-prepare">
         <javac debug="true" debuglevel="source,lines,vars" destdir="bin" source="${source}" target="${target}" includeAntRuntime="false">
-            <src refid="Dapper.sourcepath" />
-            <classpath refid="Dapper.classpath" />
+            <src refid="dapper.sourcepath" />
+            <classpath refid="dapper.classpath" />
         </javac>
     </target>
 
@@ -83,7 +83,7 @@
 
     <!-- Jar targets. -->
 
-    <fileset id="Dapper.metainf" dir=".">
+    <fileset id="dapper.metainf" dir=".">
         <include name="license.txt" />
         <include name="license/license_*.txt" />
     </fileset>
@@ -93,34 +93,34 @@
             <manifest>
                 <attribute name="Main-Class" value="dapper.ui.FlowManagerDriver" />
             </manifest>
-            <metainf refid="Dapper.metainf" />
+            <metainf refid="dapper.metainf" />
         </jar>
         <jar destfile="dapper-ex.jar" basedir="bin" includes="ex/**">
-            <metainf refid="Dapper.metainf" />
+            <metainf refid="dapper.metainf" />
         </jar>
     </target>
 
     <target name="jar-base" depends="build-project, build-resource">
         <jar destfile="distrib/jars/dapper-base-${build.version}.jar" basedir="bin" includes="dapper/**">
-            <metainf refid="Dapper.metainf" />
+            <metainf refid="dapper.metainf" />
         </jar>
     </target>
 
     <target name="jar-base-src" depends="build-project, build-resource">
         <jar destfile="distrib/sources/dapper-base-src-${build.version}.jar" basedir="src" includes="dapper/**">
-            <metainf refid="Dapper.metainf" />
+            <metainf refid="dapper.metainf" />
         </jar>
     </target>
 
     <target name="jar-ex" depends="build-project, build-resource">
         <jar destfile="distrib/jars/dapper-ex-${build.version}.jar" basedir="bin" includes="ex/**">
-            <metainf refid="Dapper.metainf" />
+            <metainf refid="dapper.metainf" />
         </jar>
     </target>
 
     <target name="jar-ex-src" depends="build-project, build-resource">
         <jar destfile="distrib/sources/dapper-ex-src-${build.version}.jar" basedir="src_examples" includes="ex/**">
-            <metainf refid="Dapper.metainf" />
+            <metainf refid="dapper.metainf" />
         </jar>
     </target>
 
@@ -135,11 +135,11 @@
 
     <target name="javadoc" depends="build-project">
         <javadoc access="protected" destdir="javadoc" packagenames="*" source="${source}" splitindex="true" failonerror="true" author="true" use="true" version="true">
-            <sourcepath refid="Dapper.sourcepath" />
-            <classpath refid="Dapper.classpath" />
+            <sourcepath refid="dapper.sourcepath" />
+            <classpath refid="dapper.classpath" />
             <link href="http://java.sun.com/javase/6/docs/api/" />
             <link href="http://shared.sourceforge.net/javadoc/" />
-            <doclet name="org.jboss.apiviz.APIviz" pathref="Dapper.classpath" />
+            <doclet name="org.jboss.apiviz.APIviz" pathref="dapper.classpath" />
         </javadoc>
         <touch file=".javadoc" />
     </target>
