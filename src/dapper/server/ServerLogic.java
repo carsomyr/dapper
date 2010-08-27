@@ -396,7 +396,11 @@ public class ServerLogic {
             return;
         }
 
-        this.executeList.addAll(FlowUtilities.buildCountDowns(flow));
+        for (LogicalNode node : FlowUtilities.buildCountDowns(flow)) {
+
+            this.executeList.add(node);
+            node.setStatus(LogicalNodeStatus.PENDING_EXECUTE);
+        }
 
         // Create and register the flow proxy.
         FlowProxy fp = this.sp.new FlowProxy(flow, fbr.flowFlags);
@@ -603,7 +607,7 @@ public class ServerLogic {
             // Reset everything in this flow node's equivalence class.
             assertTrue(node.getStatus().isExecuting() && this.executeList.add(node));
             resetNode(node);
-            node.setStatus(LogicalNodeStatus.FAILED);
+            node.setStatus(LogicalNodeStatus.PENDING_EXECUTE);
         }
 
         // Close the connection and invalidate it, since the error could have resulted from a timeout.
@@ -644,7 +648,7 @@ public class ServerLogic {
             // Reset everything in this flow node's equivalence class.
             assertTrue(node.getStatus().isExecuting() && this.executeList.add(node));
             resetNode(node);
-            node.setStatus(LogicalNodeStatus.FAILED);
+            node.setStatus(LogicalNodeStatus.PENDING_EXECUTE);
 
         } else {
 
@@ -783,8 +787,8 @@ public class ServerLogic {
         ClientState csh = (ClientState) evt.getSource().getHandler();
 
         FlowNode fn1 = csh.getFlowNode();
-        LogicalNode node = fn1.getLogicalNode();
-        Flow flow = node.getFlow();
+        LogicalNode n1 = fn1.getLogicalNode();
+        Flow flow = n1.getFlow();
 
         Server.getLog().debug(String.format("%s received on flow \"%s\".", evt.getType(), flow));
 
@@ -804,13 +808,13 @@ public class ServerLogic {
             return;
         }
 
-        assertTrue(node.getStatus() == LogicalNodeStatus.EXECUTE);
+        assertTrue(n1.getStatus() == LogicalNodeStatus.EXECUTE);
 
-        if (node.getClientCountDown().countDown(fn1)) {
+        if (n1.getClientCountDown().countDown(fn1)) {
 
             ArrayList<Object> buildArgs = new ArrayList<Object>();
 
-            for (FlowNode fn2 : node.getFlowNodes()) {
+            for (FlowNode fn2 : n1.getFlowNodes()) {
 
                 Codelet c2 = fn2.getCodelet();
 
@@ -822,24 +826,26 @@ public class ServerLogic {
             }
 
             // Mark the node as having finished BEFORE determining completion or embedding a subflow.
-            node.setStatus(LogicalNodeStatus.FINISHED);
+            n1.setStatus(LogicalNodeStatus.FINISHED);
 
             // No subflows require embedding.
             if (buildArgs.isEmpty()) {
 
                 // Scan the out-neighbors to see which ones are ready.
-                for (LogicalEdge edge : node.getOut()) {
+                for (LogicalEdge edge : n1.getOut()) {
 
-                    LogicalNode dependent = edge.getV();
+                    LogicalNode n2 = edge.getV();
 
                     // This node is ready to execute.
-                    if (dependent.getDependencyCountDown().countDown(node)) {
-                        this.executeList.add(dependent);
+                    if (n2.getDependencyCountDown().countDown(n1)) {
+
+                        this.executeList.add(n2);
+                        n2.setStatus(LogicalNodeStatus.PENDING_EXECUTE);
                     }
                 }
 
                 // Count down on the node's flow.
-                if (flow.getFlowCountDown().countDown(node)) {
+                if (flow.getFlowCountDown().countDown(n1)) {
 
                     fp.onFlowEnd(fp.getAttachment());
                     fp.setOutput(null);
@@ -869,10 +875,14 @@ public class ServerLogic {
                 }
 
                 // Restore all eligible nodes belonging to this flow.
-                this.executeList.addAll(FlowUtilities.buildCountDowns(flow));
+                for (LogicalNode n2 : FlowUtilities.buildCountDowns(flow)) {
+
+                    this.executeList.add(n2);
+                    n2.setStatus(LogicalNodeStatus.PENDING_EXECUTE);
+                }
 
                 // By construction, the modified flow no longer contains the completed node.
-                assertTrue(!nodes.contains(node));
+                assertTrue(!nodes.contains(n1));
             }
         }
 

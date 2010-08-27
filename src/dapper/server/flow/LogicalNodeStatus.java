@@ -41,9 +41,14 @@ import dapper.event.ExecuteAckEvent;
 public enum LogicalNodeStatus {
 
     /**
+     * Indicates that the node is pending execution on unmet dependencies.
+     */
+    PENDING_DEPENDENCY, //
+
+    /**
      * Indicates that the node is pending execution.
      */
-    PENDING, //
+    PENDING_EXECUTE, //
 
     /**
      * Indicates that the node is awaiting a {@link ControlEventType#RESOURCE_ACK} from clients.
@@ -73,7 +78,7 @@ public enum LogicalNodeStatus {
     /**
      * The {@link EnumSet} of executable states.
      */
-    final protected static EnumSet<LogicalNodeStatus> ExecutableSet = EnumSet.of(PENDING, FAILED);
+    final protected static EnumSet<LogicalNodeStatus> ExecutableSet = EnumSet.of(PENDING_DEPENDENCY, PENDING_EXECUTE);
 
     /**
      * The {@link EnumSet} of executing states.
@@ -88,7 +93,8 @@ public enum LogicalNodeStatus {
     /**
      * The {@link EnumSet} of mergeable states used in bookkeeping for subflow embedding.
      */
-    final protected static EnumSet<LogicalNodeStatus> MergeableSet = EnumSet.of(PENDING, FINISHED);
+    final protected static EnumSet<LogicalNodeStatus> MergeableSet = EnumSet.of(PENDING_DEPENDENCY, PENDING_EXECUTE, //
+            FINISHED);
 
     /**
      * Checks for execution eligibility.

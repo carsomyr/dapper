@@ -82,7 +82,7 @@ public class LogicalNode implements Traversable<LogicalNode, LogicalEdge>, Clone
     public LogicalNode(Flow flow) {
 
         this.depth = (this.order = -1);
-        this.status = LogicalNodeStatus.PENDING;
+        this.status = LogicalNodeStatus.PENDING_DEPENDENCY;
 
         //
 
@@ -260,7 +260,8 @@ public class LogicalNode implements Traversable<LogicalNode, LogicalEdge>, Clone
 
         switch (getStatus()) {
 
-        case PENDING:
+        case PENDING_DEPENDENCY:
+        case PENDING_EXECUTE:
             color = DARK_BLUE;
             break;
 

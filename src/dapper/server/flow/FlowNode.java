@@ -419,7 +419,8 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
 
             switch (getLogicalNode().getStatus()) {
 
-            case PENDING:
+            case PENDING_DEPENDENCY:
+            case PENDING_EXECUTE:
                 color = DARK_BLUE;
                 break;
 
