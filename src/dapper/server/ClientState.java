@@ -108,22 +108,27 @@ public class ClientState implements Handler<ControlEvent>, Locatable, Cloneable,
         return res;
     }
 
+    @Override
     public void handle(ControlEvent evt) {
         this.serverHandler.handle(evt);
     }
 
+    @Override
     public Object get() {
         return this.timeoutToken;
     }
 
+    @Override
     public void set(Object output) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public InetSocketAddress getAddress() {
         return this.address;
     }
 
+    @Override
     public ClientState setAddress(InetSocketAddress address) {
 
         this.address = address;
@@ -131,10 +136,12 @@ public class ClientState implements Handler<ControlEvent>, Locatable, Cloneable,
         return this;
     }
 
+    @Override
     public ClientStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public void setStatus(ClientStatus status) {
         this.status = status;
     }

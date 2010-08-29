@@ -58,5 +58,6 @@ public interface Codelet {
     /**
      * Creates a human-readable representation of this calculation.
      */
+    @Override
     public String toString();
 }

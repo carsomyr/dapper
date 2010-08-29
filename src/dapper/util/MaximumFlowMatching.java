@@ -61,6 +61,7 @@ public class MaximumFlowMatching implements MatchingAlgorithm {
     public MaximumFlowMatching() {
     }
 
+    @Override
     public <R extends Requirement<S>, S> Map<R, S> match(Collection<R> requirements, Collection<S> satisfiers) {
 
         List<R> rList = new ArrayList<R>();
@@ -121,6 +122,7 @@ public class MaximumFlowMatching implements MatchingAlgorithm {
                 //
                 new Transformer<Integer, Number>() {
 
+                    @Override
                     public Number transform(Integer input) {
                         return 1;
                     }
@@ -131,6 +133,7 @@ public class MaximumFlowMatching implements MatchingAlgorithm {
 
                     int ie = edgeFactoryOffset;
 
+                    @Override
                     public Integer create() {
                         return this.ie++;
                     }

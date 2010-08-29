@@ -196,6 +196,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
      * Closes all underlying {@link InputStream}s and {@link OutputStream}s.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public void close() {
 
         Set<Resource> allResources = new HashSet<Resource>();
@@ -230,15 +231,18 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
         RegistryClassLoader rcl = new RegistryClassLoader();
         rcl.addRegistry(new ResourceRegistry() {
 
+            @Override
             public URL getResource(String pathname) {
                 return null;
             }
 
             @SuppressWarnings("unchecked")
+            @Override
             public Enumeration<URL> getResources(String pathname) {
                 return Collections.enumeration(Collections.EMPTY_LIST);
             }
 
+            @Override
             public InputStream getResourceAsStream(String pathname) {
 
                 byte[] data = getData(String.format("cp:%s", pathname));
@@ -298,6 +302,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
         this.callback.onLocal(resetEvent);
     }
 
+    @Override
     public byte[] getData(String pathname) {
 
         RequestFuture<byte[]> rf = new RequestFuture<byte[]>();

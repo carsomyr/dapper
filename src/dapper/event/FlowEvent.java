@@ -117,10 +117,12 @@ public class FlowEvent<F, N> implements Event<FlowEvent<F, N>, FlowEvent.FlowEve
         this.error = error;
     }
 
+    @Override
     public FlowEventType getType() {
         return this.type;
     }
 
+    @Override
     public Source<FlowEvent<F, N>, SourceType> getSource() {
         return null;
     }

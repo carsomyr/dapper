@@ -86,6 +86,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
      * Causes all waiting threads in {@link BlockingQueue#take()} to immediately wake up and not block from thereon
      * after.
      */
+    @Override
     public void close() {
 
         synchronized (this) {
@@ -142,6 +143,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
         BlockingQueue<FlowEvent<F, N>> queue = new BlockingQueue<FlowEvent<F, N>>() {
 
+            @Override
             public FlowEvent<F, N> peek() {
 
                 synchronized (feb) {
@@ -149,6 +151,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 }
             }
 
+            @Override
             public FlowEvent<F, N> element() {
 
                 synchronized (feb) {
@@ -156,6 +159,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 }
             }
 
+            @Override
             public FlowEvent<F, N> poll() {
 
                 synchronized (feb) {
@@ -166,6 +170,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 }
             }
 
+            @Override
             public FlowEvent<F, N> poll(long timeout, TimeUnit unit) throws InterruptedException {
 
                 long timeoutMillis = unit.toMillis(timeout);
@@ -184,6 +189,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 }
             }
 
+            @Override
             public FlowEvent<F, N> remove() {
 
                 synchronized (feb) {
@@ -194,6 +200,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 }
             }
 
+            @Override
             public FlowEvent<F, N> take() throws InterruptedException {
 
                 synchronized (feb) {
@@ -208,6 +215,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 }
             }
 
+            @Override
             public void clear() {
 
                 synchronized (feb) {
@@ -218,6 +226,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 }
             }
 
+            @Override
             public int size() {
 
                 synchronized (feb) {
@@ -225,6 +234,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 }
             }
 
+            @Override
             public boolean isEmpty() {
 
                 synchronized (feb) {
@@ -232,6 +242,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 }
             }
 
+            @Override
             public int remainingCapacity() {
                 return Integer.MAX_VALUE;
             }
@@ -246,62 +257,77 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
             //
 
+            @Override
             public boolean add(FlowEvent<F, N> evt) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean addAll(Collection<? extends FlowEvent<F, N>> c) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean contains(Object o) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean containsAll(Collection<?> c) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public int drainTo(Collection<? super FlowEvent<F, N>> c) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public int drainTo(Collection<? super FlowEvent<F, N>> c, int maxElements) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public Iterator<FlowEvent<F, N>> iterator() {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean offer(FlowEvent<F, N> evt) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean offer(FlowEvent<F, N> evt, long timeout, TimeUnit unit) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public void put(FlowEvent<F, N> evt) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean remove(Object o) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean removeAll(Collection<?> c) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean retainAll(Collection<?> c) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public Object[] toArray() {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public <T> T[] toArray(T[] a) {
                 throw new UnsupportedOperationException();
             }
@@ -309,6 +335,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
         this.rr.wrap(ReferenceType.WEAK, (Queue<FlowEvent<?, ?>>) ((Queue<?>) queue), new Runnable() {
 
+            @Override
             public void run() {
 
                 synchronized (feb) {
@@ -327,6 +354,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
         return queue;
     }
 
+    @Override
     public boolean add(FlowEvent<?, ?> evt) {
 
         synchronized (this) {
@@ -343,18 +371,22 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
         return true;
     }
 
+    @Override
     public boolean offer(FlowEvent<?, ?> evt) {
         return add(evt);
     }
 
+    @Override
     public boolean offer(FlowEvent<?, ?> evt, long timeout, TimeUnit unit) {
         return add(evt);
     }
 
+    @Override
     public void put(FlowEvent<?, ?> evt) {
         add(evt);
     }
 
+    @Override
     public int size() {
 
         synchronized (this) {
@@ -362,6 +394,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
         }
     }
 
+    @Override
     public boolean isEmpty() {
 
         synchronized (this) {
@@ -369,6 +402,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
         }
     }
 
+    @Override
     public int remainingCapacity() {
         return Integer.MAX_VALUE;
     }
@@ -386,74 +420,92 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
     //
 
+    @Override
     public boolean addAll(Collection<? extends FlowEvent<?, ?>> c) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void clear() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean contains(Object o) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean containsAll(Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public int drainTo(Collection<? super FlowEvent<?, ?>> c) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public int drainTo(Collection<? super FlowEvent<?, ?>> c, int maxElements) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public FlowEvent<?, ?> element() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Iterator<FlowEvent<?, ?>> iterator() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public FlowEvent<?, ?> peek() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public FlowEvent<?, ?> poll() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public FlowEvent<?, ?> poll(long timeout, TimeUnit unit) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public FlowEvent<?, ?> remove() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean remove(Object o) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean removeAll(Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean retainAll(Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public FlowEvent<?, ?> take() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Object[] toArray() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public <T> T[] toArray(T[] a) {
         throw new UnsupportedOperationException();
     }

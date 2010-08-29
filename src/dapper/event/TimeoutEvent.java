@@ -45,6 +45,7 @@ public class TimeoutEvent extends ControlEvent {
      */
     final protected static Handler<ControlEvent> EmptyHandler = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             // Do nothing.
         }
@@ -56,26 +57,32 @@ public class TimeoutEvent extends ControlEvent {
     public TimeoutEvent(final Handle<Object> handle, final Object tag, final Source<ControlEvent, SourceType> source) {
         super(TIMEOUT, new Source<ControlEvent, SourceType>() {
 
+            @Override
             public SourceType getType() {
                 return source.getType();
             }
 
+            @Override
             public void onLocal(ControlEvent evt) {
                 source.onLocal(evt);
             }
 
+            @Override
             public void onRemote(ControlEvent evt) {
                 source.onRemote(evt);
             }
 
+            @Override
             public Handler<ControlEvent> getHandler() {
                 return (handle.get() == tag) ? source.getHandler() : EmptyHandler;
             }
 
+            @Override
             public void setHandler(Handler<ControlEvent> handler) {
                 source.setHandler(handler);
             }
 
+            @Override
             public void close() {
                 source.close();
             }

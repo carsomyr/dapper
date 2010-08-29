@@ -140,6 +140,7 @@ public class FlowTab extends JLabel implements Closeable {
     /**
      * Purges the underlying {@link Flow}.
      */
+    @Override
     public void close() {
 
         try {

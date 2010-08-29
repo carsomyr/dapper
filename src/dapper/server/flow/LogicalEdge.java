@@ -71,18 +71,22 @@ public class LogicalEdge implements Edge<LogicalNode>, Cloneable {
         return res;
     }
 
+    @Override
     public LogicalNode getU() {
         return this.u;
     }
 
+    @Override
     public void setU(LogicalNode u) {
         this.u = u;
     }
 
+    @Override
     public LogicalNode getV() {
         return this.v;
     }
 
+    @Override
     public void setV(LogicalNode v) {
         this.v = v;
     }

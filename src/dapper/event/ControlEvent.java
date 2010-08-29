@@ -285,6 +285,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         return rootElement;
     }
 
+    @Override
     public Source<ControlEvent, SourceType> getSource() {
         return this.source;
     }

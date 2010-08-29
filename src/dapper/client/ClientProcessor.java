@@ -93,10 +93,12 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         this.status = IDLE;
     }
 
+    @Override
     public SourceType getType() {
         return PROCESSOR;
     }
 
+    @Override
     public void handle(ControlEvent evt) {
 
         checkCurrentThread();
@@ -116,10 +118,12 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     }
 
+    @Override
     public ClientStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public void setStatus(ClientStatus status) {
         this.status = status;
     }
@@ -141,6 +145,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> reset = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleReset((ResetEvent) evt);
         }
@@ -150,6 +155,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "IDLE", eventType = "INIT", group = "internal")
     final Handler<ControlEvent> idleToConnect = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleIdleToConnect();
         }
@@ -167,6 +173,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> streamReady = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleStreamReady((StreamReadyEvent) evt);
         }
@@ -176,6 +183,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "PREPARE", eventType = "REFRESH", group = "internal")
     final Handler<ControlEvent> refresh = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleRefresh();
         }
@@ -185,6 +193,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "EXECUTE", eventType = "EXECUTE_ACK", group = "internal")
     final Handler<ControlEvent> executeSuccess = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleExecuteSuccess((ExecuteAckEvent) evt);
         }
@@ -194,6 +203,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "SHUTDOWN", eventType = "SHUTDOWN", group = "internal")
     final Handler<ControlEvent> shutdown = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             Control.close(ClientProcessor.this);
         }
@@ -211,6 +221,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> error = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleError(((ErrorEvent) evt));
         }
@@ -226,6 +237,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> eos = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleEOS((ControlEventConnection) evt.getSource());
         }
@@ -235,6 +247,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "CONNECT", eventType = "INIT", group = "external")
     final Handler<ControlEvent> connectToWait = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleConnectToWait((ControlEventConnection) evt.getSource());
         }
@@ -244,6 +257,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "WAIT", eventType = "RESOURCE", group = "external")
     final Handler<ControlEvent> waitToResource = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleWaitToResource((ResourceEvent) evt);
         }
@@ -253,6 +267,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "RESOURCE", eventType = "PREPARE", group = "external")
     final Handler<ControlEvent> resourceToPrepare = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleResourceToPrepare();
         }
@@ -262,6 +277,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "PREPARE", eventType = "EXECUTE", group = "external")
     final Handler<ControlEvent> prepareToExecute = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handlePrepareToExecute();
         }
@@ -275,6 +291,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> dataRequest = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleDataRequest((DataRequestEvent) evt);
         }

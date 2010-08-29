@@ -69,6 +69,7 @@ public class ResourceEvent extends ControlEvent implements ParameterMetadata {
         this.parameters = parameters;
     }
 
+    @Override
     public Node getParameters() {
         return this.parameters;
     }

@@ -44,6 +44,7 @@ import dapper.codelet.Resource;
  */
 public class Error implements Codelet {
 
+    @Override
     public void run(List<Resource> inResources, List<Resource> outResources, Node parameters) {
 
         if (Arithmetic.nextInt(16) == 0) {
@@ -51,6 +52,7 @@ public class Error implements Codelet {
             // Check that inner class loading works.
             new Runnable() {
 
+                @Override
                 public void run() {
                     throw new IllegalStateException("This exception was artificially induced");
                 }

@@ -70,6 +70,7 @@ public interface FlowEdge extends Edge<FlowNode>, EnumType<FlowEdge.FlowEdgeType
     /**
      * Sets the name.
      */
+    @Override
     public FlowEdge setName(String name);
 
     /**

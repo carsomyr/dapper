@@ -63,6 +63,7 @@ public class ControlEventConnection extends XMLConnection<ControlEventConnection
         this.delegate = delegate;
     }
 
+    @Override
     public void onLocal(ControlEvent evt) {
         this.delegate.onLocal(evt);
     }

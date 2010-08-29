@@ -127,6 +127,7 @@ public class Client extends CoreThread implements Closeable {
                 //
                 new Runnable() {
 
+                    @Override
                     public void run() {
                         Control.close(Client.this);
                     }
@@ -152,6 +153,7 @@ public class Client extends CoreThread implements Closeable {
     /**
      * Shuts down this client thread.
      */
+    @Override
     public void close() {
 
         this.run = false;

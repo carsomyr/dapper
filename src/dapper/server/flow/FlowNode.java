@@ -145,6 +145,7 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
     /**
      * Compares two {@link FlowNode}s on the basis of their assigned DFS order.
      */
+    @Override
     public int compareTo(FlowNode node) {
         return this.order - node.order;
     }
@@ -184,34 +185,42 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
         return res;
     }
 
+    @Override
     public int getOrder() {
         return this.order;
     }
 
+    @Override
     public void setOrder(int order) {
         this.order = order;
     }
 
+    @Override
     public int getDepth() {
         return this.depth;
     }
 
+    @Override
     public void setDepth(int depth) {
         this.depth = depth;
     }
 
+    @Override
     public List<FlowEdge> getIn() {
         return this.in;
     }
 
+    @Override
     public List<FlowEdge> getOut() {
         return this.out;
     }
 
+    @Override
     public boolean isSatisfied(ClientState satisfier) {
         return this.domainPattern.matcher(satisfier.getDomain()).matches();
     }
 
+    @Override
     public boolean isTrivial() {
         return this.domainPattern == null;
     }
@@ -267,10 +276,12 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
         return this;
     }
 
+    @Override
     public Object getAttachment() {
         return this.attachment;
     }
 
+    @Override
     public FlowNode setAttachment(Object attachment) {
 
         this.attachment = attachment;
@@ -278,6 +289,7 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
         return this;
     }
 
+    @Override
     public Node getParameters() {
         return this.parameters;
     }
@@ -305,10 +317,12 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
         return this;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public FlowNode setName(String name) {
 
         Control.checkTrue(name != null, //
@@ -389,6 +403,7 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
         return ++this.currentRetries;
     }
 
+    @Override
     public void render(Formatter f) {
 
         final String color;

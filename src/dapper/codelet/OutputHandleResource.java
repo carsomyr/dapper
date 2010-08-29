@@ -105,6 +105,7 @@ public class OutputHandleResource extends AbstractHandleResource<OutputHandleRes
         this.nEntries += nNewEntries;
     }
 
+    @Override
     public ResourceType getType() {
         return OUTPUT_HANDLE;
     }

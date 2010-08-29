@@ -163,10 +163,12 @@ public class ResetEvent extends ControlEvent implements Handle<Object> {
         }
     }
 
+    @Override
     public Object get() {
         return this.tag;
     }
 
+    @Override
     public void set(Object tag) {
         this.tag = tag;
     }

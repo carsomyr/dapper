@@ -99,6 +99,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
         setFinalizer(new Runnable() {
 
+            @Override
             public void run() {
 
                 ServerProcessor sp = ServerProcessor.this;
@@ -142,10 +143,12 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         return this.logic.toString();
     }
 
+    @Override
     public SourceType getType() {
         return PROCESSOR;
     }
 
+    @Override
     public void handle(ControlEvent evt) {
 
         checkCurrentThread();
@@ -165,10 +168,12 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     }
 
+    @Override
     public ServerStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public void setStatus(ServerStatus status) {
         this.status = status;
     }
@@ -179,6 +184,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "RUN", eventType = "REFRESH", group = "internal")
     final Handler<ControlEvent> refresh = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleRefresh();
         }
@@ -189,6 +195,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     final Handler<ControlEvent> queryInit = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleQueryInit((QueryEvent<FlowBuildRequest, FlowProxy>) evt);
         }
@@ -199,6 +206,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     final Handler<ControlEvent> queryRefresh = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleQueryRefresh((QueryEvent<Flow, List<FlowProxy>>) evt);
         }
@@ -209,6 +217,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     final Handler<ControlEvent> queryPurge = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleQueryPurge((QueryEvent<Flow, Object>) evt);
         }
@@ -219,6 +228,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     final Handler<ControlEvent> queryCloseIdle = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleQueryCloseIdle((QueryEvent<Boolean, Object>) evt);
         }
@@ -229,6 +239,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     final Handler<ControlEvent> queryPendingCount = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleQueryPendingCount((QueryEvent<Object, Integer>) evt);
         }
@@ -239,6 +250,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     final Handler<ControlEvent> queryFlowPendingCount = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleQueryFlowPendingCount((QueryEvent<Flow, Integer>) evt);
         }
@@ -249,6 +261,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     final Handler<ControlEvent> queryCreateUserQueue = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
+        @Override
         public void handle(ControlEvent evt) {
             ((QueryEvent<Flow, BlockingQueue<FlowEvent<Object, Object>>>) evt) //
                     .setOutput(ServerProcessor.this.feb.createUserQueue());
@@ -263,6 +276,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> suspendResume = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleSuspendResume(evt);
         }
@@ -281,6 +295,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> eos = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleEOS((ControlEventConnection) evt.getSource());
         }
@@ -297,6 +312,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> error = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleError((ErrorEvent) evt);
         }
@@ -306,6 +322,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "IDLE", eventType = "ADDRESS", group = "client")
     final Handler<ControlEvent> idleToWait = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleIdleToWait((AddressEvent) evt);
         }
@@ -315,6 +332,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "RESOURCE", eventType = "RESOURCE_ACK", group = "client")
     final Handler<ControlEvent> resourceToPrepare = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleResourceToPrepare((ClientState) evt.getSource().getHandler());
         }
@@ -324,6 +342,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "PREPARE", eventType = "PREPARE_ACK", group = "client")
     final Handler<ControlEvent> prepareToExecute = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handlePrepareToExecute((ClientState) evt.getSource().getHandler());
         }
@@ -333,6 +352,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "EXECUTE", eventType = "DATA_REQUEST", group = "client")
     final Handler<ControlEvent> dataRequest = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleDataRequest((DataRequestEvent) evt);
         }
@@ -342,6 +362,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transition(currentState = "EXECUTE", eventType = "EXECUTE_ACK", group = "client")
     final Handler<ControlEvent> executeToWait = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleExecuteToWait((ExecuteAckEvent) evt);
         }
@@ -358,6 +379,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> reset = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleReset((ResetEvent) evt);
         }
@@ -371,6 +393,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> timeout = new Handler<ControlEvent>() {
 
+        @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleTimeout((TimeoutEvent) evt);
         }
@@ -498,10 +521,12 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
             this.future = createFuture();
         }
 
+        @Override
         public Object getAttachment() {
             return this.originalFlow.getAttachment();
         }
 
+        @Override
         public FlowProxy setAttachment(Object attachment) {
 
             this.originalFlow.setAttachment(attachment);

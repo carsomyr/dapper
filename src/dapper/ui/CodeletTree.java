@@ -129,6 +129,7 @@ public class CodeletTree extends JTree implements DropTargetListener {
      * Processes a {@link DropTargetDropEvent} over this component.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public void drop(DropTargetDropEvent dtde) {
 
         Transferable tr = dtde.getTransferable();
@@ -421,6 +422,7 @@ public class CodeletTree extends JTree implements DropTargetListener {
         /**
          * Runs code associated with this node.
          */
+        @Override
         abstract public void run();
     }
 
@@ -429,6 +431,7 @@ public class CodeletTree extends JTree implements DropTargetListener {
     /**
      * Does nothing.
      */
+    @Override
     public void dragEnter(DropTargetDragEvent dtde) {
         // Do nothing.
     }
@@ -436,6 +439,7 @@ public class CodeletTree extends JTree implements DropTargetListener {
     /**
      * Does nothing.
      */
+    @Override
     public void dragExit(DropTargetEvent dte) {
         // Do nothing.
     }
@@ -443,6 +447,7 @@ public class CodeletTree extends JTree implements DropTargetListener {
     /**
      * Does nothing.
      */
+    @Override
     public void dragOver(DropTargetDragEvent dtde) {
         // Do nothing.
     }
@@ -450,6 +455,7 @@ public class CodeletTree extends JTree implements DropTargetListener {
     /**
      * Does nothing.
      */
+    @Override
     public void dropActionChanged(DropTargetDragEvent dtde) {
         // Do nothing.
     }

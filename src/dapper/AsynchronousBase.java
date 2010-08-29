@@ -91,6 +91,7 @@ public class AsynchronousBase implements Closeable {
     /**
      * Shuts down the underlying {@link ConnectionManager} and {@link Timer}.
      */
+    @Override
     public void close() {
 
         Control.close(this.manager);

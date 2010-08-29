@@ -65,6 +65,7 @@ public class ForkBomb implements EmbeddingCodelet {
         this.embeddingParameters = null;
     }
 
+    @Override
     public void build(Flow flow, //
             List<FlowEdge> inEdges, //
             List<FlowNode> outNodes) {
@@ -102,6 +103,7 @@ public class ForkBomb implements EmbeddingCodelet {
         }
     }
 
+    @Override
     public void run(List<Resource> inResources, List<Resource> outResources, Node parameters) {
 
         Arithmetic.randomize();
@@ -109,10 +111,12 @@ public class ForkBomb implements EmbeddingCodelet {
         setEmbeddingParameters(CodeletUtilities.createElement(Integer.toString(Arithmetic.nextInt(3) + 1)));
     }
 
+    @Override
     public Node getEmbeddingParameters() {
         return this.embeddingParameters;
     }
 
+    @Override
     public void setEmbeddingParameters(Node embeddingParameters) {
         this.embeddingParameters = embeddingParameters;
     }

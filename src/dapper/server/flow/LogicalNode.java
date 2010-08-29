@@ -135,6 +135,7 @@ public class LogicalNode implements Traversable<LogicalNode, LogicalEdge>, Clone
     /**
      * Compares two {@link LogicalNode}s on the basis of their assigned DFS order.
      */
+    @Override
     public int compareTo(LogicalNode node) {
         return this.order - node.order;
     }
@@ -169,26 +170,32 @@ public class LogicalNode implements Traversable<LogicalNode, LogicalEdge>, Clone
         return res;
     }
 
+    @Override
     public int getOrder() {
         return this.order;
     }
 
+    @Override
     public void setOrder(int order) {
         this.order = order;
     }
 
+    @Override
     public int getDepth() {
         return this.depth;
     }
 
+    @Override
     public void setDepth(int depth) {
         this.depth = depth;
     }
 
+    @Override
     public List<LogicalEdge> getIn() {
         return this.in;
     }
 
+    @Override
     public List<LogicalEdge> getOut() {
         return this.out;
     }
@@ -250,6 +257,7 @@ public class LogicalNode implements Traversable<LogicalNode, LogicalEdge>, Clone
         return this.flowNodes.toString();
     }
 
+    @Override
     public void render(Formatter f) {
 
         SortedSet<FlowNode> flowNodes = new TreeSet<FlowNode>(getFlowNodes());

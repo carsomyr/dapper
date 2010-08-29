@@ -54,6 +54,7 @@ public class StreamReadyEvent extends ControlEvent implements Identified {
         this.connection = connection;
     }
 
+    @Override
     public String getIdentifier() {
         return this.identifier;
     }

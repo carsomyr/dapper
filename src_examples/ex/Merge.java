@@ -49,6 +49,7 @@ import dapper.codelet.Resource;
  */
 public class Merge implements Codelet {
 
+    @Override
     public void run(List<Resource> inResources, List<Resource> outResources, Node parameters) throws IOException {
 
         Scanner scanner1 = new Scanner((inResources.get(0)).getInputStream());

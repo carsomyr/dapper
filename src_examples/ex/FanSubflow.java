@@ -55,6 +55,7 @@ public class FanSubflow implements EmbeddingCodelet {
     public FanSubflow() {
     }
 
+    @Override
     public void build(Flow flow, //
             List<FlowEdge> inEdges, //
             List<FlowNode> outNodes) {
@@ -86,13 +87,16 @@ public class FanSubflow implements EmbeddingCodelet {
         }
     }
 
+    @Override
     public void run(List<Resource> inResources, List<Resource> outResources, Node parameters) {
     }
 
+    @Override
     public Node getEmbeddingParameters() {
         return null;
     }
 
+    @Override
     public void setEmbeddingParameters(Node parameters) {
     }
 

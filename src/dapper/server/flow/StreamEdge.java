@@ -112,14 +112,17 @@ public class StreamEdge implements FlowEdge, Identified {
         return this;
     }
 
+    @Override
     public FlowEdgeType getType() {
         return STREAM;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public StreamEdge setName(String name) {
 
         Control.checkTrue(name != null, //
@@ -130,40 +133,49 @@ public class StreamEdge implements FlowEdge, Identified {
         return this;
     }
 
+    @Override
     public String getIdentifier() {
         return this.identifier;
     }
 
+    @Override
     public FlowNode getU() {
         return this.u;
     }
 
+    @Override
     public void setU(FlowNode u) {
         this.u = u;
     }
 
+    @Override
     public Resource createUResource() {
         return new StreamResource<OutputStream>(OUTPUT_STREAM, this.identifier, this.name, //
                 !this.inverted ? this.v.getClientState().getAddress() : null);
     }
 
+    @Override
     public FlowNode getV() {
         return this.v;
     }
 
+    @Override
     public void setV(FlowNode v) {
         this.v = v;
     }
 
+    @Override
     public Resource createVResource() {
         return new StreamResource<InputStream>(INPUT_STREAM, this.identifier, this.name, //
                 !this.inverted ? null : this.u.getClientState().getAddress());
     }
 
+    @Override
     public void generate() {
         this.identifier = FlowUtilities.createIdentifier(StreamEdge.class);
     }
 
+    @Override
     public void render(Formatter f) {
 
         final ClientState csh = getU().getClientState();

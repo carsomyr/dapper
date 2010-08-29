@@ -123,6 +123,7 @@ public class StreamResource<T extends Closeable> implements Resource, Locatable,
         this.name = nameNode.getTextContent();
     }
 
+    @Override
     public InputStream getInputStream() {
 
         Control.checkTrue(this.type == INPUT_STREAM, //
@@ -131,6 +132,7 @@ public class StreamResource<T extends Closeable> implements Resource, Locatable,
         return (InputStream) this.stream;
     }
 
+    @Override
     public OutputStream getOutputStream() {
 
         Control.checkTrue(this.type == OUTPUT_STREAM, //
@@ -139,22 +141,27 @@ public class StreamResource<T extends Closeable> implements Resource, Locatable,
         return (OutputStream) this.stream;
     }
 
+    @Override
     public ResourceType getType() {
         return this.type;
     }
 
+    @Override
     public T get() {
         return this.stream;
     }
 
+    @Override
     public void set(T stream) {
         this.stream = stream;
     }
 
+    @Override
     public InetSocketAddress getAddress() {
         return this.address;
     }
 
+    @Override
     public StreamResource<T> setAddress(InetSocketAddress address) {
 
         this.address = address;
@@ -162,18 +169,22 @@ public class StreamResource<T extends Closeable> implements Resource, Locatable,
         return this;
     }
 
+    @Override
     public String getIdentifier() {
         return this.identifier;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public StreamResource<?> setName(String name) {
         throw new UnsupportedOperationException("Cannot set the name of this resource");
     }
 
+    @Override
     public void getContents(Node contentNode) {
 
         Document doc = contentNode.getOwnerDocument();

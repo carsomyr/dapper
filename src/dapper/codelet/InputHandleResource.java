@@ -88,6 +88,7 @@ public class InputHandleResource extends AbstractHandleResource<InputHandleResou
         return new File(this.handleArray.get(0, 0));
     }
 
+    @Override
     public ResourceType getType() {
         return INPUT_HANDLE;
     }

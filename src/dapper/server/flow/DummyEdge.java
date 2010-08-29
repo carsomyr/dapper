@@ -82,14 +82,17 @@ public class DummyEdge implements FlowEdge {
         return res;
     }
 
+    @Override
     public FlowEdgeType getType() {
         return DUMMY;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public DummyEdge setName(String name) {
 
         Control.checkTrue(name != null, //
@@ -100,34 +103,42 @@ public class DummyEdge implements FlowEdge {
         return this;
     }
 
+    @Override
     public FlowNode getU() {
         return this.u;
     }
 
+    @Override
     public void setU(FlowNode u) {
         this.u = u;
     }
 
+    @Override
     public Resource createUResource() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public FlowNode getV() {
         return this.v;
     }
 
+    @Override
     public void setV(FlowNode v) {
         this.v = v;
     }
 
+    @Override
     public Resource createVResource() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void generate() {
         // Do nothing.
     }
 
+    @Override
     public void render(Formatter f) {
 
         final String color;

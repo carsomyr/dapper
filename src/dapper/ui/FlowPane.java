@@ -163,6 +163,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Observes {@link Flow} creation requests.
      */
+    @Override
     public void update(Observable o, Object arg) {
 
         try {
@@ -180,6 +181,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Renders the underlying {@link Flow} of the current {@link FlowTab}.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         FlowTab ft = (FlowTab) getSelectedComponent();
@@ -200,6 +202,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Tries to start the rendering timer.
      */
+    @Override
     public void componentAdded(ContainerEvent e) {
         tryStartTimer();
     }
@@ -207,6 +210,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Tries to stop the rendering timer. Purges the underlying {@link Flow} of the removed {@link FlowTab}.
      */
+    @Override
     public void componentRemoved(ContainerEvent e) {
 
         tryStopTimer();
@@ -217,6 +221,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Tries to start the rendering timer.
      */
+    @Override
     public void windowActivated(WindowEvent e) {
 
         this.active = true;
@@ -226,6 +231,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Tries to stop the rendering timer.
      */
+    @Override
     public void windowDeactivated(WindowEvent e) {
 
         this.active = false;
@@ -235,6 +241,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Destroys the underlying {@link Server} instance.
      */
+    @Override
     public void windowClosed(WindowEvent e) {
         Control.close(this.server);
     }
@@ -272,6 +279,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Does nothing.
      */
+    @Override
     public void windowClosing(WindowEvent e) {
         // Do nothing.
     }
@@ -279,6 +287,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Does nothing.
      */
+    @Override
     public void windowDeiconified(WindowEvent e) {
         // Do nothing.
     }
@@ -286,6 +295,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Does nothing.
      */
+    @Override
     public void windowIconified(WindowEvent e) {
         // Do nothing.
     }
@@ -293,6 +303,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Does nothing.
      */
+    @Override
     public void windowOpened(WindowEvent e) {
         // Do nothing.
     }

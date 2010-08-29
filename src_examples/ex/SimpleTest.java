@@ -62,6 +62,7 @@ public class SimpleTest implements FlowBuilder {
     public SimpleTest(String[] args) {
     }
 
+    @Override
     public void build(Flow flow, //
             List<FlowEdge> inEdges, //
             List<FlowNode> outNodes) {

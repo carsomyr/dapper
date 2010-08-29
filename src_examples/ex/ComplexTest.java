@@ -55,6 +55,7 @@ public class ComplexTest implements FlowBuilder {
     public ComplexTest(String[] args) {
     }
 
+    @Override
     public void build(Flow flow, //
             List<FlowEdge> inEdges, //
             List<FlowNode> outNodes) {

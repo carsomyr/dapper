@@ -161,6 +161,7 @@ public class FlowManager extends JFrame {
         JButton runButton = new JButton("run");
         runButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 FlowManager.this.codeletTree.runSelected();
             }
@@ -184,6 +185,7 @@ public class FlowManager extends JFrame {
         JButton removeButton = new JButton("unload");
         removeButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 FlowManager.this.codeletTree.removeSelected();
             }
@@ -213,6 +215,7 @@ public class FlowManager extends JFrame {
         screenshotSVGItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
         screenshotSVGItem.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 FlowManager.this.flowPane.takeScreenshot();
             }
@@ -223,6 +226,7 @@ public class FlowManager extends JFrame {
         screenshotPNGItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.ALT_MASK));
         screenshotPNGItem.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
 
                 try {
@@ -245,6 +249,7 @@ public class FlowManager extends JFrame {
         purgeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
         purgeItem.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 FlowManager.this.flowPane.purgeCurrent();
             }
@@ -256,6 +261,7 @@ public class FlowManager extends JFrame {
         removeFinishedItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_MASK));
         removeFinishedItem.addItemListener(new ItemListener() {
 
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 FlowManager.this.flowPane.setRemoveFinished(e.getStateChange() == ItemEvent.SELECTED);
             }
@@ -267,6 +273,7 @@ public class FlowManager extends JFrame {
         autoCloseIdleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK));
         autoCloseIdleItem.addItemListener(new ItemListener() {
 
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 FlowManager.this.flowPane.setAutoCloseIdle(e.getStateChange() == ItemEvent.SELECTED);
             }
@@ -278,6 +285,7 @@ public class FlowManager extends JFrame {
         logFlowEventsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.ALT_MASK));
         logFlowEventsItem.addItemListener(new ItemListener() {
 
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 FlowManager.this.flowPane.setFlowFlags(FlowEvent.F_ALL);
             }

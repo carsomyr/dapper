@@ -83,6 +83,7 @@ public class ClientConnector extends CoreThread implements Closeable {
     /**
      * Invalidates this connector thread.
      */
+    @Override
     public void close() {
         interrupt();
     }

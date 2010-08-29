@@ -99,6 +99,7 @@ public class ServerLogic {
      */
     final static protected Comparator<LogicalNode> SizeComparator = new Comparator<LogicalNode>() {
 
+        @Override
         public int compare(LogicalNode l1, LogicalNode l2) {
             return l1.getFlowNodes().size() - l2.getFlowNodes().size();
         }

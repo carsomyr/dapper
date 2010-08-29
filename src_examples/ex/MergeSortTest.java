@@ -78,6 +78,7 @@ public class MergeSortTest implements FlowBuilder {
         this.outFile = new File(args[4]);
     }
 
+    @Override
     public void build(Flow flow, //
             List<FlowEdge> inEdges, //
             List<FlowNode> outNodes) {

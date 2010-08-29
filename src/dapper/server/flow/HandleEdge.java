@@ -133,14 +133,17 @@ public class HandleEdge implements FlowEdge {
         return this;
     }
 
+    @Override
     public FlowEdgeType getType() {
         return HANDLE;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public HandleEdge setName(String name) {
 
         Control.checkTrue(name != null, //
@@ -151,33 +154,41 @@ public class HandleEdge implements FlowEdge {
         return this;
     }
 
+    @Override
     public FlowNode getU() {
         return this.u;
     }
 
+    @Override
     public void setU(FlowNode u) {
         this.u = u;
     }
 
+    @Override
     public Resource createUResource() {
         return new OutputHandleResource(this.name);
     }
 
+    @Override
     public FlowNode getV() {
         return this.v;
     }
 
+    @Override
     public void setV(FlowNode v) {
         this.v = v;
     }
 
+    @Override
     public Resource createVResource() {
         return new InputHandleResource(this.name, this.handleArray);
     }
 
+    @Override
     public void generate() {
     }
 
+    @Override
     public void render(Formatter f) {
 
         final ClientState csh = getU().getClientState();

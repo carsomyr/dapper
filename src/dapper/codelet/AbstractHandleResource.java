@@ -162,16 +162,19 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
     /**
      * Creates an {@link Iterator} over the available handles.
      */
+    @Override
     public Iterator<String> iterator() {
 
         return new Iterator<String>() {
 
             int counter = 0;
 
+            @Override
             public boolean hasNext() {
                 return this.counter < AbstractHandleResource.this.nEntries;
             }
 
+            @Override
             public String next() {
 
                 Control.checkTrue(hasNext(), //
@@ -180,20 +183,24 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
                 return getHandle(this.counter++);
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("This iterator does not support removal");
             }
         };
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public T setName(String name) {
         throw new UnsupportedOperationException("Cannot set the name of this resource");
     }
 
+    @Override
     public void getContents(Node contentNode) {
 
         Document doc = contentNode.getOwnerDocument();
@@ -241,10 +248,12 @@ abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>
         return f.toString();
     }
 
+    @Override
     public InputStream getInputStream() {
         throw new UnsupportedOperationException("This resource does not support input streams");
     }
 
+    @Override
     public OutputStream getOutputStream() {
         throw new UnsupportedOperationException("This resource does not support output streams");
     }

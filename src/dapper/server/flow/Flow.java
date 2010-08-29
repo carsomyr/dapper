@@ -343,18 +343,22 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
         return this.name;
     }
 
+    @Override
     public FlowStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public void setStatus(FlowStatus status) {
         this.status = status;
     }
 
+    @Override
     public Object getAttachment() {
         return this.attachment;
     }
 
+    @Override
     public Flow setAttachment(Object attachment) {
 
         this.attachment = attachment;
@@ -761,6 +765,7 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
                 .assign(stopNode) == this.nodes.size() + 1);
     }
 
+    @Override
     public void render(Formatter f) {
 
         final String color;

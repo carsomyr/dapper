@@ -46,6 +46,7 @@ import dapper.codelet.Resource;
  */
 public class Cleanup implements Codelet {
 
+    @Override
     public void run(List<Resource> inResources, List<Resource> outResources, Node parameters) {
 
         for (InputHandleResource ihr : CodeletUtilities.filter(inResources, InputHandleResource.class)) {
