@@ -68,8 +68,8 @@ public class ControlEventConnection extends XMLConnection<ControlEventConnection
     }
 
     @Override
-    protected void onError(Throwable error) {
-        onLocal(new ErrorEvent(error, this));
+    protected void onError() {
+        onLocal(new ErrorEvent(getError(), this));
     }
 
     @Override

@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.concurrent.Future;
 
 import shared.event.Source;
+import shared.net.Connection.InitializationType;
 import shared.net.SynchronousManagedConnection;
 import shared.util.Control;
 import shared.util.CoreThread;
@@ -99,7 +100,8 @@ public class ClientConnector extends CoreThread implements Closeable {
             SynchronousManagedConnection smc = this.base.createStreamConnection();
             String identifier = connectResource.getIdentifier();
 
-            futureMap.put(identifier, smc.connect(connectResource.getAddress()));
+            Future<InetSocketAddress> fut = smc.init(InitializationType.CONNECT, connectResource.getAddress());
+            futureMap.put(identifier, fut);
 
             Client.getLog().debug(String.format("Connecting: %s.", connectResource.getAddress()));
 

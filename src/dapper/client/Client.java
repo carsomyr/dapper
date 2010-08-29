@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import shared.cli.CLI;
 import shared.cli.CLIOptions;
 import shared.cli.CLIOptions.CLIOption;
+import shared.net.Connection.InitializationType;
 import shared.net.SynchronousManagedConnection;
 import shared.util.Control;
 import shared.util.CoreThread;
@@ -169,7 +170,7 @@ public class Client extends CoreThread implements Closeable {
 
             try {
 
-                smc.register(sChannel).get();
+                smc.init(InitializationType.REGISTER, sChannel).get();
 
             } catch (Exception e) {
 

@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import shared.event.Source;
+import shared.net.Connection.InitializationType;
 import shared.net.SynchronousManagedConnection;
 import shared.util.Control;
 import shared.util.CoreThread;
@@ -142,7 +143,7 @@ public class ClientLogic {
 
                 ClientLogic cl = ClientLogic.this;
 
-                server.connect(cl.remoteAddress).get();
+                server.init(InitializationType.CONNECT, cl.remoteAddress).get();
                 server.onRemote(new AddressEvent(new InetSocketAddress( //
                         server.getLocalAddress().getAddress(), //
                         cl.localAddress.getPort()), //

@@ -52,6 +52,7 @@ import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import shared.net.Connection.InitializationType;
 import shared.util.Control;
 import shared.util.CoreThread;
 import dapper.AsynchronousBase;
@@ -259,7 +260,7 @@ public class Server extends CoreThread implements Closeable {
 
             try {
 
-                cec.register(sChannel).get();
+                cec.init(InitializationType.REGISTER, sChannel).get();
 
             } catch (Exception e) {
 
