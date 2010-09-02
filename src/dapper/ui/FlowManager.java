@@ -329,7 +329,7 @@ public class FlowManager extends JFrame {
      * Creates the user interface.
      * 
      * @throws ParseException
-     *             when the command line arguments couldn't be parsed.
+     *             when the command-line arguments couldn't be parsed.
      */
     protected static void createUI(String[] args) throws ParseException {
 

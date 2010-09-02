@@ -63,7 +63,7 @@ import dapper.util.Requirement;
  * 
  * @author Roy Liu
  */
-public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetadata, Cloneable, Renderable,
+public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetadata, Cloneable, Renderable, //
         Requirement<ClientState>, Nameable, Taggable<Object> {
 
     /**

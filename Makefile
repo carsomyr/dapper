@@ -1,11 +1,11 @@
 include build/*.mk
 
-ANT					= java -cp 'build/ant-launcher.jar' \
-					org.apache.tools.ant.launch.Launcher
-
 #------------------------------------------------------------------------------#
 # Declare variables.                                                           #
 #------------------------------------------------------------------------------#
+
+ANT					= java -cp 'build/ant-launcher.jar' \
+					org.apache.tools.ant.launch.Launcher
 
 # Java Sources
 
@@ -28,7 +28,7 @@ PUBLISH_TOKEN		= .publish
 
 # Macros
 
-LIB_DIR             = native/$(OS)$(WORD_SIZE)
+LIB_DIR				= native/$(OS)$(WORD_SIZE)
 
 MAKE_BUILD_AND_TEST	= \
 	$(MAKE) -C native buildandtest \

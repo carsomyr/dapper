@@ -30,6 +30,7 @@ package dapper.event;
 
 import static dapper.Constants.BUFFER_SIZE;
 import static dapper.Constants.MAXIMUM_CONTROL_MESSAGE_SIZE;
+import static dapper.event.ControlEvent.ControlEventType.END_OF_STREAM;
 import static dapper.event.SourceType.CONNECTION;
 
 import org.w3c.dom.Element;
@@ -37,7 +38,6 @@ import org.w3c.dom.Element;
 import shared.event.SourceLocal;
 import shared.net.ConnectionManager;
 import shared.net.XMLConnection;
-import dapper.event.ControlEvent.ControlEventType;
 
 /**
  * A subclass of {@link XMLConnection} specialized for handling {@link ControlEvent}s.
@@ -75,7 +75,7 @@ public class ControlEventConnection extends XMLConnection<ControlEventConnection
 
     @Override
     protected ControlEvent parse(Element rootElement) {
-        return (rootElement == null) ? new ControlEvent(ControlEventType.END_OF_STREAM, this) //
+        return (rootElement == null) ? new ControlEvent(END_OF_STREAM, this) //
                 : ControlEvent.parse(rootElement, this);
     }
 }

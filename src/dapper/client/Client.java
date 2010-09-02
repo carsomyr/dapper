@@ -258,7 +258,7 @@ public class Client extends CoreThread implements Closeable {
      * Creates a client.
      * 
      * @throws ParseException
-     *             when the command line arguments couldn't be parsed.
+     *             when the command-line arguments couldn't be parsed.
      */
     public static void createClient(String[] args) throws ParseException {
 

@@ -97,7 +97,7 @@ public class ServerLogic {
      * A {@link Comparator} for comparing {@link LogicalNode}s based on the sizes of the {@link FlowNode} equivalence
      * classes they represent.
      */
-    final static protected Comparator<LogicalNode> SizeComparator = new Comparator<LogicalNode>() {
+    final protected static Comparator<LogicalNode> SizeComparator = new Comparator<LogicalNode>() {
 
         @Override
         public int compare(LogicalNode l1, LogicalNode l2) {
@@ -108,7 +108,7 @@ public class ServerLogic {
     /**
      * A {@link Pattern} used to parse data requests.
      */
-    final static protected Pattern DataRequestPattern = Pattern.compile("([0-9a-zA-Z_]+):(.*)");
+    final protected static Pattern DataRequestPattern = Pattern.compile("([0-9a-zA-Z_]+):(.*)");
 
     final InetAddress address;
     final ServerProcessor sp;

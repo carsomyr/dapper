@@ -48,8 +48,8 @@ import dapper.server.flow.FlowNode;
  * 
  * @author Roy Liu
  */
-public class ClientState implements Handler<ControlEvent>, Locatable, Cloneable, EnumStatus<ClientStatus>,
-        Handle<Object> {
+public class ClientState //
+        implements Handler<ControlEvent>, Locatable, Cloneable, EnumStatus<ClientStatus>, Handle<Object> {
 
     final ControlEventConnection connection;
     final Handler<ControlEvent> serverHandler;

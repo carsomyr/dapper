@@ -59,8 +59,8 @@ import dapper.event.StreamReadyEvent;
  * @apiviz.owns dapper.client.ClientStatus
  * @author Roy Liu
  */
-public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventType, SourceType> implements
-        EnumStatus<ClientStatus> {
+public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventType, SourceType> //
+        implements EnumStatus<ClientStatus> {
 
     final ClientLogic logic;
 

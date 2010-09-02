@@ -54,7 +54,7 @@ public class SimpleTest implements FlowBuilder {
     /**
      * The static {@link Logger} instance.
      */
-    final static protected Logger Log = LoggerFactory.getLogger(SimpleTest.class.getName());
+    final protected static Logger Log = LoggerFactory.getLogger(SimpleTest.class.getName());
 
     /**
      * Default constructor.

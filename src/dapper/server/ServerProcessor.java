@@ -80,8 +80,8 @@ import dapper.server.flow.FlowNode;
  * @apiviz.has dapper.server.ServerProcessor.QueryEvent - - - event
  * @author Roy Liu
  */
-public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventType, SourceType> implements
-        EnumStatus<ServerStatus> {
+public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventType, SourceType> //
+        implements EnumStatus<ServerStatus> {
 
     final ServerLogic logic;
     final StateTable<ServerStatus, ControlEventType, ControlEvent> fsmInternal;

@@ -185,8 +185,8 @@ public class CodeletTree extends JTree implements DropTargetListener {
      * @throws IOException
      *             when something goes awry.
      */
-    protected void registerJar(File file, String targetName, final String[] args) throws IOException,
-            ClassNotFoundException {
+    protected void registerJar(File file, String targetName, final String[] args) //
+            throws IOException, ClassNotFoundException {
 
         List<String> classNames = new ArrayList<String>();
 

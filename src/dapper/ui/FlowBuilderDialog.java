@@ -46,7 +46,7 @@ import javax.swing.WindowConstants;
 import dapper.server.flow.FlowBuilder;
 
 /**
- * A subclass of {@link JDialog} for aiding in the creation of command line arguments for {@link FlowBuilder}
+ * A subclass of {@link JDialog} for aiding in the creation of command-line arguments for {@link FlowBuilder}
  * instantiation.
  * 
  * @author Roy Liu

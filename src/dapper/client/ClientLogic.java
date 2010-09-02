@@ -152,7 +152,7 @@ public class ClientLogic {
 
             @Override
             protected void runCatch(Throwable t) {
-                // No need to handle -- manager will signal client processor on failure.
+                // No need to handle -- Manager will signal client processor on failure.
             }
 
         }.start();

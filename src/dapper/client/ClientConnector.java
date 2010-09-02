@@ -33,7 +33,6 @@ import static dapper.client.Client.HEADER_LENGTH;
 import static shared.util.Control.checkTrue;
 
 import java.io.Closeable;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,8 +97,8 @@ public class ClientConnector extends CoreThread implements Closeable {
 
         for (StreamResource<?> connectResource : this.connectResources) {
 
-            SynchronousManagedConnection smc = this.base.createStreamConnection();
             String identifier = connectResource.getIdentifier();
+            SynchronousManagedConnection smc = this.base.createStreamConnection();
 
             Future<InetSocketAddress> fut = smc.init(InitializationType.CONNECT, connectResource.getAddress());
             futureMap.put(identifier, fut);
@@ -116,8 +115,7 @@ public class ClientConnector extends CoreThread implements Closeable {
             SynchronousManagedConnection smc = this.connectionMap.get(identifier);
             futureMap.get(identifier).get();
 
-            OutputStream out = smc.getOutputStream();
-            out.write(identifier.getBytes());
+            smc.getOutputStream().write(identifier.getBytes());
 
             Client.getLog().debug(String.format("Connected: %s.", smc.getRemoteAddress()));
 

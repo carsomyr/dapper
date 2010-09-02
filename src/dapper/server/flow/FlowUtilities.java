@@ -202,7 +202,7 @@ abstract public class FlowUtilities {
      * @throws DapperException
      *             when something goes awry.
      */
-    final public static void assignParameters(FlowNode flowNode, Node embeddingParameters, Node edgeParameters)
+    final public static void assignParameters(FlowNode flowNode, Node embeddingParameters, Node edgeParameters) //
             throws DapperException {
 
         Codelet codelet = flowNode.getCodelet();
