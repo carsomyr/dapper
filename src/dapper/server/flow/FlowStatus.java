@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -58,7 +58,7 @@ public enum FlowStatus {
     final protected static EnumSet<FlowStatus> ExecutingSet = EnumSet.of(EXECUTE);
 
     /**
-     * Checks if the {@link Flow} is executing.
+     * Gets whether the {@link Flow} is executing.
      */
     public boolean isExecuting() {
         return ExecutingSet.contains(this);

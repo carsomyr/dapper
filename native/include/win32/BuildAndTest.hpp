@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Regents of the University of California
+ * Copyright (c) 2008 The Regents of the University of California
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -41,6 +41,7 @@ public:
      * 
      * @param cmd
      *      the command line.
+     * @return a struct pertaining to the newly exec'd process.
      */
     static PROCESS_INFORMATION exec(const TCHAR *cmd);
 };

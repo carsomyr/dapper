@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -46,6 +46,8 @@ public interface CountDown<T> {
 
     /**
      * Counts down on the given value.
+     * 
+     * @return {@code true} if and only if the countdown is finished.
      */
     public boolean countDown(T value);
 

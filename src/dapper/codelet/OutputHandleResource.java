@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -57,7 +57,7 @@ public class OutputHandleResource extends AbstractHandleResource<OutputHandleRes
     }
 
     /**
-     * Creates a handle entry from the given handle and the "" stem.
+     * Creates a handle entry from the given handle and the empty stem.
      */
     public void put(String handle) {
         put(handle, "");

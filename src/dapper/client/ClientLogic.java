@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -56,8 +56,8 @@ import dapper.event.StreamReadyEvent;
 /**
  * A class that houses the Dapper client logic.
  * 
- * @apiviz.composedOf dapper.client.ClientJob
  * @apiviz.composedOf dapper.client.ClientConnector
+ * @apiviz.composedOf dapper.client.ClientJob
  * @author Roy Liu
  */
 public class ClientLogic {
@@ -97,7 +97,8 @@ public class ClientLogic {
     // INTERNAL LOGIC
 
     /**
-     * Handles a {@link ResetEvent}.
+     * Handles a message from the server resetting both ends to a common, inactive state. Alternatively handles a reset
+     * notification and forwards it to the server.
      */
     protected void handleReset(ResetEvent evt) {
 
@@ -129,7 +130,7 @@ public class ClientLogic {
     }
 
     /**
-     * Transitions from {@link ClientStatus#IDLE} to {@link ClientStatus#CONNECT}.
+     * Handles a transition from {@link ClientStatus#IDLE} to {@link ClientStatus#CONNECT}.
      */
     protected void handleIdleToConnect() {
 
@@ -161,7 +162,7 @@ public class ClientLogic {
     }
 
     /**
-     * Handles a {@link StreamReadyEvent}.
+     * Handles a stream readiness notification.
      */
     protected void handleStreamReady(StreamReadyEvent evt) {
 
@@ -183,7 +184,7 @@ public class ClientLogic {
     }
 
     /**
-     * Handles a refresh.
+     * Handles a request to refresh the computation state and see if any work can be done.
      */
     protected void handleRefresh() {
 
@@ -194,7 +195,7 @@ public class ClientLogic {
     }
 
     /**
-     * Handles an {@link ExecuteAckEvent}.
+     * Handles a successful execution notification and forwards it to the server.
      */
     protected void handleExecuteSuccess(ExecuteAckEvent evt) {
 
@@ -216,14 +217,14 @@ public class ClientLogic {
     // EXTERNAL LOGIC
 
     /**
-     * Handles an end-of-stream.
+     * Handles a connection end-of-stream notification.
      */
     protected void handleEOS(ControlEventConnection connection) {
         handleError(new ErrorEvent(new IOException("End-of-stream encountered"), connection));
     }
 
     /**
-     * Handles an {@link ErrorEvent}.
+     * Handles a connection error notification.
      */
     protected void handleError(ErrorEvent evt) {
 
@@ -236,7 +237,7 @@ public class ClientLogic {
     }
 
     /**
-     * Transitions from {@link ClientStatus#CONNECT} to {@link ClientStatus#WAIT}.
+     * Handles a transition from {@link ClientStatus#CONNECT} to {@link ClientStatus#WAIT}.
      */
     protected void handleConnectToWait(ControlEventConnection server) {
 
@@ -247,7 +248,7 @@ public class ClientLogic {
     }
 
     /**
-     * Transitions from {@link ClientStatus#WAIT} to {@link ClientStatus#RESOURCE}.
+     * Handles a transition from {@link ClientStatus#WAIT} to {@link ClientStatus#RESOURCE}.
      */
     protected void handleWaitToResource(ResourceEvent evt) {
 
@@ -261,7 +262,7 @@ public class ClientLogic {
     }
 
     /**
-     * Transitions from {@link ClientStatus#RESOURCE} to {@link ClientStatus#PREPARE}.
+     * Handles a transition from {@link ClientStatus#RESOURCE} to {@link ClientStatus#PREPARE}.
      */
     protected void handleResourceToPrepare() {
 
@@ -275,7 +276,7 @@ public class ClientLogic {
     }
 
     /**
-     * Transitions from {@link ClientStatus#PREPARE} to {@link ClientStatus#EXECUTE}.
+     * Handles a transition from {@link ClientStatus#PREPARE} to {@link ClientStatus#EXECUTE}.
      */
     protected void handlePrepareToExecute() {
 
@@ -286,7 +287,7 @@ public class ClientLogic {
     }
 
     /**
-     * Handles a {@link DataRequestEvent}.
+     * Handles a message from the server conveying data.
      */
     protected void handleDataRequest(DataRequestEvent evt) {
 

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -52,7 +52,7 @@ import dapper.event.ControlEvent;
 import dapper.event.ControlEventConnection;
 
 /**
- * A class for housing shared, asynchronous services like {@link ConnectionManager} and {@link Timer}.
+ * A utility class for common Dapper operations.
  * 
  * @author Roy Liu
  */

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -171,7 +171,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
     }
 
     /**
-     * Checks if this job is ready to execute.
+     * Gets whether this job is ready to execute.
      */
     public boolean isReady() {
         return this.remaining.isEmpty();

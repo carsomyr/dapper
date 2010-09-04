@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -100,7 +100,7 @@ public class Split implements Codelet {
     }
 
     /**
-     * Gets a human-readable description.
+     * Creates a human-readable description of this {@link Codelet}.
      */
     @Override
     public String toString() {

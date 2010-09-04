@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -38,12 +38,12 @@ package dapper.util;
 public interface Requirement<S> {
 
     /**
-     * Tests whether this requirement is satisfied.
+     * Gets whether this requirement is satisfied.
      */
     public boolean isSatisfied(S satisfier);
 
     /**
-     * Tests whether this requirement is trivially satisfied.
+     * Gets whether this requirement is trivially satisfied.
      */
     public boolean isTrivial();
 }

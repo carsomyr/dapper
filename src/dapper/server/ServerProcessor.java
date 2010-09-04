@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008-2010 The Regents of the University of California<br />
+ * Copyright (c) 2008-2010 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -75,8 +75,8 @@ import dapper.server.flow.FlowNode;
  * 
  * @apiviz.composedOf dapper.server.ServerLogic
  * @apiviz.owns dapper.server.ServerStatus
- * @apiviz.has dapper.server.ServerProcessor.FlowProxy - - - argument
  * @apiviz.has dapper.server.ServerProcessor.FlowBuildRequest - - - argument
+ * @apiviz.has dapper.server.ServerProcessor.FlowProxy - - - argument
  * @apiviz.has dapper.server.ServerProcessor.QueryEvent - - - event
  * @author Roy Liu
  */
@@ -180,7 +180,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
     // INTERNAL LOGIC
 
-    // Refresh computation state and kicks off any newly eligible computations.
     @Transition(currentState = "RUN", eventType = "REFRESH", group = "internal")
     final Handler<ControlEvent> refresh = new Handler<ControlEvent>() {
 
@@ -190,7 +189,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Query for initializing flows.
     @Transition(currentState = "RUN", eventType = "QUERY_INIT", group = "internal")
     final Handler<ControlEvent> queryInit = new Handler<ControlEvent>() {
 
@@ -201,7 +199,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Query for copies of flows.
     @Transition(currentState = "RUN", eventType = "QUERY_REFRESH", group = "internal")
     final Handler<ControlEvent> queryRefresh = new Handler<ControlEvent>() {
 
@@ -212,7 +209,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Query for purging flows.
     @Transition(currentState = "RUN", eventType = "QUERY_PURGE", group = "internal")
     final Handler<ControlEvent> queryPurge = new Handler<ControlEvent>() {
 
@@ -223,7 +219,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Query for closing all idle clients or setting the idle client auto-close option.
     @Transition(currentState = "RUN", eventType = "QUERY_CLOSE_IDLE", group = "internal")
     final Handler<ControlEvent> queryCloseIdle = new Handler<ControlEvent>() {
 
@@ -234,7 +229,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Query for the number of additional clients needed to saturate all pending computations.
     @Transition(currentState = "RUN", eventType = "QUERY_PENDING_COUNT", group = "internal")
     final Handler<ControlEvent> queryPendingCount = new Handler<ControlEvent>() {
 
@@ -245,7 +239,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Query for the number of additional clients needed to saturate all pending computations on individual flows.
     @Transition(currentState = "RUN", eventType = "QUERY_FLOW_PENDING_COUNT", group = "internal")
     final Handler<ControlEvent> queryFlowPendingCount = new Handler<ControlEvent>() {
 
@@ -256,7 +249,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Create a new user-facing flow event queue.
     @Transition(currentState = "RUN", eventType = "QUERY_CREATE_USER_QUEUE", group = "internal")
     final Handler<ControlEvent> queryCreateUserQueue = new Handler<ControlEvent>() {
 
@@ -268,7 +260,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Suspend or resume the server.
     @Transitions(transitions = {
             //
             @Transition(currentState = "RUN", eventType = "SUSPEND", group = "internal"), //
@@ -318,7 +309,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Read in the client port.
     @Transition(currentState = "IDLE", eventType = "ADDRESS", group = "client")
     final Handler<ControlEvent> idleToWait = new Handler<ControlEvent>() {
 
@@ -328,7 +318,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Register a client acknowledgement of receipt of resource descriptors.
     @Transition(currentState = "RESOURCE", eventType = "RESOURCE_ACK", group = "client")
     final Handler<ControlEvent> resourceToPrepare = new Handler<ControlEvent>() {
 
@@ -338,7 +327,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Register a client acknowledgement of successful resource acquisition.
     @Transition(currentState = "PREPARE", eventType = "PREPARE_ACK", group = "client")
     final Handler<ControlEvent> prepareToExecute = new Handler<ControlEvent>() {
 
@@ -348,7 +336,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Request for data by the client.
     @Transition(currentState = "EXECUTE", eventType = "DATA_REQUEST", group = "client")
     final Handler<ControlEvent> dataRequest = new Handler<ControlEvent>() {
 
@@ -358,7 +345,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Register a client acknowledgement of successful execution.
     @Transition(currentState = "EXECUTE", eventType = "EXECUTE_ACK", group = "client")
     final Handler<ControlEvent> executeToWait = new Handler<ControlEvent>() {
 
@@ -453,8 +439,8 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     }
 
     /**
-     * A subclass of {@link ControlEvent} for asynchronously querying the internal state of the {@link ServerLogic} in a
-     * thread-safe way.
+     * A subclass of {@link ControlEvent} for retrieving the internal state of the {@link ServerLogic} in a thread-safe
+     * way.
      * 
      * @param <S>
      *            the input type.
@@ -484,14 +470,14 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
 
         /**
-         * Sets the {@link RequestFuture} output.
+         * Sets the {@link RequestFuture} result.
          */
         protected void setOutput(T value) {
             this.future.set(value);
         }
 
         /**
-         * Sets a {@link RequestFuture} error.
+         * Sets a {@link RequestFuture} exception.
          */
         protected void setException(Throwable t) {
             this.future.setException(t);
@@ -609,14 +595,14 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
 
         /**
-         * Sets the {@link RequestFuture} output.
+         * Sets the {@link RequestFuture} result.
          */
         protected void setOutput(Object value) {
             this.future.set(value);
         }
 
         /**
-         * Sets a {@link RequestFuture} error.
+         * Sets a {@link RequestFuture} exception.
          */
         protected void setException(Throwable t) {
             this.future.setException(t);

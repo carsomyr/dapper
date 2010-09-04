@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -59,11 +59,11 @@ import dapper.server.flow.FlowEdge.FlowEdgeType;
 /**
  * A class for storing the flow computation state.
  * 
- * @apiviz.composedOf dapper.server.flow.LogicalNode
- * @apiviz.composedOf dapper.server.flow.LogicalEdge
  * @apiviz.composedOf dapper.server.flow.AbstractCountDown
- * @apiviz.composedOf dapper.server.flow.FlowNode
  * @apiviz.composedOf dapper.server.flow.FlowEdge
+ * @apiviz.composedOf dapper.server.flow.FlowNode
+ * @apiviz.composedOf dapper.server.flow.LogicalEdge
+ * @apiviz.composedOf dapper.server.flow.LogicalNode
  * @apiviz.owns dapper.server.flow.FlowStatus
  * @apiviz.uses dapper.server.flow.FlowUtilities
  * @author Roy Liu

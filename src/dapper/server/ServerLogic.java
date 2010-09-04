@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008-2010 The Regents of the University of California<br />
+ * Copyright (c) 2008-2010 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -65,7 +65,6 @@ import dapper.event.DataRequestEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
 import dapper.event.ResetEvent;
-import dapper.event.ResourceEvent;
 import dapper.event.TimeoutEvent;
 import dapper.server.ServerProcessor.FlowBuildRequest;
 import dapper.server.ServerProcessor.FlowProxy;
@@ -291,7 +290,7 @@ public class ServerLogic {
     // INTERNAL LOGIC
 
     /**
-     * Refreshes the computation state and sees if any work can be executed.
+     * Handles a request to refresh the computation state and see if any work can be done.
      */
     protected void handleRefresh() {
 
@@ -328,7 +327,7 @@ public class ServerLogic {
 
                 assertTrue(csh.getStatus() == ClientStatus.WAIT);
 
-                // The client no longer belongs to the waiting set.
+                // The client no longer belongs to the wait set.
                 assertTrue(this.clientWaitSet.remove(csh));
 
                 // Make the node and the client known to each other.
@@ -372,7 +371,7 @@ public class ServerLogic {
     }
 
     /**
-     * Performs initialization of {@link Flow}s from within the processing thread.
+     * Handles a request to create a new {@link Flow}.
      */
     protected void handleQueryInit(QueryEvent<FlowBuildRequest, FlowProxy> evt) {
 
@@ -416,7 +415,8 @@ public class ServerLogic {
     }
 
     /**
-     * Refreshes {@link Flow}s.
+     * Handles a request to get the {@link FlowProxy} associated with an individual {@link Flow} or all
+     * {@link FlowProxy}s associated with all {@link Flow}s.
      */
     protected void handleQueryRefresh(QueryEvent<Flow, List<FlowProxy>> evt) {
 
@@ -424,7 +424,7 @@ public class ServerLogic {
 
         if (f != null) {
 
-            // If the query was for a particular flow.
+            // If the request was for a particular flow.
             FlowProxy fp = this.allFlowsMap.get(f);
 
             if (fp != null) {
@@ -461,7 +461,7 @@ public class ServerLogic {
     }
 
     /**
-     * Purges {@link Flow}s.
+     * Handles a request to purge an active {@link Flow}.
      */
     protected void handleQueryPurge(QueryEvent<Flow, Object> evt) {
 
@@ -479,7 +479,7 @@ public class ServerLogic {
     }
 
     /**
-     * Sets the idle client auto-close option.
+     * Handles a request to set the idle client autoclose option.
      */
     protected void handleQueryCloseIdle(QueryEvent<Boolean, Object> evt) {
 
@@ -502,21 +502,22 @@ public class ServerLogic {
     }
 
     /**
-     * Gets the number of additional clients required to saturate pending computations.
+     * Handles a request to get the number of additional clients required to saturate pending computations.
      */
     protected void handleQueryPendingCount(QueryEvent<Object, Integer> evt) {
         evt.setOutput(getPendingCount());
     }
 
     /**
-     * Gets the number of additional clients required to saturate pending computations on the given {@link Flow}.
+     * Handles a request to get the number of additional clients required to saturate pending computations on the given
+     * {@link Flow}.
      */
     protected void handleQueryFlowPendingCount(QueryEvent<Flow, Integer> evt) {
         evt.setOutput(getPendingCount(evt.getInput()));
     }
 
     /**
-     * Suspends and resumes server activities.
+     * Handles a request to suspend or resume server activities.
      */
     protected void handleSuspendResume(ControlEvent evt) {
 
@@ -541,14 +542,14 @@ public class ServerLogic {
     // CLIENT LOGIC
 
     /**
-     * Handles an end-of-stream.
+     * Handles a connection end-of-stream notification.
      */
     protected void handleEOS(ControlEventConnection connection) {
         handleError(new ErrorEvent(new IOException("End-of-stream encountered"), connection));
     }
 
     /**
-     * Handles the given {@link TimeoutEvent}.
+     * Handles a timeout notification.
      */
     protected void handleTimeout(TimeoutEvent evt) {
 
@@ -579,7 +580,7 @@ public class ServerLogic {
     }
 
     /**
-     * Handles an {@link ErrorEvent}.
+     * Handles a connection error notification.
      */
     protected void handleError(ErrorEvent evt) {
 
@@ -621,7 +622,7 @@ public class ServerLogic {
     }
 
     /**
-     * Handles the given {@link ResetEvent}.
+     * Handles a message from the client resetting both ends to a common, inactive state.
      */
     protected void handleReset(ResetEvent evt) {
 
@@ -664,7 +665,7 @@ public class ServerLogic {
     }
 
     /**
-     * Transitions from {@link ClientStatus#IDLE} to {@link ClientStatus#WAIT}.
+     * Handles a client transition from {@link ClientStatus#IDLE} to {@link ClientStatus#WAIT}.
      */
     protected void handleIdleToWait(AddressEvent evt) {
 
@@ -673,9 +674,10 @@ public class ServerLogic {
         // The client had better not be in the wait set when we add it.
         assertTrue(this.clientWaitSet.add(csh));
 
-        // Set the address of the client for later reference.
+        // Notify the client of connection establishment.
         csh.getConnection().onRemote(new ControlEvent(INIT, null));
 
+        // Set the address of the client for later reference.
         InetSocketAddress address = evt.getAddress();
 
         // Treat loopback addresses specially.
@@ -702,7 +704,7 @@ public class ServerLogic {
     }
 
     /**
-     * Handles the given {@link DataRequestEvent}.
+     * Handles a message from the client requesting data.
      */
     protected void handleDataRequest(DataRequestEvent evt) {
 
@@ -750,8 +752,9 @@ public class ServerLogic {
     }
 
     /**
-     * The client has acknowledged receipt of the given {@link ResourceEvent}. Once all clients of the same equivalence
-     * class check in, they all transition from {@link ClientStatus#RESOURCE} to {@link ClientStatus#PREPARE}.
+     * Handles a possible client transition from {@link ClientStatus#RESOURCE} to {@link ClientStatus#PREPARE}, as the
+     * client has acknowledged receipt of its resource descriptor. Once all clients of the same equivalence class check
+     * in, they all make said transition.
      */
     protected void handleResourceToPrepare(ClientState csh) {
         transitionIfReady(csh, //
@@ -761,8 +764,9 @@ public class ServerLogic {
     }
 
     /**
-     * The client has requisitioned all necessary resources for execution. Once all clients of the same equivalence
-     * class check in, they all transition from {@link ClientStatus#PREPARE} to {@link ClientStatus#EXECUTE}.
+     * Handles a possible client transition from {@link ClientStatus#PREPARE} to {@link ClientStatus#EXECUTE}, as the
+     * client has requisitioned all necessary resources for execution. Once all clients of the same equivalence class
+     * check in, they all make said transition.
      */
     protected void handlePrepareToExecute(ClientState csh) {
 
@@ -778,10 +782,10 @@ public class ServerLogic {
     }
 
     /**
-     * The client has successfully executed; it transitions from {@link ClientStatus#EXECUTE} to
-     * {@link ClientStatus#WAIT}. Once all clients of the same equivalence class check in, the server searches for
-     * dependent {@link LogicalNode}s that are newly eligible for execution. Should member {@link FlowNode}s embed
-     * subflows, the server executes their {@link FlowBuilder}s and rebuilds the underlying {@link Flow}.
+     * Handles a client transition from {@link ClientStatus#EXECUTE} to {@link ClientStatus#WAIT}, as the client has
+     * successfully executed. Once all clients of the same equivalence class check in, the server searches for dependent
+     * {@link LogicalNode}s that are newly eligible for execution. Should member {@link FlowNode}s embed subflows, the
+     * server executes their {@link FlowBuilder}s and rebuilds the underlying {@link Flow}.
      */
     protected void handleExecuteToWait(ExecuteAckEvent evt) {
 

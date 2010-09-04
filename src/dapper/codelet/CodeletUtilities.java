@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 import shared.util.Control;
 
 /**
- * A class of convenient static methods for {@link Codelet} execution.
+ * A static utility class for {@link Codelet} execution.
  * 
  * @apiviz.owns dapper.codelet.DataService
  * @author Roy Liu

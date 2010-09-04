@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -35,6 +35,7 @@ import java.util.List;
 import org.w3c.dom.Node;
 
 import shared.util.Arithmetic;
+import dapper.codelet.Codelet;
 import dapper.codelet.CodeletUtilities;
 import dapper.codelet.Resource;
 import dapper.server.flow.EmbeddingCodelet;
@@ -122,7 +123,7 @@ public class ForkBomb implements EmbeddingCodelet {
     }
 
     /**
-     * Gets a human-readable description.
+     * Creates a human-readable description of this {@link Codelet}.
      */
     @Override
     public String toString() {

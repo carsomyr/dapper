@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -96,7 +96,7 @@ public class StreamEdge implements FlowEdge, Identified {
     }
 
     /**
-     * Checks whether connections are established in the reverse direction.
+     * Gets whether connections are established in the reverse direction.
      */
     public boolean isInverted() {
         return this.inverted;

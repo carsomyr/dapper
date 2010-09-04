@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -53,15 +53,9 @@ abstract public class AbstractCountDown<T> implements CountDown<T> {
         this.unmodifiableView = Collections.unmodifiableSet(this.countDownSet);
     }
 
-    /**
-     * Resets the count down.
-     */
     @Override
     abstract public void reset();
 
-    /**
-     * Counts down on the given value.
-     */
     @Override
     public boolean countDown(T value) {
 
@@ -73,9 +67,6 @@ abstract public class AbstractCountDown<T> implements CountDown<T> {
         return this.countDownSet.isEmpty();
     };
 
-    /**
-     * Gets the remaining items.
-     */
     @Override
     public Set<T> getRemaining() {
         return this.unmodifiableView;

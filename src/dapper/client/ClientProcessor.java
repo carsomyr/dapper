@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -151,7 +151,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Self initialization.
     @Transition(currentState = "IDLE", eventType = "INIT", group = "internal")
     final Handler<ControlEvent> idleToConnect = new Handler<ControlEvent>() {
 
@@ -179,7 +178,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Determination of execution eligibility.
     @Transition(currentState = "PREPARE", eventType = "REFRESH", group = "internal")
     final Handler<ControlEvent> refresh = new Handler<ControlEvent>() {
 
@@ -189,7 +187,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Execution success.
     @Transition(currentState = "EXECUTE", eventType = "EXECUTE_ACK", group = "internal")
     final Handler<ControlEvent> executeSuccess = new Handler<ControlEvent>() {
 
@@ -199,7 +196,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Client process shutdown.
     @Transition(currentState = "SHUTDOWN", eventType = "SHUTDOWN", group = "internal")
     final Handler<ControlEvent> shutdown = new Handler<ControlEvent>() {
 
@@ -243,7 +239,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Server connection initialized.
     @Transition(currentState = "CONNECT", eventType = "INIT", group = "external")
     final Handler<ControlEvent> connectToWait = new Handler<ControlEvent>() {
 
@@ -253,7 +248,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Resource descriptors.
     @Transition(currentState = "WAIT", eventType = "RESOURCE", group = "external")
     final Handler<ControlEvent> waitToResource = new Handler<ControlEvent>() {
 
@@ -263,7 +257,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Resource preparation.
     @Transition(currentState = "RESOURCE", eventType = "PREPARE", group = "external")
     final Handler<ControlEvent> resourceToPrepare = new Handler<ControlEvent>() {
 
@@ -273,7 +266,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    // Codelet execution.
     @Transition(currentState = "PREPARE", eventType = "EXECUTE", group = "external")
     final Handler<ControlEvent> prepareToExecute = new Handler<ControlEvent>() {
 

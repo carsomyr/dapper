@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -28,7 +28,6 @@
 
 package dapper;
 
-import java.net.ServerSocket;
 import java.util.Timer;
 import java.util.regex.Pattern;
 
@@ -42,12 +41,12 @@ import dapper.codelet.Codelet;
 public class Constants {
 
     /**
-     * The server's listening port.
+     * The default server listening port.
      */
     final public static int PORT = 10101;
 
     /**
-     * The size of {@link ServerSocket} backlogs.
+     * The default backlog size of listening sockets.
      */
     final public static int BACKLOG = 128;
 
@@ -57,17 +56,17 @@ public class Constants {
     final public static int MAXIMUM_CONTROL_MESSAGE_SIZE = 1 << 26;
 
     /**
-     * The transfer buffer size.
+     * The default transfer buffer size.
      */
     final public static int BUFFER_SIZE = 1 << 20;
 
     /**
-     * The request timeout.
+     * The request timeout in milliseconds.
      */
     final public static long TIMEOUT = 10000;
 
     /**
-     * The client timeout.
+     * The client timeout in milliseconds.
      */
     final public static long CLIENT_TIMEOUT = 60000;
 
@@ -77,22 +76,22 @@ public class Constants {
     final public static int MAX_PENDING_ACCEPTS = 16;
 
     /**
-     * The default {@link Codelet} execution time limit.
+     * The {@link Codelet} execution time limit in milliseconds.
      */
     final public static long CODELET_TIMEOUT = 86400000;
 
     /**
-     * The default {@link Codelet} failed execution retry limit.
+     * The maximum allowable number of {@link Codelet} execution retries.
      */
     final public static int CODELET_RETRIES = 8;
 
     /**
-     * A {@link Pattern} specification that exactly matches the string "local".
+     * A domain {@link Pattern} that exactly matches the string "local".
      */
     final public static String LOCAL = "^local$";
 
     /**
-     * A {@link Pattern} specification that exactly matches the string "remote".
+     * A domain {@link Pattern} that exactly matches the string "remote".
      */
     final public static String REMOTE = "^remote$";
 

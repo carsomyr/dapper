@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008-2010 The Regents of the University of California<br />
+ * Copyright (c) 2008-2010 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -54,8 +54,8 @@ import dapper.server.flow.FlowStatus;
 /**
  * A subclass of {@link JTabbedPane} that serves as an index of {@link FlowTab}s.
  * 
- * @apiviz.composedOf dapper.ui.FlowTab
  * @apiviz.composedOf dapper.ui.CodeletTree
+ * @apiviz.composedOf dapper.ui.FlowTab
  * @author Roy Liu
  */
 @SuppressWarnings("serial")
@@ -108,14 +108,14 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     }
 
     /**
-     * Sets a flag regulating whether {@link FlowTab}s corresponding to finished {@link Flow}s should be removed.
+     * Sets an option regulating whether {@link FlowTab}s corresponding to finished {@link Flow}s should be removed.
      */
     public void setRemoveFinished(boolean removeFinished) {
         this.removeFinished = removeFinished;
     }
 
     /**
-     * Sets the idle client auto-close option.
+     * Sets the idle client autoclose option.
      */
     public void setAutoCloseIdle(boolean autoCloseIdle) {
 

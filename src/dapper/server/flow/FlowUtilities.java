@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -47,7 +47,7 @@ import dapper.codelet.OutputHandleResource;
 import dapper.server.flow.FlowEdge.FlowEdgeType;
 
 /**
- * A class of static utility methods for {@link Flow} bookkeeping.
+ * A static utility class for {@link Flow} bookkeeping.
  * 
  * @author Roy Liu
  */

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -36,6 +36,7 @@ import org.w3c.dom.NodeList;
 import shared.event.Source;
 import shared.event.XMLEvent;
 import shared.util.Control;
+import dapper.server.ServerProcessor.FlowProxy;
 import dapper.server.flow.Flow;
 
 /**
@@ -52,7 +53,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
     public enum ControlEventType {
 
         /**
-         * Indicates an initialization catalyst for the server/client.
+         * Indicates the first message from the server.
          */
         INIT {
 
@@ -63,7 +64,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates the start of a client's relationship with the server.
+         * Indicates a message from the client conveying an externally facing local IP address.
          */
         ADDRESS {
 
@@ -74,7 +75,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates an interrupt that causes the server/client to reassess the computation state.
+         * Indicates a request to refresh the computation state and see if any work can be done.
          */
         REFRESH {
 
@@ -85,7 +86,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates resource descriptions sent from server to client.
+         * Indicates a message from the server conveying a resource descriptor.
          */
         RESOURCE {
 
@@ -96,7 +97,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates a request for data.
+         * Indicates a message from the client requesting data or a message from the server conveying data.
          */
         DATA_REQUEST {
 
@@ -107,7 +108,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates acknowledgement upon client receipt of a {@link ResourceEvent}.
+         * Indicates a message from the client on receipt of a resource descriptor.
          */
         RESOURCE_ACK {
 
@@ -118,7 +119,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates an instruction from the server to clients to begin requisitioning resources for execution.
+         * Indicates a message from the server instructing the client to begin requisitioning resources for execution.
          */
         PREPARE {
 
@@ -129,7 +130,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates acknowledgement upon client load of all necessary resources.
+         * Indicates a message from the client on load of all necessary resources.
          */
         PREPARE_ACK {
 
@@ -140,7 +141,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates an instruction from the server to execute.
+         * Indicates a message from the server instructing the client to begin executing.
          */
         EXECUTE {
 
@@ -151,7 +152,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates an acknowledgement of successful execution.
+         * Indicates a message from the client on successful execution.
          */
         EXECUTE_ACK {
 
@@ -162,7 +163,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates a reset of the server/client to an inactive state.
+         * Indicates a message from the server/client resetting both ends to a common, inactive state.
          */
         RESET {
 
@@ -173,80 +174,79 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates that an error has occurred.
+         * Indicates a connection error notification.
          */
         ERROR, //
 
         /**
-         * Indicates that an end-of-stream has been reached.
+         * Indicates a connection end-of-stream notification.
          */
         END_OF_STREAM, //
 
         /**
-         * Indicates that a stream is ready.
+         * Indicates a stream readiness notification.
          */
         STREAM_READY, //
 
         /**
-         * Indicates a timeout while waiting for a transition.
+         * Indicates a timeout notification.
          */
         TIMEOUT, //
 
         /**
-         * Indicates shutdown of the client process.
+         * Indicates a request to shut down the processing thread.
          */
         SHUTDOWN, //
 
         /**
-         * Indicates a query for initializing {@link Flow}s.
+         * Indicates a request to create a new {@link Flow}.
          */
         QUERY_INIT, //
 
         /**
-         * Indicates a query for refreshing the state of {@link Flow}s in the server.
+         * Indicates a request to get the {@link FlowProxy} associated with an individual {@link Flow} or all
+         * {@link FlowProxy}s associated with all {@link Flow}s.
          */
         QUERY_REFRESH, //
 
         /**
-         * Indicates a query for purging {@link Flow}s from the server.
+         * Indicates a request to purge an active {@link Flow}.
          */
         QUERY_PURGE, //
 
         /**
-         * Indicates a query for closing all idle clients <i>or</i> setting the idle client auto-close option, depending
-         * on the argument.
+         * Indicates a request to set the idle client autoclose option.
          */
         QUERY_CLOSE_IDLE, //
 
         /**
-         * Indicates a query for the number of additional clients required to saturate all pending computations.
+         * Indicates a request to get the number of additional clients required to saturate pending computations.
          */
         QUERY_PENDING_COUNT, //
 
         /**
-         * Indicates a query for the number of additional clients required to saturate all pending computations on
-         * individual {@link Flow}s.
+         * Indicates a request to get the number of additional clients required to saturate pending computations on the
+         * given {@link Flow}.
          */
         QUERY_FLOW_PENDING_COUNT, //
 
         /**
-         * Indicates a query for creating a new user-facing {@link FlowEvent} queue.
+         * Indicates a request to create a new user-facing {@link FlowEvent} queue.
          */
         QUERY_CREATE_USER_QUEUE, //
 
         /**
-         * Indicates a request for the server to suspend operations by ceasing to assign clients to pending
-         * computations.
+         * Indicates a request to suspend server activities.
          */
         SUSPEND, //
 
         /**
-         * Indicates a request for the server to resume operations.
+         * Indicates a request to resume server activities.
          */
         RESUME;
 
         /**
-         * Parses a {@link ControlEvent} from the given root DOM {@link Node}.
+         * Parses a {@link ControlEvent} from the given DOM {@link Node}.
          */
         protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
             throw new UnsupportedOperationException("Parse method not defined");

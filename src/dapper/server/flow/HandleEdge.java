@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -117,7 +117,7 @@ public class HandleEdge implements FlowEdge {
     }
 
     /**
-     * Checks whether this edge should be expanded into multiple edges on subflow embedding.
+     * Gets whether this edge should be expanded into multiple edges on subflow embedding.
      */
     public boolean isExpandOnEmbed() {
         return this.expandOnEmbed;

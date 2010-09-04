@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -92,7 +92,7 @@ public class LogicalEdge implements Edge<LogicalNode>, Cloneable {
     }
 
     /**
-     * Fulfills the {@link Object#equals(Object)} contract.
+     * Fulfills the {@link #equals(Object)} contract.
      */
     @Override
     public boolean equals(Object o) {
@@ -102,7 +102,7 @@ public class LogicalEdge implements Edge<LogicalNode>, Cloneable {
     }
 
     /**
-     * Fulfills the {@link Object#hashCode()} contract.
+     * Fulfills the {@link #hashCode()} contract.
      */
     @Override
     public int hashCode() {

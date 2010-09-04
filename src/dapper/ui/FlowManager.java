@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008-2010 The Regents of the University of California<br />
+ * Copyright (c) 2008-2010 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -208,7 +208,7 @@ public class FlowManager extends JFrame {
 
         JMenuBar menuBar = new JMenuBar();
 
-        // Create the 'Options' menu.
+        // Create the "Options" menu.
         JMenu optionsMenu = new JMenu("Options");
 
         JMenuItem screenshotSVGItem = new JMenuItem("Take Screenshot (SVG)");

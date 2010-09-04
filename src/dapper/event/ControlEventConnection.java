@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -55,7 +55,6 @@ public class ControlEventConnection extends XMLConnection<ControlEventConnection
      * 
      * @param delegate
      *            the delegate to which events will be forwarded.
-     * @see XMLConnection#XMLConnection(String, Enum, int, ConnectionManager)
      */
     public ControlEventConnection(String name, ConnectionManager manager, SourceLocal<ControlEvent> delegate) {
         super(name, CONNECTION, BUFFER_SIZE, MAXIMUM_CONTROL_MESSAGE_SIZE, manager);

@@ -15,7 +15,7 @@ aux_source_directory("src/win32" SRC_WIN32)
 
 include_directories("include/dapper" "include/win32")
 
-# Add the 'buildandtest' build target.
+# Add the buildandtest build target.
 
 add_executable("buildandtest" ${SRC_WIN32} "src/icon/icon.rc")
 set_target_properties("buildandtest" PROPERTIES VERSION ${VERSION})

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -97,28 +97,28 @@ public enum LogicalNodeStatus {
             FINISHED);
 
     /**
-     * Checks for execution eligibility.
+     * Gets whether the computation is eligible for execution.
      */
     public boolean isExecutable() {
         return ExecutableSet.contains(this);
     }
 
     /**
-     * Checks if the computation is executing.
+     * Gets whether the computation is executing.
      */
     public boolean isExecuting() {
         return ExecutingSet.contains(this);
     }
 
     /**
-     * Checks if the computation is finished.
+     * Gets whether the computation is finished.
      */
     public boolean isFinished() {
         return FinishedSet.contains(this);
     }
 
     /**
-     * Checks if the computation can be merged with another for the purposes of subflow embedding.
+     * Gets whether the computation can be merged with another for the purposes of subflow embedding.
      */
     public boolean isMergeable() {
         return MergeableSet.contains(this);

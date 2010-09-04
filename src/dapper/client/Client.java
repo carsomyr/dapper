@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -151,7 +151,7 @@ public class Client extends CoreThread implements Closeable {
     }
 
     /**
-     * Shuts down this client thread.
+     * Shuts down this thread.
      */
     @Override
     public void close() {

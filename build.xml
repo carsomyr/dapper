@@ -47,6 +47,7 @@
     </target>
 
     <target name="ivy-retrieve" depends="ivy-prepare" unless="build.dependencies">
+        <!-- Some Jar artifacts are declared as having type bundle. -->
         <ivy:retrieve conf="ant, checkstyle, lib" type="bundle, jar" />
         <ivy:retrieve conf="auxlib" type="resource, source" />
         <unzip src="build/auxlib/sst-build-conf.jar" dest="build">
