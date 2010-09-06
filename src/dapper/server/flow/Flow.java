@@ -73,7 +73,8 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
     /**
      * A temporary mapping of {@link FlowNode} proxies to actuals local to the current thread.
      */
-    final protected static ThreadLocal<Map<FlowNode, FlowNode>> NodeMapLocal = new ThreadLocal<Map<FlowNode, FlowNode>>();
+    final protected static ThreadLocal<Map<FlowNode, FlowNode>> NodeMapLocal = //
+    new ThreadLocal<Map<FlowNode, FlowNode>>();
 
     /**
      * An empty {@link FlowEdge} list.
@@ -305,8 +306,8 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
      * Rebuilds edge incidence relationships on a flow copy.
      */
     @SuppressWarnings("unchecked")
-    final protected static <V extends Traversable<V, E>, E extends Edge<V>> void assignNodeNeighbors(Map<V, V> nodeMap,
-            Map<E, E> edgeMap) {
+    final protected static <V extends Traversable<V, E>, E extends Edge<V>> void assignNodeNeighbors( //
+            Map<V, V> nodeMap, Map<E, E> edgeMap) {
 
         for (Entry<E, E> entry : edgeMap.entrySet()) {
 
@@ -643,8 +644,8 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
             stopFlowNode.getIn().add(new DummyEdge(fn1, stopFlowNode));
         }
 
-        // Assign priority order according to the traversal policy and assert that the number of nodes traversed
-        // is equal to set of nodes.
+        // Assign priority order according to the traversal policy and assert that the number of nodes traversed is
+        // equal to set of nodes.
         Control.assertTrue(new LimitedMemoryPolicy<FlowNode, FlowEdge>() //
                 .assign(stopFlowNode) == this.flowNodes.size() + 1);
 
@@ -678,8 +679,8 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
 
             final LogicalNode canonicalNode;
 
-            // If there are unattached flow nodes, merge them, along with attached flow nodes, into one
-            // equivalence class.
+            // If there are unattached flow nodes, merge them, along with attached flow nodes, into one equivalence
+            // class.
             if (!unattachedFlowNodes.isEmpty()) {
 
                 canonicalNode = new LogicalNode(this);

@@ -296,7 +296,6 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
     public static ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
 
         NodeList children = rootNode.getChildNodes();
-
         return ControlEventType.valueOf(children.item(0).getTextContent()).parse(children.item(1), source);
     }
 }

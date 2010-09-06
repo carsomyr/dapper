@@ -80,9 +80,14 @@ import dapper.server.flow.Flow;
  */
 @CLIOptions(options = {
 //
-        @CLIOption(opt = "a", longOpt = "archive", numArgs = -1, description = "the execution archive to load"), //
-        @CLIOption(opt = "p", longOpt = "port", numArgs = 1, description = "the listening port"), //
-        @CLIOption(opt = "c", longOpt = "autocloseidle", numArgs = 0, description = "close idle clients automatically") //
+        @CLIOption(opt = "a", longOpt = "archive", numArgs = -1, //
+        description = "the execution archive to load"), //
+        //
+        @CLIOption(opt = "p", longOpt = "port", numArgs = 1, //
+        description = "the listening port"), //
+        //
+        @CLIOption(opt = "c", longOpt = "autocloseidle", numArgs = 0, //
+        description = "close idle clients automatically") //
 })
 @SuppressWarnings("serial")
 public class FlowManager extends JFrame {

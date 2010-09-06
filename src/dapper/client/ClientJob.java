@@ -315,8 +315,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
             this.pending.put(pathname, rf);
         }
 
-        this.callback.onLocal(new DataRequestEvent(pathname, //
-                new byte[] {}, ClientJob.this.callback));
+        this.callback.onLocal(new DataRequestEvent(pathname, new byte[] {}, ClientJob.this.callback));
 
         try {
 

@@ -312,8 +312,8 @@ public class CodeletTree extends JTree implements DropTargetListener {
      *             when some class(es) could not be found.
      */
     @SuppressWarnings("unchecked")
-    final protected static List<Class<? extends FlowBuilder>> getBuilders( //
-            ClassLoader cl, List<String> classNames) throws ClassNotFoundException {
+    final protected static List<Class<? extends FlowBuilder>> getBuilders(ClassLoader cl, List<String> classNames) //
+            throws ClassNotFoundException {
 
         List<Class<? extends FlowBuilder>> builders = new ArrayList<Class<? extends FlowBuilder>>();
 

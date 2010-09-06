@@ -65,13 +65,11 @@ public class Merge implements Codelet {
             line2 = (line2 == null) ? scanner2.nextLine() : line2;
 
             if (line1.length() != LINE_LENGTH - 1) {
-                throw new IllegalStateException( //
-                        String.format("Unexpected line length: %d", line1.length()));
+                throw new IllegalStateException(String.format("Unexpected line length: %d", line1.length()));
             }
 
             if (line2.length() != LINE_LENGTH - 1) {
-                throw new IllegalStateException( //
-                        String.format("Unexpected line length: %d", line2.length()));
+                throw new IllegalStateException(String.format("Unexpected line length: %d", line2.length()));
             }
 
             if (line1.compareTo(line2) < 0) {

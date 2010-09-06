@@ -227,7 +227,8 @@ public class Server extends CoreThread implements Closeable {
      *             when something goes awry.
      */
     @SuppressWarnings("unchecked")
-    public <F, N> BlockingQueue<FlowEvent<F, N>> createFlowEventQueue() throws InterruptedException, ExecutionException {
+    public <F, N> BlockingQueue<FlowEvent<F, N>> createFlowEventQueue() //
+            throws InterruptedException, ExecutionException {
         return (BlockingQueue<FlowEvent<F, N>>) this.processor.query(QUERY_CREATE_USER_QUEUE, (Object) null);
     }
 

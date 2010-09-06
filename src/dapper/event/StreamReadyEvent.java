@@ -46,7 +46,7 @@ public class StreamReadyEvent extends ControlEvent implements Identified {
     /**
      * Default constructor.
      */
-    public StreamReadyEvent(String identifier, SynchronousManagedConnection connection,
+    public StreamReadyEvent(String identifier, SynchronousManagedConnection connection, //
             Source<ControlEvent, SourceType> source) {
         super(STREAM_READY, source);
 

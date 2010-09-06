@@ -47,7 +47,8 @@ import shared.util.Control;
  *            the parameterization lower bounded by {@link AbstractHandleResource} itself.
  * @author Roy Liu
  */
-abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>> implements Resource, Iterable<String> {
+abstract public class AbstractHandleResource<T extends AbstractHandleResource<T>> //
+        implements Resource, Iterable<String> {
 
     final String name;
 

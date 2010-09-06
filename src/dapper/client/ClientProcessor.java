@@ -63,7 +63,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         implements EnumStatus<ClientStatus> {
 
     final ClientLogic logic;
-
     final StateTable<ClientStatus, ControlEventType, ControlEvent> fsmInternal;
     final StateTable<ClientStatus, ControlEventType, ControlEvent> fsmExternal;
 

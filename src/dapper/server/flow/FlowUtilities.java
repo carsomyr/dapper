@@ -155,8 +155,8 @@ abstract public class FlowUtilities {
 
         flow.getFlowCountDown().reset();
 
-        // Start a dependency count down on all nodes, where we consider a node eligible for execution
-        // if it has no remaining dependencies.
+        // Start a dependency count down on all nodes, where we consider a node eligible for execution if it has no
+        // remaining dependencies.
         for (LogicalNode node : nodes) {
 
             CountDown<LogicalNode> countDown = node.getDependencyCountDown();

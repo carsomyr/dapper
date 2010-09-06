@@ -199,7 +199,8 @@ public class Client extends CoreThread implements Closeable {
                     InputStream in = smc.getInputStream();
 
                     for (int size, offset = 0, length = header.length; //
-                    length > 0; offset += size, length -= size) {
+                    length > 0; //
+                    offset += size, length -= size) {
 
                         size = in.read(header, offset, length);
 

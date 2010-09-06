@@ -45,8 +45,7 @@ PROCESS_INFORMATION BuildAndTest::exec(const TCHAR *cmd) {
             NULL, //
             NULL, //
             &si, //
-            &pi) //
-    ) {
+            &pi)) {
         printf("Could not create child process '%s'.\n", cmd);
     }
 
@@ -55,9 +54,9 @@ PROCESS_INFORMATION BuildAndTest::exec(const TCHAR *cmd) {
 
 int _tmain(int argc, TCHAR *argv[]) {
 
-    PROCESS_INFORMATION antPI = BuildAndTest::exec("java -Xmx128M " //
-                "-cp build/ant-launcher.jar " //
-                "org.apache.tools.ant.launch.Launcher jars");
+    PROCESS_INFORMATION antPI = BuildAndTest::exec("java -Xmx128M "
+            "-cp build/ant-launcher.jar "
+            "org.apache.tools.ant.launch.Launcher jars");
 
     if (antPI.hProcess == NULL) {
 
@@ -75,17 +74,17 @@ int _tmain(int argc, TCHAR *argv[]) {
 
     PROCESS_INFORMATION pis[N_CLIENTS + 1];
 
-    pis[0] = BuildAndTest::exec("java -Xmx128M " //
-                "-cp dapper.jar dapper.ui.FlowManagerDriver " //
-                "--port 12121 " //
-                "--archive dapper-ex.jar ex.SimpleTest");
+    pis[0] = BuildAndTest::exec("java -Xmx128M "
+            "-cp dapper.jar dapper.ui.FlowManagerDriver "
+            "--port 12121 "
+            "--archive dapper-ex.jar ex.SimpleTest");
 
     Sleep(2000);
 
     for (int i = 1; i <= N_CLIENTS; i++) {
-        pis[i] = BuildAndTest::exec("java -Xmx128M " //
-                    "-cp dapper.jar dapper.client.ClientDriver " //
-                    "--host localhost:12121");
+        pis[i] = BuildAndTest::exec("java -Xmx128M "
+                "-cp dapper.jar dapper.client.ClientDriver "
+                "--host localhost:12121");
     }
 
     //

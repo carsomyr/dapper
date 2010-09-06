@@ -107,8 +107,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
                 synchronized (sp) {
 
                     for (RequestFuture<?> future : sp.futures) {
-                        future.setException(new IllegalStateException( //
-                                "The processing thread has exited"));
+                        future.setException(new IllegalStateException("The processing thread has exited"));
                     }
 
                     sp.setStatus(ServerStatus.INVALID);

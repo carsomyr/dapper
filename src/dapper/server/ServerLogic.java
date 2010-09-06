@@ -129,8 +129,8 @@ public class ServerLogic {
 
         this.clientWaitSet = new HashSet<ClientState>();
 
-        // The map of all flows has weak keys in case the outside world loses all strong references to the
-        // flows stored therein.
+        // The map of all flows has weak keys in case the outside world loses all strong references to the flows stored
+        // therein.
         this.allFlowsMap = new WeakHashMap<Flow, FlowProxy>();
 
         // The execute list holds everything currently eligible for execution.
@@ -435,8 +435,7 @@ public class ServerLogic {
 
             } else {
 
-                evt.setException(new IllegalArgumentException( //
-                        "Flow did not originate from this server"));
+                evt.setException(new IllegalArgumentException("Flow did not originate from this server"));
             }
 
         } else {
@@ -566,9 +565,8 @@ public class ServerLogic {
 
             FlowNode flowNode = csh.getFlowNode();
 
-            purgeFlow(flowNode.getLogicalNode().getFlow(), new IllegalStateException( //
-                    String.format("Maximum execution time limit of %d milliseconds exceeded", //
-                            flowNode.getTimeout())));
+            purgeFlow(flowNode.getLogicalNode().getFlow(), new IllegalStateException(String.format("Maximum " //
+                    + "execution time limit of %d milliseconds exceeded", flowNode.getTimeout())));
 
             this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
 
@@ -655,9 +653,8 @@ public class ServerLogic {
         } else {
 
             // Purge the flow if too many retries.
-            purgeFlow(node.getFlow(), new IllegalStateException( //
-                    String.format("Maximum failed execution limit of " //
-                            + "%d retries exceeded", maxRetries)));
+            purgeFlow(node.getFlow(), new IllegalStateException(String.format("Maximum failed execution limit of " //
+                    + "%d retries exceeded", maxRetries)));
         }
 
         // Interrupt self.
