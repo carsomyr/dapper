@@ -28,7 +28,7 @@
 
 package dapper.event;
 
-import static dapper.event.ControlEvent.ControlEventType.DATA_REQUEST;
+import static dapper.event.ControlEvent.ControlEventType.DATA;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -42,7 +42,7 @@ import shared.event.Source;
  * 
  * @author Roy Liu
  */
-public class DataRequestEvent extends ControlEvent {
+public class DataEvent extends ControlEvent {
 
     final String pathname;
     final byte[] data;
@@ -50,8 +50,8 @@ public class DataRequestEvent extends ControlEvent {
     /**
      * Default constructor.
      */
-    public DataRequestEvent(String pathname, byte[] data, Source<ControlEvent, SourceType> source) {
-        super(DATA_REQUEST, source);
+    public DataEvent(String pathname, byte[] data, Source<ControlEvent, SourceType> source) {
+        super(DATA, source);
 
         this.pathname = pathname;
         this.data = data;
@@ -60,8 +60,8 @@ public class DataRequestEvent extends ControlEvent {
     /**
      * Alternate constructor.
      */
-    public DataRequestEvent(Node contentNode, Source<ControlEvent, SourceType> source) {
-        super(DATA_REQUEST, source);
+    public DataEvent(Node contentNode, Source<ControlEvent, SourceType> source) {
+        super(DATA, source);
 
         NodeList nodeList = contentNode.getChildNodes();
 

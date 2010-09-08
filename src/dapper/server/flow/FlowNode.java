@@ -29,13 +29,13 @@
 package dapper.server.flow;
 
 import static dapper.Constants.BLACK;
-import static dapper.Constants.CODELET_RETRIES;
-import static dapper.Constants.CODELET_TIMEOUT;
+import static dapper.Constants.CODELET_TIMEOUT_MILLIS;
 import static dapper.Constants.DARK_BLUE;
 import static dapper.Constants.DARK_GREEN;
 import static dapper.Constants.DARK_ORANGE;
 import static dapper.Constants.DARK_RED;
 import static dapper.Constants.LIGHT_BLUE;
+import static dapper.Constants.MAX_CODELET_RETRIES;
 
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -104,8 +104,8 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
         this.depth = (this.order = -1);
         this.currentRetries = 0;
 
-        this.timeout = CODELET_TIMEOUT;
-        this.retries = CODELET_RETRIES;
+        this.timeout = CODELET_TIMEOUT_MILLIS;
+        this.retries = MAX_CODELET_RETRIES;
         this.domainPattern = null;
         this.name = "";
         this.parameters = EmptyParameters;

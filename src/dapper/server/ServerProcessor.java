@@ -28,10 +28,10 @@
 
 package dapper.server;
 
-import static dapper.Constants.INTERNAL_EVENT_BACKLOG;
-import static dapper.event.ControlEvent.ControlEventType.QUERY_FLOW_PENDING_COUNT;
-import static dapper.event.ControlEvent.ControlEventType.QUERY_PURGE;
-import static dapper.event.ControlEvent.ControlEventType.QUERY_REFRESH;
+import static dapper.Constants.MAX_INTERNAL_QUEUE_SIZE;
+import static dapper.event.ControlEvent.ControlEventType.GET_FLOW_PENDING_COUNT;
+import static dapper.event.ControlEvent.ControlEventType.GET_FLOW_PROXY;
+import static dapper.event.ControlEvent.ControlEventType.PURGE_FLOW;
 import static dapper.event.SourceType.PROCESSOR;
 
 import java.net.InetAddress;
@@ -57,7 +57,7 @@ import dapper.event.AddressEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.ControlEventConnection;
-import dapper.event.DataRequestEvent;
+import dapper.event.DataEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
 import dapper.event.FlowEvent;
@@ -77,7 +77,7 @@ import dapper.server.flow.FlowNode;
  * @apiviz.owns dapper.server.ServerStatus
  * @apiviz.has dapper.server.ServerProcessor.FlowBuildRequest - - - argument
  * @apiviz.has dapper.server.ServerProcessor.FlowProxy - - - argument
- * @apiviz.has dapper.server.ServerProcessor.QueryEvent - - - event
+ * @apiviz.has dapper.server.ServerProcessor.RequestEvent - - - event
  * @author Roy Liu
  */
 public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventType, SourceType> //
@@ -128,7 +128,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
                 ClientStatus.class, ControlEventType.class, //
                 "client");
 
-        this.feb = new FlowEventBroadcaster(INTERNAL_EVENT_BACKLOG, this);
+        this.feb = new FlowEventBroadcaster(MAX_INTERNAL_QUEUE_SIZE, this);
         this.futures = Collections.newSetFromMap(new WeakHashMap<RequestFuture<?>, Boolean>());
 
         this.status = ServerStatus.RUN;
@@ -180,7 +180,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     // INTERNAL LOGIC
 
     @Transition(currentState = "RUN", eventType = "REFRESH", group = "internal")
-    final Handler<ControlEvent> refresh = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> refreshHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -188,73 +188,73 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_INIT", group = "internal")
-    final Handler<ControlEvent> queryInit = new Handler<ControlEvent>() {
+    @Transition(currentState = "RUN", eventType = "CREATE_FLOW", group = "internal")
+    final Handler<ControlEvent> createFlowHandler = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleQueryInit((QueryEvent<FlowBuildRequest, FlowProxy>) evt);
+            ServerProcessor.this.logic.handleCreateFlow((RequestEvent<FlowBuildRequest, FlowProxy>) evt);
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_PURGE", group = "internal")
-    final Handler<ControlEvent> queryPurge = new Handler<ControlEvent>() {
+    @Transition(currentState = "RUN", eventType = "PURGE_FLOW", group = "internal")
+    final Handler<ControlEvent> purgeFlowHandler = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleQueryPurge((QueryEvent<Flow, Object>) evt);
+            ServerProcessor.this.logic.handlePurgeFlow((RequestEvent<Flow, Object>) evt);
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_CLOSE_IDLE", group = "internal")
-    final Handler<ControlEvent> queryCloseIdle = new Handler<ControlEvent>() {
+    @Transition(currentState = "RUN", eventType = "SET_AUTOCLOSE_IDLE", group = "internal")
+    final Handler<ControlEvent> setAutocloseIdleHandler = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleQueryCloseIdle((QueryEvent<Boolean, Object>) evt);
+            ServerProcessor.this.logic.handleSetAutocloseIdle((RequestEvent<Boolean, Object>) evt);
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_REFRESH", group = "internal")
-    final Handler<ControlEvent> queryRefresh = new Handler<ControlEvent>() {
+    @Transition(currentState = "RUN", eventType = "GET_FLOW_PROXY", group = "internal")
+    final Handler<ControlEvent> getFlowProxyHandler = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleQueryRefresh((QueryEvent<Flow, List<FlowProxy>>) evt);
+            ServerProcessor.this.logic.handleGetFlowProxy((RequestEvent<Flow, List<FlowProxy>>) evt);
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_PENDING_COUNT", group = "internal")
-    final Handler<ControlEvent> queryPendingCount = new Handler<ControlEvent>() {
+    @Transition(currentState = "RUN", eventType = "GET_PENDING_COUNT", group = "internal")
+    final Handler<ControlEvent> getPendingCountHandler = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleQueryPendingCount((QueryEvent<Object, Integer>) evt);
+            ServerProcessor.this.logic.handleGetPendingCount((RequestEvent<Object, Integer>) evt);
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_FLOW_PENDING_COUNT", group = "internal")
-    final Handler<ControlEvent> queryFlowPendingCount = new Handler<ControlEvent>() {
+    @Transition(currentState = "RUN", eventType = "GET_FLOW_PENDING_COUNT", group = "internal")
+    final Handler<ControlEvent> getFlowPendingCountHandler = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleQueryFlowPendingCount((QueryEvent<Flow, Integer>) evt);
+            ServerProcessor.this.logic.handleGetFlowPendingCount((RequestEvent<Flow, Integer>) evt);
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_CREATE_USER_QUEUE", group = "internal")
-    final Handler<ControlEvent> queryCreateUserQueue = new Handler<ControlEvent>() {
+    @Transition(currentState = "RUN", eventType = "CREATE_USER_QUEUE", group = "internal")
+    final Handler<ControlEvent> createUserQueueHandler = new Handler<ControlEvent>() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void handle(ControlEvent evt) {
-            ((QueryEvent<Flow, BlockingQueue<FlowEvent<Object, Object>>>) evt) //
+            ((RequestEvent<Flow, BlockingQueue<FlowEvent<Object, Object>>>) evt) //
                     .setOutput(ServerProcessor.this.feb.createUserQueue());
         }
     };
@@ -264,7 +264,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
             @Transition(currentState = "RUN", eventType = "SUSPEND", group = "internal"), //
             @Transition(currentState = "RUN", eventType = "RESUME", group = "internal") //
     })
-    final Handler<ControlEvent> suspendResume = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> suspendResumeHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -283,7 +283,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
             @Transition(currentState = "PREPARE_ACK", eventType = "END_OF_STREAM", group = "client"), //
             @Transition(currentState = "EXECUTE", eventType = "END_OF_STREAM", group = "client") //
     })
-    final Handler<ControlEvent> eos = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> eosHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -300,7 +300,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
             @Transition(currentState = "PREPARE_ACK", eventType = "ERROR", group = "client"), //
             @Transition(currentState = "EXECUTE", eventType = "ERROR", group = "client") //
     })
-    final Handler<ControlEvent> error = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> errorHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -314,7 +314,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
             @Transition(currentState = "PREPARE", eventType = "TIMEOUT", group = "client"), //
             @Transition(currentState = "EXECUTE", eventType = "TIMEOUT", group = "client") //
     })
-    final Handler<ControlEvent> timeout = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> timeoutHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -322,12 +322,12 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    @Transition(currentState = "EXECUTE", eventType = "DATA_REQUEST", group = "client")
-    final Handler<ControlEvent> dataRequest = new Handler<ControlEvent>() {
+    @Transition(currentState = "EXECUTE", eventType = "DATA", group = "client")
+    final Handler<ControlEvent> dataHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleDataRequest((DataRequestEvent) evt);
+            ServerProcessor.this.logic.handleData((DataEvent) evt);
         }
     };
 
@@ -340,7 +340,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
             // Reset a node because some one of its clients failed in execution.
             @Transition(currentState = "EXECUTE", eventType = "RESET", group = "client") //
     })
-    final Handler<ControlEvent> reset = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> resetHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -349,7 +349,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "IDLE", eventType = "ADDRESS", group = "client")
-    final Handler<ControlEvent> idleToWait = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> idleToWaitHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -358,7 +358,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "RESOURCE", eventType = "RESOURCE_ACK", group = "client")
-    final Handler<ControlEvent> resourceToPrepare = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> resourceToPrepareHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -367,7 +367,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "PREPARE", eventType = "PREPARE_ACK", group = "client")
-    final Handler<ControlEvent> prepareToExecute = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> prepareToExecuteHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -376,7 +376,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "EXECUTE", eventType = "EXECUTE_ACK", group = "client")
-    final Handler<ControlEvent> executeToWait = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> executeToWaitHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -385,7 +385,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     /**
-     * Creates and fires a new {@link QueryEvent}.
+     * Creates and fires a new {@link RequestEvent}.
      * 
      * @param <S>
      *            the input type.
@@ -396,9 +396,9 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
      * @throws ExecutionException
      *             when something goes awry.
      */
-    protected <S, T> T query(ControlEventType type, S input) throws InterruptedException, ExecutionException {
+    protected <S, T> T request(ControlEventType type, S input) throws InterruptedException, ExecutionException {
 
-        QueryEvent<S, T> evt = new QueryEvent<S, T>(type, input);
+        RequestEvent<S, T> evt = new RequestEvent<S, T>(type, input);
         onLocal(evt);
 
         return evt.future.get();
@@ -433,8 +433,8 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
      * @param <N>
      *            the {@link FlowNode} attachment type.
      */
-    public <F, N> void broadcast(FlowEventType type, F flowAttachment, N flowNodeAttachment, Throwable error) {
-        this.feb.add(new FlowEvent<F, N>(type, flowAttachment, flowNodeAttachment, error));
+    public <F, N> void broadcast(FlowEventType type, F flowAttachment, N flowNodeAttachment, Throwable exception) {
+        this.feb.add(new FlowEvent<F, N>(type, flowAttachment, flowNodeAttachment, exception));
     }
 
     /**
@@ -446,7 +446,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
      * @param <T>
      *            the output type.
      */
-    protected class QueryEvent<S, T> extends ControlEvent {
+    protected class RequestEvent<S, T> extends ControlEvent {
 
         final S input;
         final RequestFuture<T> future;
@@ -454,7 +454,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         /**
          * Default constructor.
          */
-        protected QueryEvent(ControlEventType type, S input) {
+        protected RequestEvent(ControlEventType type, S input) {
             super(type, ServerProcessor.this);
 
             this.input = input;
@@ -554,7 +554,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
          *             when something goes awry.
          */
         public void purge() throws InterruptedException, ExecutionException {
-            query(QUERY_PURGE, this.originalFlow);
+            request(PURGE_FLOW, this.originalFlow);
         }
 
         /**
@@ -566,7 +566,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
          *             when something goes awry.
          */
         public void refresh() throws InterruptedException, ExecutionException {
-            query(QUERY_REFRESH, this.originalFlow);
+            request(GET_FLOW_PROXY, this.originalFlow);
         }
 
         /**
@@ -578,7 +578,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
          *             when something goes awry.
          */
         public int getPendingCount() throws InterruptedException, ExecutionException {
-            return (Integer) query(QUERY_FLOW_PENDING_COUNT, (Object) this.originalFlow);
+            return (Integer) request(GET_FLOW_PENDING_COUNT, (Object) this.originalFlow);
         }
 
         /**
@@ -630,10 +630,10 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         /**
          * On {@link Flow} error.
          */
-        protected void onFlowError(Object flowAttachment, Throwable error) {
+        protected void onFlowError(Object flowAttachment, Throwable exception) {
 
             if ((this.flowFlags & FlowEvent.F_FLOW) != 0) {
-                broadcast(FlowEventType.FLOW_ERROR, flowAttachment, (Object) null, error);
+                broadcast(FlowEventType.FLOW_ERROR, flowAttachment, (Object) null, exception);
             }
         }
 
@@ -660,10 +660,10 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         /**
          * On {@link FlowNode} error.
          */
-        protected void onFlowNodeError(Object flowAttachment, Object flowNodeAttachment, Throwable error) {
+        protected void onFlowNodeError(Object flowAttachment, Object flowNodeAttachment, Throwable exception) {
 
             if ((this.flowFlags & FlowEvent.F_FLOW_NODE) != 0) {
-                broadcast(FlowEventType.FLOW_NODE_ERROR, flowAttachment, flowNodeAttachment, error);
+                broadcast(FlowEventType.FLOW_NODE_ERROR, flowAttachment, flowNodeAttachment, exception);
             }
         }
     }

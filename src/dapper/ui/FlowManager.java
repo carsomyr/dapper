@@ -28,7 +28,7 @@
 
 package dapper.ui;
 
-import static dapper.Constants.PORT;
+import static dapper.Constants.DEFAULT_SERVER_PORT;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -273,17 +273,17 @@ public class FlowManager extends JFrame {
         });
         optionsMenu.add(removeFinishedItem);
 
-        JCheckBoxMenuItem autoCloseIdleItem = new JCheckBoxMenuItem("Close Idle Clients");
-        autoCloseIdleItem.setSelected(false);
-        autoCloseIdleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK));
-        autoCloseIdleItem.addItemListener(new ItemListener() {
+        JCheckBoxMenuItem autocloseIdleItem = new JCheckBoxMenuItem("Close Idle Clients");
+        autocloseIdleItem.setSelected(false);
+        autocloseIdleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK));
+        autocloseIdleItem.addItemListener(new ItemListener() {
 
             @Override
             public void itemStateChanged(ItemEvent e) {
-                FlowManager.this.flowPane.setAutoCloseIdle(e.getStateChange() == ItemEvent.SELECTED);
+                FlowManager.this.flowPane.setAutocloseIdle(e.getStateChange() == ItemEvent.SELECTED);
             }
         });
-        optionsMenu.add(autoCloseIdleItem);
+        optionsMenu.add(autocloseIdleItem);
 
         JCheckBoxMenuItem logFlowEventsItem = new JCheckBoxMenuItem("Log Flow Events");
         logFlowEventsItem.setSelected(false);
@@ -342,14 +342,14 @@ public class FlowManager extends JFrame {
 
         String[] archiveValues;
 
-        boolean autoCloseIdle;
+        boolean autocloseIdle;
 
         try {
 
             CommandLine cmdLine = CLI.createCommandLine(FlowManager.class, args);
 
             String portValue = cmdLine.getOptionValue("p");
-            port = (portValue != null) ? Integer.parseInt(portValue) : PORT;
+            port = (portValue != null) ? Integer.parseInt(portValue) : DEFAULT_SERVER_PORT;
 
             archiveValues = cmdLine.getOptionValues("a");
 
@@ -358,7 +358,7 @@ public class FlowManager extends JFrame {
                         + "followed by the fully qualified target class name");
             }
 
-            autoCloseIdle = cmdLine.hasOption("c");
+            autocloseIdle = cmdLine.hasOption("c");
 
         } catch (ParseException e) {
 
@@ -378,7 +378,7 @@ public class FlowManager extends JFrame {
                         Arrays.copyOfRange(archiveValues, 2, archiveValues.length, String[].class));
             }
 
-            fm.getFlowPane().setAutoCloseIdle(autoCloseIdle);
+            fm.getFlowPane().setAutocloseIdle(autocloseIdle);
 
         } catch (Exception e) {
 

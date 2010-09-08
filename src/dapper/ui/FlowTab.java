@@ -55,21 +55,21 @@ public class FlowTab extends JLabel implements Closeable {
     /**
      * An array of operating system dependent arguments to execute Dot with PNG export.
      */
-    final protected static String[] DotExecArgs_PNG;
+    final protected static String[] DotExecArgsPNG;
 
     /**
      * An array of operating system dependent arguments to execute Dot with SVG export.
      */
-    final protected static String[] DotExecArgs_SVG;
+    final protected static String[] DotExecArgsSVG;
 
     static {
 
         boolean isWindows = System.getProperty("os.name").contains("Windows");
 
-        DotExecArgs_PNG = isWindows ? new String[] { "cmd", "/C", "dot", "-Tpng" } //
+        DotExecArgsPNG = isWindows ? new String[] { "cmd", "/C", "dot", "-Tpng" } //
                 : new String[] { "dot", "-Tpng" };
 
-        DotExecArgs_SVG = isWindows ? new String[] { "cmd", "/C", "dot", "-Tsvg" } //
+        DotExecArgsSVG = isWindows ? new String[] { "cmd", "/C", "dot", "-Tsvg" } //
                 : new String[] { "dot", "-Tsvg" };
     }
 
@@ -104,7 +104,7 @@ public class FlowTab extends JLabel implements Closeable {
 
             Control.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
                     out, NullOutputStream, //
-                    DotExecArgs_PNG);
+                    DotExecArgsPNG);
 
             ((ImageIcon) getIcon()).setImage(ImageIO.read(new ByteArrayInputStream(out.toByteArray())));
 
@@ -127,7 +127,7 @@ public class FlowTab extends JLabel implements Closeable {
 
             Control.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
                     out, NullOutputStream, //
-                    DotExecArgs_SVG);
+                    DotExecArgsSVG);
 
             Control.transfer(new ByteArrayInputStream(out.toByteArray()), f);
 

@@ -58,7 +58,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         INIT {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
                 return new ControlEvent(this, source);
             }
         }, //
@@ -69,8 +69,8 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         ADDRESS {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
-                return new AddressEvent(rootNode, source);
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
+                return new AddressEvent(contentNode, source);
             }
         }, //
 
@@ -80,7 +80,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         REFRESH {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
                 throw new UnsupportedOperationException();
             }
         }, //
@@ -91,8 +91,8 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         RESOURCE {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
-                return new ResourceEvent(rootNode, source);
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
+                return new ResourceEvent(contentNode, source);
             }
         }, //
 
@@ -102,7 +102,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         RESOURCE_ACK {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
                 return new ControlEvent(this, source);
             }
         }, //
@@ -113,7 +113,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         PREPARE {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
                 return new ControlEvent(this, source);
             }
         }, //
@@ -124,7 +124,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         PREPARE_ACK {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
                 return new ControlEvent(this, source);
             }
         }, //
@@ -135,7 +135,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         EXECUTE {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
                 return new ControlEvent(this, source);
             }
         }, //
@@ -146,19 +146,19 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         EXECUTE_ACK {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
-                return new ExecuteAckEvent(rootNode, source);
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
+                return new ExecuteAckEvent(contentNode, source);
             }
         }, //
 
         /**
          * Indicates a message from the client requesting data or a message from the server conveying data.
          */
-        DATA_REQUEST {
+        DATA {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
-                return new DataRequestEvent(rootNode, source);
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
+                return new DataEvent(contentNode, source);
             }
         }, //
 
@@ -168,8 +168,8 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         RESET {
 
             @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
-                return new ResetEvent(rootNode, source);
+            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
+                return new ResetEvent(contentNode, source);
             }
         }, //
 
@@ -201,39 +201,39 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         /**
          * Indicates a request to create a new {@link Flow}.
          */
-        QUERY_INIT, //
+        CREATE_FLOW, //
 
         /**
          * Indicates a request to purge an active {@link Flow}.
          */
-        QUERY_PURGE, //
+        PURGE_FLOW, //
 
         /**
          * Indicates a request to set the idle client autoclose option.
          */
-        QUERY_CLOSE_IDLE, //
+        SET_AUTOCLOSE_IDLE, //
 
         /**
          * Indicates a request to get the {@link FlowProxy} associated with an individual {@link Flow} or all
          * {@link FlowProxy}s associated with all {@link Flow}s.
          */
-        QUERY_REFRESH, //
+        GET_FLOW_PROXY, //
 
         /**
          * Indicates a request to get the number of additional clients required to saturate pending computations.
          */
-        QUERY_PENDING_COUNT, //
+        GET_PENDING_COUNT, //
 
         /**
          * Indicates a request to get the number of additional clients required to saturate pending computations on the
          * given {@link Flow}.
          */
-        QUERY_FLOW_PENDING_COUNT, //
+        GET_FLOW_PENDING_COUNT, //
 
         /**
          * Indicates a request to create a new user-facing {@link FlowEvent} queue.
          */
-        QUERY_CREATE_USER_QUEUE, //
+        CREATE_USER_QUEUE, //
 
         /**
          * Indicates a request to suspend server activities.
@@ -248,7 +248,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         /**
          * Parses a {@link ControlEvent} from the given DOM {@link Node}.
          */
-        protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
+        protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
             throw new UnsupportedOperationException("Parse method not defined");
         }
     }

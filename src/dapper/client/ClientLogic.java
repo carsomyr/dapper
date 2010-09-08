@@ -45,7 +45,7 @@ import dapper.AsynchronousBase;
 import dapper.event.AddressEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEventConnection;
-import dapper.event.DataRequestEvent;
+import dapper.event.DataEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
 import dapper.event.ResetEvent;
@@ -197,7 +197,7 @@ public class ClientLogic {
     /**
      * Handles a successful execution notification and forwards it to the server.
      */
-    protected void handleExecuteSuccess(ExecuteAckEvent evt) {
+    protected void handleSuccessfulExecution(ExecuteAckEvent evt) {
 
         if (evt.get() != this.job) {
             return;
@@ -219,8 +219,8 @@ public class ClientLogic {
     /**
      * Handles a connection end-of-stream notification.
      */
-    protected void handleEOS(ControlEventConnection connection) {
-        handleError(new ErrorEvent(new IOException("End-of-stream encountered"), connection));
+    protected void handleEOS(ControlEventConnection server) {
+        handleError(new ErrorEvent(new IOException("End-of-stream encountered"), server));
     }
 
     /**
@@ -289,7 +289,7 @@ public class ClientLogic {
     /**
      * Handles a message from the server conveying data.
      */
-    protected void handleDataRequest(DataRequestEvent evt) {
+    protected void handleData(DataEvent evt) {
 
         Source<ControlEvent, SourceType> source = evt.getSource();
 

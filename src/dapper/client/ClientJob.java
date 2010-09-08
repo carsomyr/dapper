@@ -28,7 +28,7 @@
 
 package dapper.client;
 
-import static dapper.Constants.TIMEOUT;
+import static dapper.Constants.REQUEST_TIMEOUT_MILLIS;
 import static dapper.codelet.Resource.ResourceType.OUTPUT_HANDLE;
 
 import java.io.ByteArrayInputStream;
@@ -64,7 +64,7 @@ import dapper.codelet.OutputHandleResource;
 import dapper.codelet.Resource;
 import dapper.codelet.StreamResource;
 import dapper.event.ControlEvent;
-import dapper.event.DataRequestEvent;
+import dapper.event.DataEvent;
 import dapper.event.ExecuteAckEvent;
 import dapper.event.ResetEvent;
 import dapper.event.ResourceEvent;
@@ -315,11 +315,11 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
             this.pending.put(pathname, rf);
         }
 
-        this.callback.onLocal(new DataRequestEvent(pathname, new byte[] {}, ClientJob.this.callback));
+        this.callback.onLocal(new DataEvent(pathname, new byte[] {}, ClientJob.this.callback));
 
         try {
 
-            return rf.get(TIMEOUT, TimeUnit.MILLISECONDS);
+            return rf.get(REQUEST_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
         } catch (Exception e) {
 

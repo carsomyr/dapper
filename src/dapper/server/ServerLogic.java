@@ -28,7 +28,7 @@
 
 package dapper.server;
 
-import static dapper.Constants.CLIENT_TIMEOUT;
+import static dapper.Constants.CLIENT_TIMEOUT_MILLIS;
 import static dapper.event.ControlEvent.ControlEventType.EXECUTE;
 import static dapper.event.ControlEvent.ControlEventType.INIT;
 import static dapper.event.ControlEvent.ControlEventType.PREPARE;
@@ -61,14 +61,14 @@ import dapper.event.AddressEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.ControlEventConnection;
-import dapper.event.DataRequestEvent;
+import dapper.event.DataEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
 import dapper.event.ResetEvent;
 import dapper.event.TimeoutEvent;
 import dapper.server.ServerProcessor.FlowBuildRequest;
 import dapper.server.ServerProcessor.FlowProxy;
-import dapper.server.ServerProcessor.QueryEvent;
+import dapper.server.ServerProcessor.RequestEvent;
 import dapper.server.flow.CountDown;
 import dapper.server.flow.EmbeddingCodelet;
 import dapper.server.flow.Flow;
@@ -116,8 +116,8 @@ public class ServerLogic {
     final List<LogicalNode> executeList;
     final MatchingAlgorithm matching;
 
-    boolean autoClose;
-    boolean suspend;
+    boolean autocloseIdle;
+    boolean suspended;
 
     /**
      * Default constructor.
@@ -138,8 +138,8 @@ public class ServerLogic {
 
         this.matching = new MaximumFlowMatching();
 
-        this.autoClose = false;
-        this.suspend = false;
+        this.autocloseIdle = false;
+        this.suspended = false;
     }
 
     // HELPER METHODS
@@ -295,7 +295,7 @@ public class ServerLogic {
     protected void handleRefresh() {
 
         // Check if a suspension is in effect.
-        if (this.suspend) {
+        if (this.suspended) {
             return;
         }
 
@@ -352,7 +352,7 @@ public class ServerLogic {
                 // Send over resource descriptors.
                 csh.getConnection().onRemote(flowNode.createResourceEvent());
                 csh.setStatus(ClientStatus.RESOURCE);
-                csh.timeout(CLIENT_TIMEOUT);
+                csh.timeout(CLIENT_TIMEOUT_MILLIS);
             }
 
             // Start a count down for waiting on all clients to acknowledge.
@@ -365,7 +365,7 @@ public class ServerLogic {
         }
 
         // Automatically close any clients left over.
-        if (this.autoClose) {
+        if (this.autocloseIdle) {
             closeIdleClients();
         }
     }
@@ -373,7 +373,7 @@ public class ServerLogic {
     /**
      * Handles a request to create a new {@link Flow}.
      */
-    protected void handleQueryInit(QueryEvent<FlowBuildRequest, FlowProxy> evt) {
+    protected void handleCreateFlow(RequestEvent<FlowBuildRequest, FlowProxy> evt) {
 
         FlowBuildRequest fbr = evt.getInput();
 
@@ -417,7 +417,7 @@ public class ServerLogic {
     /**
      * Handles a request to purge an active {@link Flow}.
      */
-    protected void handleQueryPurge(QueryEvent<Flow, Object> evt) {
+    protected void handlePurgeFlow(RequestEvent<Flow, Object> evt) {
 
         Flow flow = evt.getInput();
 
@@ -435,17 +435,17 @@ public class ServerLogic {
     /**
      * Handles a request to set the idle client autoclose option.
      */
-    protected void handleQueryCloseIdle(QueryEvent<Boolean, Object> evt) {
+    protected void handleSetAutocloseIdle(RequestEvent<Boolean, Object> evt) {
 
-        Boolean value = evt.getInput();
+        Boolean autocloseIdle = evt.getInput();
 
-        if (value == null) {
+        if (autocloseIdle == null) {
 
             closeIdleClients();
 
         } else {
 
-            this.autoClose = value.booleanValue();
+            this.autocloseIdle = autocloseIdle.booleanValue();
         }
 
         // Notify the invoker of completion.
@@ -459,7 +459,7 @@ public class ServerLogic {
      * Handles a request to get the {@link FlowProxy} associated with an individual {@link Flow} or all
      * {@link FlowProxy}s associated with all {@link Flow}s.
      */
-    protected void handleQueryRefresh(QueryEvent<Flow, List<FlowProxy>> evt) {
+    protected void handleGetFlowProxy(RequestEvent<Flow, List<FlowProxy>> evt) {
 
         Flow f = evt.getInput();
 
@@ -503,7 +503,7 @@ public class ServerLogic {
     /**
      * Handles a request to get the number of additional clients required to saturate pending computations.
      */
-    protected void handleQueryPendingCount(QueryEvent<Object, Integer> evt) {
+    protected void handleGetPendingCount(RequestEvent<Object, Integer> evt) {
         evt.setOutput(getPendingCount());
     }
 
@@ -511,7 +511,7 @@ public class ServerLogic {
      * Handles a request to get the number of additional clients required to saturate pending computations on the given
      * {@link Flow}.
      */
-    protected void handleQueryFlowPendingCount(QueryEvent<Flow, Integer> evt) {
+    protected void handleGetFlowPendingCount(RequestEvent<Flow, Integer> evt) {
         evt.setOutput(getPendingCount(evt.getInput()));
     }
 
@@ -523,12 +523,12 @@ public class ServerLogic {
         switch (evt.getType()) {
 
         case SUSPEND:
-            this.suspend = true;
+            this.suspended = true;
             break;
 
         case RESUME:
 
-            this.suspend = false;
+            this.suspended = false;
             this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
 
             break;
@@ -554,9 +554,9 @@ public class ServerLogic {
 
         ClientState csh = (ClientState) evt.getSource().getHandler();
 
-        Throwable error = evt.getError();
+        Throwable exception = evt.getError();
 
-        Server.getLog().info(String.format("Received error from %s: %s.", evt.getSource(), error.getMessage()));
+        Server.getLog().info(String.format("Received error from %s: %s.", evt.getSource(), exception.getMessage()));
 
         FlowNode flowNode = csh.getFlowNode();
 
@@ -566,7 +566,7 @@ public class ServerLogic {
         if (flowNode != null) {
 
             FlowProxy fp = this.allFlowsMap.get(flowNode.getLogicalNode().getFlow());
-            fp.onFlowNodeError(fp.getAttachment(), flowNode.getAttachment(), error);
+            fp.onFlowNodeError(fp.getAttachment(), flowNode.getAttachment(), exception);
 
             // Unlink the client from its node BEFORE resetting its equivalence class peers.
             csh.setFlowNode(null);
@@ -622,7 +622,7 @@ public class ServerLogic {
     /**
      * Handles a message from the client requesting data.
      */
-    protected void handleDataRequest(DataRequestEvent evt) {
+    protected void handleData(DataEvent evt) {
 
         ClientState csh = (ClientState) evt.getSource().getHandler();
 
@@ -658,7 +658,7 @@ public class ServerLogic {
                 throw new RuntimeException("Invalid request syntax");
             }
 
-            csh.getConnection().onRemote(new DataRequestEvent(m.group(0), data, null));
+            csh.getConnection().onRemote(new DataEvent(m.group(0), data, null));
 
         } catch (Exception e) {
 
@@ -674,9 +674,9 @@ public class ServerLogic {
 
         ClientState csh = (ClientState) evt.getSource().getHandler();
 
-        Throwable error = evt.getException();
+        Throwable exception = evt.getException();
 
-        Server.getLog().info(String.format("Received error from client %s.", csh.getAddress()), error);
+        Server.getLog().info(String.format("Received error from client %s.", csh.getAddress()), exception);
 
         FlowNode flowNode = csh.getFlowNode();
 
@@ -687,7 +687,7 @@ public class ServerLogic {
         assertTrue(node != null && node.getFlowNodes().contains(flowNode));
 
         FlowProxy fp = this.allFlowsMap.get(flowNode.getLogicalNode().getFlow());
-        fp.onFlowNodeError(fp.getAttachment(), flowNode.getAttachment(), error);
+        fp.onFlowNodeError(fp.getAttachment(), flowNode.getAttachment(), exception);
 
         int maxRetries = flowNode.getRetries();
 
@@ -757,7 +757,7 @@ public class ServerLogic {
         transitionIfReady(csh, //
                 ClientStatus.RESOURCE_ACK, ClientStatus.PREPARE, //
                 LogicalNodeStatus.RESOURCE, LogicalNodeStatus.PREPARE, //
-                PREPARE, CLIENT_TIMEOUT);
+                PREPARE, CLIENT_TIMEOUT_MILLIS);
     }
 
     /**

@@ -41,18 +41,18 @@ def main():
 
     subprocess.call(["make", "jars"])
 
-    javacmd = ["java", "-ea", "-Xmx128M", "-cp", "dapper.jar"]
+    java_cmd = ["java", "-ea", "-Xmx128M", "-cp", "dapper.jar"]
 
     processes = []
-    processes.append(Popen(javacmd + ["dapper.ui.FlowManagerDriver", "--port", "12121",
-                                      "--archive", "dapper-ex.jar", "ex.SimpleTest"]))
+    processes.append(Popen(java_cmd + ["dapper.ui.FlowManagerDriver", "--port", "12121",
+                                       "--archive", "dapper-ex.jar", "ex.SimpleTest"]))
 
     time.sleep(2)
 
     nclients = 4
 
     for i in range(nclients):
-        processes.append(Popen(javacmd + ["dapper.client.ClientDriver", "--host", "localhost:12121"]))
+        processes.append(Popen(java_cmd + ["dapper.client.ClientDriver", "--host", "localhost:12121"]))
 
     while sys.stdin.read(1) != "\n":
         pass

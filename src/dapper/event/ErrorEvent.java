@@ -38,21 +38,21 @@ import shared.event.Source;
  */
 public class ErrorEvent extends ControlEvent {
 
-    final Throwable error;
+    final Throwable exception;
 
     /**
      * Default constructor.
      */
-    public ErrorEvent(Throwable error, Source<ControlEvent, SourceType> source) {
+    public ErrorEvent(Throwable exception, Source<ControlEvent, SourceType> source) {
         super(ERROR, source);
 
-        this.error = error;
+        this.exception = exception;
     }
 
     /**
      * Gets the cause of the error.
      */
     public Throwable getError() {
-        return this.error;
+        return this.exception;
     }
 }

@@ -43,32 +43,32 @@ public class Constants {
     /**
      * The default server listening port.
      */
-    final public static int PORT = 10101;
+    final public static int DEFAULT_SERVER_PORT = 10101;
 
     /**
      * The default backlog size of listening sockets.
      */
-    final public static int BACKLOG = 128;
+    final public static int DEFAULT_BACKLOG_SIZE = 128;
 
     /**
      * The maximum allowable control message size.
      */
-    final public static int MAXIMUM_CONTROL_MESSAGE_SIZE = 1 << 26;
+    final public static int MAX_CONTROL_MESSAGE_SIZE = 1 << 26;
 
     /**
      * The default transfer buffer size.
      */
-    final public static int BUFFER_SIZE = 1 << 20;
+    final public static int DEFAULT_BUFFER_SIZE = 1 << 20;
 
     /**
      * The request timeout in milliseconds.
      */
-    final public static long TIMEOUT = 10000;
+    final public static long REQUEST_TIMEOUT_MILLIS = 10000;
 
     /**
      * The client timeout in milliseconds.
      */
-    final public static long CLIENT_TIMEOUT = 60000;
+    final public static long CLIENT_TIMEOUT_MILLIS = 60000;
 
     /**
      * The maximum allowable number of pending accepts.
@@ -78,12 +78,12 @@ public class Constants {
     /**
      * The {@link Codelet} execution time limit in milliseconds.
      */
-    final public static long CODELET_TIMEOUT = 86400000;
+    final public static long CODELET_TIMEOUT_MILLIS = 86400000;
 
     /**
      * The maximum allowable number of {@link Codelet} execution retries.
      */
-    final public static int CODELET_RETRIES = 8;
+    final public static int MAX_CODELET_RETRIES = 8;
 
     /**
      * A domain {@link Pattern} that exactly matches the string "local".
@@ -98,12 +98,12 @@ public class Constants {
     /**
      * The {@link Timer#purge()} interval in milliseconds.
      */
-    final public static long TIMER_PURGE_INTERVAL = 120000;
+    final public static long TIMER_PURGE_INTERVAL_MILLIS = 120000;
 
     /**
      * The maximum allowable size of the server's internal event queues.
      */
-    final public static int INTERNAL_EVENT_BACKLOG = 128;
+    final public static int MAX_INTERNAL_QUEUE_SIZE = 128;
 
     // Declare some colors.
 

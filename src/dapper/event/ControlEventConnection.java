@@ -28,8 +28,8 @@
 
 package dapper.event;
 
-import static dapper.Constants.BUFFER_SIZE;
-import static dapper.Constants.MAXIMUM_CONTROL_MESSAGE_SIZE;
+import static dapper.Constants.DEFAULT_BUFFER_SIZE;
+import static dapper.Constants.MAX_CONTROL_MESSAGE_SIZE;
 import static dapper.event.ControlEvent.ControlEventType.END_OF_STREAM;
 import static dapper.event.SourceType.CONNECTION;
 
@@ -57,7 +57,7 @@ public class ControlEventConnection extends XMLConnection<ControlEventConnection
      *            the delegate to which events will be forwarded.
      */
     public ControlEventConnection(String name, ConnectionManager manager, SourceLocal<ControlEvent> delegate) {
-        super(name, CONNECTION, BUFFER_SIZE, MAXIMUM_CONTROL_MESSAGE_SIZE, manager);
+        super(name, CONNECTION, DEFAULT_BUFFER_SIZE, MAX_CONTROL_MESSAGE_SIZE, manager);
 
         this.delegate = delegate;
     }

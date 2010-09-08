@@ -44,7 +44,7 @@ import dapper.AsynchronousBase;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.ControlEventConnection;
-import dapper.event.DataRequestEvent;
+import dapper.event.DataEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
 import dapper.event.ResetEvent;
@@ -130,7 +130,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     // INTERNAL LOGIC
 
     @Transition(currentState = "PREPARE", eventType = "REFRESH", group = "internal")
-    final Handler<ControlEvent> refresh = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> refreshHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -151,7 +151,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
             // Execution failure by another client.
             @Transition(currentState = "EXECUTE", eventType = "RESET", group = "external") //
     })
-    final Handler<ControlEvent> reset = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> resetHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -160,7 +160,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "IDLE", eventType = "INIT", group = "internal")
-    final Handler<ControlEvent> idleToConnect = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> idleToConnectHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -178,7 +178,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
             @Transition(currentState = "PREPARE", eventType = "STREAM_READY", group = "internal"), //
             @Transition(currentState = "EXECUTE", eventType = "STREAM_READY", group = "internal") //
     })
-    final Handler<ControlEvent> streamReady = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> streamReadyHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -187,16 +187,16 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "EXECUTE", eventType = "EXECUTE_ACK", group = "internal")
-    final Handler<ControlEvent> executeSuccess = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> successfulExecutionHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
-            ClientProcessor.this.logic.handleExecuteSuccess((ExecuteAckEvent) evt);
+            ClientProcessor.this.logic.handleSuccessfulExecution((ExecuteAckEvent) evt);
         }
     };
 
     @Transition(currentState = "SHUTDOWN", eventType = "SHUTDOWN", group = "internal")
-    final Handler<ControlEvent> shutdown = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> shutdownHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -214,7 +214,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
             @Transition(currentState = "PREPARE", eventType = "ERROR", group = "external"), //
             @Transition(currentState = "EXECUTE", eventType = "ERROR", group = "external") //
     })
-    final Handler<ControlEvent> error = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> errorHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -230,7 +230,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
             @Transition(currentState = "PREPARE", eventType = "END_OF_STREAM", group = "external"), //
             @Transition(currentState = "EXECUTE", eventType = "END_OF_STREAM", group = "external") //
     })
-    final Handler<ControlEvent> eos = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> eosHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -239,7 +239,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "CONNECT", eventType = "INIT", group = "external")
-    final Handler<ControlEvent> connectToWait = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> connectToWaitHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -248,7 +248,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "WAIT", eventType = "RESOURCE", group = "external")
-    final Handler<ControlEvent> waitToResource = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> waitToResourceHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -257,7 +257,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "RESOURCE", eventType = "PREPARE", group = "external")
-    final Handler<ControlEvent> resourceToPrepare = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> resourceToPrepareHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -266,7 +266,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     };
 
     @Transition(currentState = "PREPARE", eventType = "EXECUTE", group = "external")
-    final Handler<ControlEvent> prepareToExecute = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> prepareToExecuteHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -277,14 +277,14 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Transitions(transitions = {
             //
             // Request for class data from the server.
-            @Transition(currentState = "EXECUTE", eventType = "DATA_REQUEST", group = "internal"), //
-            @Transition(currentState = "EXECUTE", eventType = "DATA_REQUEST", group = "external") //
+            @Transition(currentState = "EXECUTE", eventType = "DATA", group = "internal"), //
+            @Transition(currentState = "EXECUTE", eventType = "DATA", group = "external") //
     })
-    final Handler<ControlEvent> dataRequest = new Handler<ControlEvent>() {
+    final Handler<ControlEvent> dataHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
-            ClientProcessor.this.logic.handleDataRequest((DataRequestEvent) evt);
+            ClientProcessor.this.logic.handleData((DataEvent) evt);
         }
     };
 }

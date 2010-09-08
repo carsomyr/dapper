@@ -28,7 +28,7 @@
 
 package dapper.client;
 
-import static dapper.Constants.TIMEOUT;
+import static dapper.Constants.REQUEST_TIMEOUT_MILLIS;
 import static dapper.client.Client.HEADER_LENGTH;
 import static shared.util.Control.checkTrue;
 
@@ -91,7 +91,7 @@ public class ClientConnector extends CoreThread implements Closeable {
     protected void runUnchecked() throws Exception {
 
         // Before proceeding, schedule an interrupt.
-        this.base.scheduleInterrupt(this, TIMEOUT);
+        this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
 
         Map<String, Future<InetSocketAddress>> futureMap = new HashMap<String, Future<InetSocketAddress>>();
 

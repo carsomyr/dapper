@@ -28,10 +28,10 @@
 
 package dapper.client;
 
-import static dapper.Constants.BACKLOG;
+import static dapper.Constants.DEFAULT_BACKLOG_SIZE;
+import static dapper.Constants.DEFAULT_SERVER_PORT;
 import static dapper.Constants.MAX_PENDING_ACCEPTS;
-import static dapper.Constants.PORT;
-import static dapper.Constants.TIMEOUT;
+import static dapper.Constants.REQUEST_TIMEOUT_MILLIS;
 import static dapper.event.ControlEvent.ControlEventType.INIT;
 
 import java.io.Closeable;
@@ -114,7 +114,7 @@ public class Client extends CoreThread implements Closeable {
         try {
 
             this.ssChannel = ServerSocketChannel.open();
-            this.ssChannel.socket().bind(new InetSocketAddress(0), BACKLOG);
+            this.ssChannel.socket().bind(new InetSocketAddress(0), DEFAULT_BACKLOG_SIZE);
 
         } catch (IOException e) {
 
@@ -187,7 +187,7 @@ public class Client extends CoreThread implements Closeable {
                 protected void runUnchecked() throws IOException {
 
                     // Before proceeding, schedule an interrupt.
-                    Client.this.base.scheduleInterrupt(this, TIMEOUT);
+                    Client.this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
 
                     getLog().debug(String.format("Accepting: %s.", //
                             smc.getRemoteAddress()));
@@ -301,7 +301,7 @@ public class Client extends CoreThread implements Closeable {
         switch (split.length) {
 
         case 1:
-            return new InetSocketAddress(split[0], PORT);
+            return new InetSocketAddress(split[0], DEFAULT_SERVER_PORT);
 
         case 2:
             return new InetSocketAddress(split[0], Integer.parseInt(split[1]));

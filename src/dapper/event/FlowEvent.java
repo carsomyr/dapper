@@ -104,17 +104,17 @@ public class FlowEvent<F, N> implements Event<FlowEvent<F, N>, FlowEvent.FlowEve
     final FlowEventType type;
     final F flowAttachment;
     final N flowNodeAttachment;
-    final Throwable error;
+    final Throwable exception;
 
     /**
      * Default constructor.
      */
-    public FlowEvent(FlowEventType type, F flowAttachment, N flowNodeAttachment, Throwable error) {
+    public FlowEvent(FlowEventType type, F flowAttachment, N flowNodeAttachment, Throwable exception) {
 
         this.type = type;
         this.flowAttachment = flowAttachment;
         this.flowNodeAttachment = flowNodeAttachment;
-        this.error = error;
+        this.exception = exception;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class FlowEvent<F, N> implements Event<FlowEvent<F, N>, FlowEvent.FlowEve
     public String toString() {
         return String.format("%s[%s, %s, %s, %s]", //
                 FlowEvent.class.getSimpleName(), this.type, this.flowAttachment, this.flowNodeAttachment, //
-                (this.error != null) ? this.error.getClass().getSimpleName() : null);
+                (this.exception != null) ? this.exception.getClass().getSimpleName() : null);
     }
 
     /**
@@ -155,6 +155,6 @@ public class FlowEvent<F, N> implements Event<FlowEvent<F, N>, FlowEvent.FlowEve
      * Gets the error that just occurred.
      */
     public Throwable getError() {
-        return this.error;
+        return this.exception;
     }
 }

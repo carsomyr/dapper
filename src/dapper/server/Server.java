@@ -28,13 +28,13 @@
 
 package dapper.server;
 
-import static dapper.Constants.BACKLOG;
-import static dapper.Constants.PORT;
-import static dapper.event.ControlEvent.ControlEventType.QUERY_CLOSE_IDLE;
-import static dapper.event.ControlEvent.ControlEventType.QUERY_CREATE_USER_QUEUE;
-import static dapper.event.ControlEvent.ControlEventType.QUERY_INIT;
-import static dapper.event.ControlEvent.ControlEventType.QUERY_PENDING_COUNT;
-import static dapper.event.ControlEvent.ControlEventType.QUERY_REFRESH;
+import static dapper.Constants.DEFAULT_BACKLOG_SIZE;
+import static dapper.Constants.DEFAULT_SERVER_PORT;
+import static dapper.event.ControlEvent.ControlEventType.CREATE_FLOW;
+import static dapper.event.ControlEvent.ControlEventType.CREATE_USER_QUEUE;
+import static dapper.event.ControlEvent.ControlEventType.GET_FLOW_PROXY;
+import static dapper.event.ControlEvent.ControlEventType.GET_PENDING_COUNT;
+import static dapper.event.ControlEvent.ControlEventType.SET_AUTOCLOSE_IDLE;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -105,7 +105,7 @@ public class Server extends CoreThread implements Closeable {
         super("Server");
 
         this.ssChannel = ServerSocketChannel.open();
-        this.ssChannel.socket().bind(new InetSocketAddress(port), BACKLOG);
+        this.ssChannel.socket().bind(new InetSocketAddress(port), DEFAULT_BACKLOG_SIZE);
 
         this.base = new AsynchronousBase();
 
@@ -126,7 +126,7 @@ public class Server extends CoreThread implements Closeable {
     }
 
     /**
-     * Alternate constructor. Listens on the default port value {@link Constants#PORT}.
+     * Alternate constructor. Listens on the default port value {@link Constants#DEFAULT_SERVER_PORT}.
      * 
      * @throws UnknownHostException
      *             when the server's {@link InetAddress} could not be inferred.
@@ -134,7 +134,7 @@ public class Server extends CoreThread implements Closeable {
      *             when the underlying {@link ServerSocketChannel} could not be bound.
      */
     public Server() throws UnknownHostException, IOException {
-        this(PORT);
+        this(DEFAULT_SERVER_PORT);
     }
 
     /**
@@ -160,7 +160,7 @@ public class Server extends CoreThread implements Closeable {
      */
     public FlowProxy createFlow(FlowBuilder builder, ClassLoader cl, int flowFlags) //
             throws InterruptedException, ExecutionException {
-        return this.processor.query(QUERY_INIT, new FlowBuildRequest(builder, cl, flowFlags));
+        return this.processor.request(CREATE_FLOW, new FlowBuildRequest(builder, cl, flowFlags));
     }
 
     /**
@@ -172,7 +172,7 @@ public class Server extends CoreThread implements Closeable {
      *             when something goes awry.
      */
     public List<FlowProxy> refresh() throws InterruptedException, ExecutionException {
-        return this.processor.query(QUERY_REFRESH, null);
+        return this.processor.request(GET_FLOW_PROXY, null);
     }
 
     /**
@@ -184,7 +184,7 @@ public class Server extends CoreThread implements Closeable {
      *             when something goes awry.
      */
     public void closeIdleClients() throws InterruptedException, ExecutionException {
-        this.processor.query(QUERY_CLOSE_IDLE, null);
+        this.processor.request(SET_AUTOCLOSE_IDLE, null);
     }
 
     /**
@@ -195,9 +195,9 @@ public class Server extends CoreThread implements Closeable {
      * @throws ExecutionException
      *             when something goes awry.
      */
-    public Server setAutoCloseIdle(boolean value) throws InterruptedException, ExecutionException {
+    public Server setAutocloseIdle(boolean autocloseIdle) throws InterruptedException, ExecutionException {
 
-        this.processor.query(QUERY_CLOSE_IDLE, Boolean.valueOf(value));
+        this.processor.request(SET_AUTOCLOSE_IDLE, Boolean.valueOf(autocloseIdle));
 
         return this;
     }
@@ -211,7 +211,7 @@ public class Server extends CoreThread implements Closeable {
      *             when something goes awry.
      */
     public int getPendingCount() throws InterruptedException, ExecutionException {
-        return (Integer) this.processor.query(QUERY_PENDING_COUNT, (Object) null);
+        return (Integer) this.processor.request(GET_PENDING_COUNT, (Object) null);
     }
 
     /**
@@ -229,7 +229,7 @@ public class Server extends CoreThread implements Closeable {
     @SuppressWarnings("unchecked")
     public <F, N> BlockingQueue<FlowEvent<F, N>> createFlowEventQueue() //
             throws InterruptedException, ExecutionException {
-        return (BlockingQueue<FlowEvent<F, N>>) this.processor.query(QUERY_CREATE_USER_QUEUE, (Object) null);
+        return (BlockingQueue<FlowEvent<F, N>>) this.processor.request(CREATE_USER_QUEUE, (Object) null);
     }
 
     /**

@@ -28,9 +28,9 @@
 
 package dapper;
 
-import static dapper.Constants.BACKLOG;
-import static dapper.Constants.BUFFER_SIZE;
-import static dapper.Constants.TIMER_PURGE_INTERVAL;
+import static dapper.Constants.DEFAULT_BACKLOG_SIZE;
+import static dapper.Constants.DEFAULT_BUFFER_SIZE;
+import static dapper.Constants.TIMER_PURGE_INTERVAL_MILLIS;
 
 import java.io.Closeable;
 import java.net.InetAddress;
@@ -72,7 +72,7 @@ public class AsynchronousBase implements Closeable {
      */
     public AsynchronousBase() {
 
-        this.manager = new ConnectionManager("CM", BACKLOG);
+        this.manager = new ConnectionManager("CM", DEFAULT_BACKLOG_SIZE);
         this.timer = new Timer();
         this.timer.schedule(new TimerTask() {
 
@@ -83,7 +83,7 @@ public class AsynchronousBase implements Closeable {
                 System.gc();
             }
 
-        }, 0, TIMER_PURGE_INTERVAL);
+        }, 0, TIMER_PURGE_INTERVAL_MILLIS);
 
         this.counter = new AtomicLong(0);
     }
@@ -112,7 +112,7 @@ public class AsynchronousBase implements Closeable {
     public SynchronousManagedConnection createStreamConnection() {
         return new SynchronousManagedConnection(String.format("SC_%d", this.counter.getAndIncrement()), //
                 this.manager) //
-                .setBufferSize(BUFFER_SIZE);
+                .setBufferSize(DEFAULT_BUFFER_SIZE);
     }
 
     /**

@@ -117,11 +117,11 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
     /**
      * Sets the idle client autoclose option.
      */
-    public void setAutoCloseIdle(boolean autoCloseIdle) {
+    public void setAutocloseIdle(boolean autocloseIdle) {
 
         try {
 
-            this.server.setAutoCloseIdle(autoCloseIdle);
+            this.server.setAutocloseIdle(autocloseIdle);
 
         } catch (Exception e) {
 
