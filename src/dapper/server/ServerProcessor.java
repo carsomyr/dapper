@@ -198,16 +198,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_REFRESH", group = "internal")
-    final Handler<ControlEvent> queryRefresh = new Handler<ControlEvent>() {
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleQueryRefresh((QueryEvent<Flow, List<FlowProxy>>) evt);
-        }
-    };
-
     @Transition(currentState = "RUN", eventType = "QUERY_PURGE", group = "internal")
     final Handler<ControlEvent> queryPurge = new Handler<ControlEvent>() {
 
@@ -225,6 +215,16 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleQueryCloseIdle((QueryEvent<Boolean, Object>) evt);
+        }
+    };
+
+    @Transition(currentState = "RUN", eventType = "QUERY_REFRESH", group = "internal")
+    final Handler<ControlEvent> queryRefresh = new Handler<ControlEvent>() {
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void handle(ControlEvent evt) {
+            ServerProcessor.this.logic.handleQueryRefresh((QueryEvent<Flow, List<FlowProxy>>) evt);
         }
     };
 
@@ -308,6 +308,46 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
+    @Transitions(transitions = {
+            //
+            @Transition(currentState = "RESOURCE", eventType = "TIMEOUT", group = "client"), //
+            @Transition(currentState = "PREPARE", eventType = "TIMEOUT", group = "client"), //
+            @Transition(currentState = "EXECUTE", eventType = "TIMEOUT", group = "client") //
+    })
+    final Handler<ControlEvent> timeout = new Handler<ControlEvent>() {
+
+        @Override
+        public void handle(ControlEvent evt) {
+            ServerProcessor.this.logic.handleTimeout((TimeoutEvent) evt);
+        }
+    };
+
+    @Transition(currentState = "EXECUTE", eventType = "DATA_REQUEST", group = "client")
+    final Handler<ControlEvent> dataRequest = new Handler<ControlEvent>() {
+
+        @Override
+        public void handle(ControlEvent evt) {
+            ServerProcessor.this.logic.handleDataRequest((DataRequestEvent) evt);
+        }
+    };
+
+    @Transitions(transitions = {
+            //
+            // Reset a node because some one of its clients failed to acquire resources.
+            @Transition(currentState = "PREPARE", eventType = "RESET", group = "client"), //
+            // Reset a node because some one of its clients failed to acquire resources.
+            @Transition(currentState = "PREPARE_ACK", eventType = "RESET", group = "client"), //
+            // Reset a node because some one of its clients failed in execution.
+            @Transition(currentState = "EXECUTE", eventType = "RESET", group = "client") //
+    })
+    final Handler<ControlEvent> reset = new Handler<ControlEvent>() {
+
+        @Override
+        public void handle(ControlEvent evt) {
+            ServerProcessor.this.logic.handleReset((ResetEvent) evt);
+        }
+    };
+
     @Transition(currentState = "IDLE", eventType = "ADDRESS", group = "client")
     final Handler<ControlEvent> idleToWait = new Handler<ControlEvent>() {
 
@@ -335,52 +375,12 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
-    @Transition(currentState = "EXECUTE", eventType = "DATA_REQUEST", group = "client")
-    final Handler<ControlEvent> dataRequest = new Handler<ControlEvent>() {
-
-        @Override
-        public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleDataRequest((DataRequestEvent) evt);
-        }
-    };
-
     @Transition(currentState = "EXECUTE", eventType = "EXECUTE_ACK", group = "client")
     final Handler<ControlEvent> executeToWait = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
             ServerProcessor.this.logic.handleExecuteToWait((ExecuteAckEvent) evt);
-        }
-    };
-
-    @Transitions(transitions = {
-            //
-            // Reset a node because some one of its clients failed to acquire resources.
-            @Transition(currentState = "PREPARE", eventType = "RESET", group = "client"), //
-            // Reset a node because some one of its clients failed to acquire resources.
-            @Transition(currentState = "PREPARE_ACK", eventType = "RESET", group = "client"), //
-            // Reset a node because some one of its clients failed in execution.
-            @Transition(currentState = "EXECUTE", eventType = "RESET", group = "client") //
-    })
-    final Handler<ControlEvent> reset = new Handler<ControlEvent>() {
-
-        @Override
-        public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleReset((ResetEvent) evt);
-        }
-    };
-
-    @Transitions(transitions = {
-            //
-            @Transition(currentState = "RESOURCE", eventType = "TIMEOUT", group = "client"), //
-            @Transition(currentState = "PREPARE", eventType = "TIMEOUT", group = "client"), //
-            @Transition(currentState = "EXECUTE", eventType = "TIMEOUT", group = "client") //
-    })
-    final Handler<ControlEvent> timeout = new Handler<ControlEvent>() {
-
-        @Override
-        public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleTimeout((TimeoutEvent) evt);
         }
     };
 

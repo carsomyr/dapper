@@ -54,9 +54,6 @@ abstract public class AbstractCountDown<T> implements CountDown<T> {
     }
 
     @Override
-    abstract public void reset();
-
-    @Override
     public boolean countDown(T value) {
 
         if (value != null) {

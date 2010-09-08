@@ -129,6 +129,15 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
     // INTERNAL LOGIC
 
+    @Transition(currentState = "PREPARE", eventType = "REFRESH", group = "internal")
+    final Handler<ControlEvent> refresh = new Handler<ControlEvent>() {
+
+        @Override
+        public void handle(ControlEvent evt) {
+            ClientProcessor.this.logic.handleRefresh();
+        }
+    };
+
     @Transitions(transitions = {
             //
             // Resource acquisition failure.
@@ -174,15 +183,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleStreamReady((StreamReadyEvent) evt);
-        }
-    };
-
-    @Transition(currentState = "PREPARE", eventType = "REFRESH", group = "internal")
-    final Handler<ControlEvent> refresh = new Handler<ControlEvent>() {
-
-        @Override
-        public void handle(ControlEvent evt) {
-            ClientProcessor.this.logic.handleRefresh();
         }
     };
 

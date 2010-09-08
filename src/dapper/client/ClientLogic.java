@@ -97,6 +97,17 @@ public class ClientLogic {
     // INTERNAL LOGIC
 
     /**
+     * Handles a request to refresh the computation state and see if any work can be done.
+     */
+    protected void handleRefresh() {
+
+        // Acknowledge completion of preparations.
+        if (this.job.isReady()) {
+            this.server.onRemote(new ControlEvent(PREPARE_ACK, null));
+        }
+    }
+
+    /**
      * Handles a message from the server resetting both ends to a common, inactive state. Alternatively handles a reset
      * notification and forwards it to the server.
      */
@@ -181,17 +192,6 @@ public class ClientLogic {
 
         // Interrupt self.
         this.cp.onLocal(new ControlEvent(REFRESH, this.cp));
-    }
-
-    /**
-     * Handles a request to refresh the computation state and see if any work can be done.
-     */
-    protected void handleRefresh() {
-
-        // Acknowledge completion of preparations.
-        if (this.job.isReady()) {
-            this.server.onRemote(new ControlEvent(PREPARE_ACK, null));
-        }
     }
 
     /**

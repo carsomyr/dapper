@@ -415,6 +415,47 @@ public class ServerLogic {
     }
 
     /**
+     * Handles a request to purge an active {@link Flow}.
+     */
+    protected void handleQueryPurge(QueryEvent<Flow, Object> evt) {
+
+        Flow flow = evt.getInput();
+
+        if (flow.getStatus().isExecuting()) {
+            purgeFlow(flow, new IllegalStateException("The flow was purged"));
+        }
+
+        // Notify the invoker of completion.
+        evt.setOutput(null);
+
+        // Interrupt self.
+        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+    }
+
+    /**
+     * Handles a request to set the idle client autoclose option.
+     */
+    protected void handleQueryCloseIdle(QueryEvent<Boolean, Object> evt) {
+
+        Boolean value = evt.getInput();
+
+        if (value == null) {
+
+            closeIdleClients();
+
+        } else {
+
+            this.autoClose = value.booleanValue();
+        }
+
+        // Notify the invoker of completion.
+        evt.setOutput(null);
+
+        // Interrupt self.
+        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+    }
+
+    /**
      * Handles a request to get the {@link FlowProxy} associated with an individual {@link Flow} or all
      * {@link FlowProxy}s associated with all {@link Flow}s.
      */
@@ -457,47 +498,6 @@ public class ServerLogic {
 
             evt.setOutput(res);
         }
-    }
-
-    /**
-     * Handles a request to purge an active {@link Flow}.
-     */
-    protected void handleQueryPurge(QueryEvent<Flow, Object> evt) {
-
-        Flow flow = evt.getInput();
-
-        if (flow.getStatus().isExecuting()) {
-            purgeFlow(flow, new IllegalStateException("The flow was purged"));
-        }
-
-        // Notify the invoker of completion.
-        evt.setOutput(null);
-
-        // Interrupt self.
-        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
-    }
-
-    /**
-     * Handles a request to set the idle client autoclose option.
-     */
-    protected void handleQueryCloseIdle(QueryEvent<Boolean, Object> evt) {
-
-        Boolean value = evt.getInput();
-
-        if (value == null) {
-
-            closeIdleClients();
-
-        } else {
-
-            this.autoClose = value.booleanValue();
-        }
-
-        // Notify the invoker of completion.
-        evt.setOutput(null);
-
-        // Interrupt self.
-        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
     }
 
     /**
@@ -548,36 +548,6 @@ public class ServerLogic {
     }
 
     /**
-     * Handles a timeout notification.
-     */
-    protected void handleTimeout(TimeoutEvent evt) {
-
-        ClientState csh = (ClientState) evt.getSource().getHandler();
-
-        switch (csh.getStatus()) {
-
-        case RESOURCE:
-        case PREPARE:
-            handleError(new ErrorEvent(new TimeoutException("Client timed out"), evt.getSource()));
-            break;
-
-        case EXECUTE:
-
-            FlowNode flowNode = csh.getFlowNode();
-
-            purgeFlow(flowNode.getLogicalNode().getFlow(), new IllegalStateException(String.format("Maximum " //
-                    + "execution time limit of %d milliseconds exceeded", flowNode.getTimeout())));
-
-            this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
-
-            break;
-
-        default:
-            throw new AssertionError("Control should never reach here");
-        }
-    }
-
-    /**
      * Handles a connection error notification.
      */
     protected void handleError(ErrorEvent evt) {
@@ -617,6 +587,84 @@ public class ServerLogic {
 
         // Interrupt self.
         this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+    }
+
+    /**
+     * Handles a timeout notification.
+     */
+    protected void handleTimeout(TimeoutEvent evt) {
+
+        ClientState csh = (ClientState) evt.getSource().getHandler();
+
+        switch (csh.getStatus()) {
+
+        case RESOURCE:
+        case PREPARE:
+            handleError(new ErrorEvent(new TimeoutException("Client timed out"), evt.getSource()));
+            break;
+
+        case EXECUTE:
+
+            FlowNode flowNode = csh.getFlowNode();
+
+            purgeFlow(flowNode.getLogicalNode().getFlow(), new IllegalStateException(String.format("Maximum " //
+                    + "execution time limit of %d milliseconds exceeded", flowNode.getTimeout())));
+
+            this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+
+            break;
+
+        default:
+            throw new AssertionError("Control should never reach here");
+        }
+    }
+
+    /**
+     * Handles a message from the client requesting data.
+     */
+    protected void handleDataRequest(DataRequestEvent evt) {
+
+        ClientState csh = (ClientState) evt.getSource().getHandler();
+
+        FlowNode flowNode = csh.getFlowNode();
+
+        assertTrue(flowNode != null && csh == flowNode.getClientState());
+
+        String identifier = evt.getPathname();
+
+        Matcher m = DataRequestPattern.matcher(identifier);
+
+        try {
+
+            Control.checkTrue(m.matches(), //
+                    "Invalid request syntax");
+
+            String mode = m.group(1);
+            String pathname = m.group(2);
+
+            final byte[] data;
+
+            if (mode.equals("cp")) {
+
+                data = Control.getBytes(flowNode.getCodelet().getClass().getClassLoader() //
+                        .getResourceAsStream(pathname));
+
+            } else if (mode.equals("id")) {
+
+                data = FlowUtilities.createIdentifier(HandleEdge.class).getBytes();
+
+            } else {
+
+                throw new RuntimeException("Invalid request syntax");
+            }
+
+            csh.getConnection().onRemote(new DataRequestEvent(m.group(0), data, null));
+
+        } catch (Exception e) {
+
+            handleReset(new ResetEvent(String.format("Requested data \"%s\" could not be retrieved", identifier), e, //
+                    evt.getSource()));
+        }
     }
 
     /**
@@ -698,54 +746,6 @@ public class ServerLogic {
 
         // Interrupt self.
         this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
-    }
-
-    /**
-     * Handles a message from the client requesting data.
-     */
-    protected void handleDataRequest(DataRequestEvent evt) {
-
-        ClientState csh = (ClientState) evt.getSource().getHandler();
-
-        FlowNode flowNode = csh.getFlowNode();
-
-        assertTrue(flowNode != null && csh == flowNode.getClientState());
-
-        String identifier = evt.getPathname();
-
-        Matcher m = DataRequestPattern.matcher(identifier);
-
-        try {
-
-            Control.checkTrue(m.matches(), //
-                    "Invalid request syntax");
-
-            String mode = m.group(1);
-            String pathname = m.group(2);
-
-            final byte[] data;
-
-            if (mode.equals("cp")) {
-
-                data = Control.getBytes(flowNode.getCodelet().getClass().getClassLoader() //
-                        .getResourceAsStream(pathname));
-
-            } else if (mode.equals("id")) {
-
-                data = FlowUtilities.createIdentifier(HandleEdge.class).getBytes();
-
-            } else {
-
-                throw new RuntimeException("Invalid request syntax");
-            }
-
-            csh.getConnection().onRemote(new DataRequestEvent(m.group(0), data, null));
-
-        } catch (Exception e) {
-
-            handleReset(new ResetEvent(String.format("Requested data \"%s\" could not be retrieved", identifier), e, //
-                    evt.getSource()));
-        }
     }
 
     /**

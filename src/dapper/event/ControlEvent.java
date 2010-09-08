@@ -97,17 +97,6 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates a message from the client requesting data or a message from the server conveying data.
-         */
-        DATA_REQUEST {
-
-            @Override
-            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
-                return new DataRequestEvent(rootNode, source);
-            }
-        }, //
-
-        /**
          * Indicates a message from the client on receipt of a resource descriptor.
          */
         RESOURCE_ACK {
@@ -163,6 +152,17 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
+         * Indicates a message from the client requesting data or a message from the server conveying data.
+         */
+        DATA_REQUEST {
+
+            @Override
+            protected ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
+                return new DataRequestEvent(rootNode, source);
+            }
+        }, //
+
+        /**
          * Indicates a message from the server/client resetting both ends to a common, inactive state.
          */
         RESET {
@@ -174,14 +174,14 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates a connection error notification.
-         */
-        ERROR, //
-
-        /**
          * Indicates a connection end-of-stream notification.
          */
         END_OF_STREAM, //
+
+        /**
+         * Indicates a connection error notification.
+         */
+        ERROR, //
 
         /**
          * Indicates a stream readiness notification.
@@ -204,12 +204,6 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         QUERY_INIT, //
 
         /**
-         * Indicates a request to get the {@link FlowProxy} associated with an individual {@link Flow} or all
-         * {@link FlowProxy}s associated with all {@link Flow}s.
-         */
-        QUERY_REFRESH, //
-
-        /**
          * Indicates a request to purge an active {@link Flow}.
          */
         QUERY_PURGE, //
@@ -218,6 +212,12 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
          * Indicates a request to set the idle client autoclose option.
          */
         QUERY_CLOSE_IDLE, //
+
+        /**
+         * Indicates a request to get the {@link FlowProxy} associated with an individual {@link Flow} or all
+         * {@link FlowProxy}s associated with all {@link Flow}s.
+         */
+        QUERY_REFRESH, //
 
         /**
          * Indicates a request to get the number of additional clients required to saturate pending computations.
