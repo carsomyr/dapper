@@ -33,7 +33,6 @@ import static dapper.event.ControlEvent.ControlEventType.EXECUTE;
 import static dapper.event.ControlEvent.ControlEventType.INIT;
 import static dapper.event.ControlEvent.ControlEventType.PREPARE;
 import static dapper.event.ControlEvent.ControlEventType.REFRESH;
-import static shared.util.Control.assertTrue;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -156,7 +155,7 @@ public class ServerLogic {
             if (csh != null) {
 
                 // The client had better not be in the wait set when we add it.
-                assertTrue(this.clientWaitSet.add(csh));
+                Control.assertTrue(this.clientWaitSet.add(csh));
 
                 csh.setFlowNode(null);
                 flowNode.setClientState(null);
@@ -222,7 +221,7 @@ public class ServerLogic {
 
                 ClientState csh2 = fn2.getClientState();
 
-                assertTrue(csh2.getStatus() == assignedClientStatus);
+                Control.assertTrue(csh2.getStatus() == assignedClientStatus);
 
                 csh2.getConnection().onRemote(new ControlEvent(eventType, null));
                 csh2.setStatus(nextClientStatus);
@@ -230,7 +229,7 @@ public class ServerLogic {
             }
 
             // Start a count down for waiting on all clients to acknowledge.
-            assertTrue(node.getStatus() == currentNodeStatus);
+            Control.assertTrue(node.getStatus() == currentNodeStatus);
             clientCountDown.reset();
             node.setStatus(nextNodeStatus);
         }
@@ -325,10 +324,10 @@ public class ServerLogic {
                 FlowNode flowNode = matchEntry.getKey();
                 ClientState csh = matchEntry.getValue();
 
-                assertTrue(csh.getStatus() == ClientStatus.WAIT);
+                Control.assertTrue(csh.getStatus() == ClientStatus.WAIT);
 
                 // The client no longer belongs to the wait set.
-                assertTrue(this.clientWaitSet.remove(csh));
+                Control.assertTrue(this.clientWaitSet.remove(csh));
 
                 // Make the node and the client known to each other.
                 flowNode.setClientState(csh);
@@ -356,7 +355,7 @@ public class ServerLogic {
             }
 
             // Start a count down for waiting on all clients to acknowledge.
-            assertTrue(node.getStatus().isExecutable());
+            Control.assertTrue(node.getStatus().isExecutable());
             node.getClientCountDown().reset();
             node.setStatus(LogicalNodeStatus.RESOURCE);
 
@@ -406,7 +405,7 @@ public class ServerLogic {
         FlowProxy fp = this.sp.new FlowProxy(flow, fbr.flowFlags);
         fp.onFlowBegin(fp.getAttachment());
 
-        assertTrue(this.allFlowsMap.put(flow, fp) == null);
+        Control.assertTrue(this.allFlowsMap.put(flow, fp) == null);
 
         evt.setOutput(fp);
 
@@ -575,7 +574,7 @@ public class ServerLogic {
             LogicalNode node = flowNode.getLogicalNode();
 
             // Reset everything in this flow node's equivalence class.
-            assertTrue(node.getStatus().isExecuting() && this.executeList.add(node));
+            Control.assertTrue(node.getStatus().isExecuting() && this.executeList.add(node));
             resetNode(node);
             node.setStatus(LogicalNodeStatus.PENDING_EXECUTE);
         }
@@ -628,7 +627,7 @@ public class ServerLogic {
 
         FlowNode flowNode = csh.getFlowNode();
 
-        assertTrue(flowNode != null && csh == flowNode.getClientState());
+        Control.assertTrue(flowNode != null && csh == flowNode.getClientState());
 
         String identifier = evt.getPathname();
 
@@ -680,11 +679,11 @@ public class ServerLogic {
 
         FlowNode flowNode = csh.getFlowNode();
 
-        assertTrue(flowNode != null && csh == flowNode.getClientState());
+        Control.assertTrue(flowNode != null && csh == flowNode.getClientState());
 
         LogicalNode node = flowNode.getLogicalNode();
 
-        assertTrue(node != null && node.getFlowNodes().contains(flowNode));
+        Control.assertTrue(node != null && node.getFlowNodes().contains(flowNode));
 
         FlowProxy fp = this.allFlowsMap.get(flowNode.getLogicalNode().getFlow());
         fp.onFlowNodeError(fp.getAttachment(), flowNode.getAttachment(), exception);
@@ -694,7 +693,7 @@ public class ServerLogic {
         if (flowNode.incrementAndGetRetries() <= maxRetries) {
 
             // Reset everything in this flow node's equivalence class.
-            assertTrue(node.getStatus().isExecuting() && this.executeList.add(node));
+            Control.assertTrue(node.getStatus().isExecuting() && this.executeList.add(node));
             resetNode(node);
             node.setStatus(LogicalNodeStatus.PENDING_EXECUTE);
 
@@ -717,7 +716,7 @@ public class ServerLogic {
         ClientState csh = (ClientState) evt.getSource().getHandler();
 
         // The client had better not be in the wait set when we add it.
-        assertTrue(this.clientWaitSet.add(csh));
+        Control.assertTrue(this.clientWaitSet.add(csh));
 
         // Notify the client of connection establishment.
         csh.getConnection().onRemote(new ControlEvent(INIT, null));
@@ -810,7 +809,7 @@ public class ServerLogic {
             return;
         }
 
-        assertTrue(n1.getStatus() == LogicalNodeStatus.EXECUTE);
+        Control.assertTrue(n1.getStatus() == LogicalNodeStatus.EXECUTE);
 
         if (n1.getClientCountDown().countDown(fn1)) {
 
@@ -884,12 +883,12 @@ public class ServerLogic {
                 }
 
                 // By construction, the modified flow no longer contains the completed node.
-                assertTrue(!nodes.contains(n1));
+                Control.assertTrue(!nodes.contains(n1));
             }
         }
 
         // The client had better not be in the wait set when we add it.
-        assertTrue(this.clientWaitSet.add(csh));
+        Control.assertTrue(this.clientWaitSet.add(csh));
 
         // Unlink the client from its node.
         csh.setFlowNode(null);

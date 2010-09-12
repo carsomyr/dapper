@@ -30,7 +30,6 @@ package dapper.client;
 
 import static dapper.Constants.REQUEST_TIMEOUT_MILLIS;
 import static dapper.client.Client.HEADER_LENGTH;
-import static shared.util.Control.checkTrue;
 
 import java.io.Closeable;
 import java.net.InetSocketAddress;
@@ -110,7 +109,7 @@ public class ClientConnector extends CoreThread implements Closeable {
 
         for (String identifier : this.connectionMap.keySet()) {
 
-            checkTrue(identifier.length() == HEADER_LENGTH);
+            Control.checkTrue(identifier.length() == HEADER_LENGTH);
 
             SynchronousManagedConnection smc = this.connectionMap.get(identifier);
             futureMap.get(identifier).get();
