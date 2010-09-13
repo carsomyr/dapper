@@ -37,7 +37,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
@@ -168,11 +168,9 @@ public class AsynchronousBase implements Closeable {
 
         try {
 
-            for (Enumeration<NetworkInterface> e1 = NetworkInterface.getNetworkInterfaces(); e1.hasMoreElements();) {
+            for (NetworkInterface iFace : Collections.list(NetworkInterface.getNetworkInterfaces())) {
 
-                for (Enumeration<InetAddress> e2 = e1.nextElement().getInetAddresses(); e2.hasMoreElements();) {
-
-                    InetAddress addr = e2.nextElement();
+                for (InetAddress addr : Collections.list(iFace.getInetAddresses())) {
 
                     // Match the first address that isn't the local host.
                     if (addr.getAddress().length == 4 && !Arrays.equals(LocalHost, addr.getAddress())) {
@@ -185,7 +183,7 @@ public class AsynchronousBase implements Closeable {
 
         } catch (Exception e) {
 
-            throw new RuntimeException("Error while inferring network address", e);
+            throw new RuntimeException("Could not infer network address", e);
         }
     }
 }

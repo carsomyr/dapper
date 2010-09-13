@@ -125,7 +125,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
 
         } catch (Exception e) {
 
-            FlowManager.getLog().info("Failed to set client auto-close option.", e);
+            FlowManager.getLog().info("Failed to set client autoclose option.", e);
         }
     }
 

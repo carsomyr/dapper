@@ -126,8 +126,8 @@ public class ClientConnector extends CoreThread implements Closeable {
     protected void runCatch(Throwable t) {
 
         // Close all connections.
-        for (String identifier : this.connectionMap.keySet()) {
-            Control.close(this.connectionMap.get(identifier));
+        for (SynchronousManagedConnection smc : this.connectionMap.values()) {
+            Control.close(smc);
         }
 
         Client.getLog().info("Connect failure.", t);

@@ -83,7 +83,7 @@ public class InputHandleResource extends AbstractHandleResource<InputHandleResou
     public File getFile() {
 
         Control.checkTrue(this.nEntries > 0, //
-                "Handles collection must be non-empty");
+                "Handles collection must be nonempty");
 
         return new File(this.handleArray.get(0, 0));
     }

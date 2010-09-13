@@ -291,11 +291,11 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
     }
 
     /**
-     * Parses a {@link ControlEvent} from the given root DOM {@link Node}.
+     * Parses a {@link ControlEvent} from the given root DOM {@link Element}.
      */
-    public static ControlEvent parse(Node rootNode, Source<ControlEvent, SourceType> source) {
+    public static ControlEvent parse(Node rootElement, Source<ControlEvent, SourceType> source) {
 
-        NodeList children = rootNode.getChildNodes();
+        NodeList children = rootElement.getChildNodes();
         return ControlEventType.valueOf(children.item(0).getTextContent()).parse(children.item(1), source);
     }
 }

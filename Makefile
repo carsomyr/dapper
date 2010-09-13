@@ -33,8 +33,8 @@ PUBLISH_TOKEN		= .publish
 LIB_DIR				= native/$(OS)$(WORD_SIZE)
 
 MAKE_BUILD_AND_TEST	= \
-	$(MAKE) -C native buildandtest \
-	&& cp $(LIB_DIR)/buildandtest.exe .
+	$(MAKE) -C native -- buildandtest \
+	&& cp -- $(LIB_DIR)/buildandtest.exe .
 
 #------------------------------------------------------------------------------#
 # Make the high level targets.                                                 #
@@ -76,7 +76,7 @@ jars: dapper.jar dapper-ex.jar
 
 dapper.jar dapper-ex.jar: $(BUILD_TOKEN)
 	$(ANT) jars
-	touch $@
+	touch -- $@
 
 #------------------------------------------------------------------------------#
 # Make the Javadoc.                                                            #
@@ -94,8 +94,8 @@ $(JAVADOC_TOKEN): $(JSRCS)
 doxydoc: $(DOXYDOC_TOKEN)
 
 $(DOXYDOC_TOKEN): $(CSRCS) $(CHEADERS)
-	$(MAKE) -C native doxygen
-	touch $@
+	$(MAKE) -C native -- doxygen
+	touch -- $@
 
 #------------------------------------------------------------------------------#
 # Run Checkstyle.                                                              #
@@ -120,14 +120,14 @@ $(PUBLISH_TOKEN): $(JSRCS)
 #------------------------------------------------------------------------------#
 
 clean: clean_win32
-	rm -rf doxydoc
-	rm -f $(DOXYDOC_TOKEN) *.exe
+	rm -rf -- doxydoc
+	rm -f -- $(DOXYDOC_TOKEN) *.exe
 	$(ANT) clean
-	$(MAKE) -C native clean
+	$(MAKE) -C native -- clean
 
 clean_win32: OS = Windows
 clean_win32:
-	$(MAKE) -C native clean
+	$(MAKE) -C native -- clean
 
 distclean: clean
 	$(ANT) distclean

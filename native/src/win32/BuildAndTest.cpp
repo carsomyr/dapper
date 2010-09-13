@@ -46,7 +46,7 @@ PROCESS_INFORMATION BuildAndTest::exec(const TCHAR *cmd) {
             NULL, //
             &si, //
             &pi)) {
-        printf("Could not create child process '%s'.\n", cmd);
+        printf("Could not create child process \"%s\".\n", cmd);
     }
 
     return pi;

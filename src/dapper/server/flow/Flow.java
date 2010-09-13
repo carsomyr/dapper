@@ -797,10 +797,10 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
         f.format("rankdir = LR;%n");
         f.format("node [shape = box];%n");
 
-        f.format("%n/* Begin Node Specification */%n");
+        f.format("%n/* Begin Node Specification */%n%n");
 
-        f.format("%nsubgraph cluster_flow {%n");
-        f.format("%n\tcolor = \"#%s\";%n", color);
+        f.format("subgraph cluster_flow {%n%n");
+        f.format("    color = \"#%s\";%n", color);
 
         for (LogicalNode node : new TreeSet<LogicalNode>(getNodes())) {
             node.render(f);

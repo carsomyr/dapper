@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,7 +105,7 @@ public class ServerLogic {
     /**
      * A {@link Pattern} used to parse data requests.
      */
-    final protected static Pattern DataRequestPattern = Pattern.compile("([0-9a-zA-Z_]+):(.*)");
+    final protected static Pattern DataRequestPattern = Pattern.compile("^([a-zA-Z_0-9]+):(.*)$");
 
     final InetAddress address;
     final ServerProcessor sp;
@@ -172,20 +171,17 @@ public class ServerLogic {
      */
     protected void purgeFlow(Flow flow, Throwable t) {
 
-        Server.getLog().info(String.format("The flow '%s' was purged.", flow), t);
+        Server.getLog().info(String.format("The flow \"%s\" was purged.", flow), t);
 
         Set<LogicalNode> nodes = flow.getNodes();
 
         // Deliver a reset to all active clients.
-        // Since nodes are reinserted into the execute list, do this BEFORE removing all nodes from it.
         for (LogicalNode node : nodes) {
 
+            this.executeList.remove(node);
             resetNode(node);
             node.setStatus(LogicalNodeStatus.FAILED);
         }
-
-        // Remove all traces of the flow.
-        this.executeList.removeAll(nodes);
 
         FlowProxy fp = this.allFlowsMap.get(flow);
 
@@ -240,10 +236,8 @@ public class ServerLogic {
      */
     protected void closeIdleClients() {
 
-        int nFlowNodes = getPendingCount();
-
-        for (ClientState csh : new LinkedList<ClientState>(this.clientWaitSet) //
-                .subList(0, Math.max(this.clientWaitSet.size() - nFlowNodes, 0))) {
+        for (ClientState csh : new ArrayList<ClientState>(this.clientWaitSet) //
+                .subList(0, Math.max(this.clientWaitSet.size() - getPendingCount(), 0))) {
 
             this.clientWaitSet.remove(csh);
 
@@ -312,14 +306,15 @@ public class ServerLogic {
                 break loop;
             }
 
-            Map<FlowNode, ClientState> matchMap = this.matching.match(flowNodes, this.clientWaitSet);
+            Set<Entry<FlowNode, ClientState>> matchEntries = //
+            this.matching.match(flowNodes, this.clientWaitSet).entrySet();
 
             // Skip the current iteration if not all requirements could be met.
-            if (flowNodes.size() != matchMap.size()) {
+            if (flowNodes.size() != matchEntries.size()) {
                 continue loop;
             }
 
-            for (Entry<FlowNode, ClientState> matchEntry : matchMap.entrySet()) {
+            for (Entry<FlowNode, ClientState> matchEntry : matchEntries) {
 
                 FlowNode flowNode = matchEntry.getKey();
                 ClientState csh = matchEntry.getValue();
@@ -343,7 +338,7 @@ public class ServerLogic {
             }
 
             // Some edges may query the client states at both ends, so create resources AFTER linking.
-            for (Entry<FlowNode, ClientState> matchEntry : matchMap.entrySet()) {
+            for (Entry<FlowNode, ClientState> matchEntry : matchEntries) {
 
                 FlowNode flowNode = matchEntry.getKey();
                 ClientState csh = matchEntry.getValue();

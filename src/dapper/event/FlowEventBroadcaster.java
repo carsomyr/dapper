@@ -178,7 +178,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
                 synchronized (feb) {
 
                     for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
-                    remaining > 0 && backing.size() == 0 && !feb.closed; //
+                    remaining > 0 && backing.isEmpty() && !feb.closed; //
                     remaining = end - System.currentTimeMillis()) {
                         feb.wait(remaining);
                     }
@@ -205,7 +205,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
                 synchronized (feb) {
 
-                    for (; backing.size() == 0 && !feb.closed;) {
+                    for (; backing.isEmpty() && !feb.closed;) {
                         feb.wait();
                     }
 

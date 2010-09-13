@@ -64,13 +64,8 @@ public class FlowTab extends JLabel implements Closeable {
 
     static {
 
-        boolean isWindows = System.getProperty("os.name").contains("Windows");
-
-        DotExecArgsPNG = isWindows ? new String[] { "cmd", "/C", "dot", "-Tpng" } //
-                : new String[] { "dot", "-Tpng" };
-
-        DotExecArgsSVG = isWindows ? new String[] { "cmd", "/C", "dot", "-Tsvg" } //
-                : new String[] { "dot", "-Tsvg" };
+        DotExecArgsPNG = new String[] { "dot", "-T", "png" };
+        DotExecArgsSVG = new String[] { "dot", "-T", "svg" };
     }
 
     final FlowProxy fp;

@@ -454,10 +454,11 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
             }
         }
 
-        f.format("%n\tnode_%s [%n", this.order);
-        f.format("\t\tlabel = \"%s\",%n", toString().replace("\"", "\\\""));
-        f.format("\t\tstyle = \"%s\",%n", this.codelet instanceof EmbeddingCodelet ? "dotted" : "solid");
-        f.format("\t\tcolor = \"#%s\"%n", color);
-        f.format("\t];%n");
+        f.format("%n");
+        f.format("    node_%s [%n", this.order);
+        f.format("        label = \"%s\",%n", toString().replace("\"", "\\\""));
+        f.format("        style = \"%s\",%n", this.codelet instanceof EmbeddingCodelet ? "dotted" : "solid");
+        f.format("        color = \"#%s\"%n", color);
+        f.format("    ];%n");
     }
 }

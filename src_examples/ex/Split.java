@@ -65,7 +65,7 @@ public class Split implements Codelet {
             OutputHandleResource ohr = (OutputHandleResource) outResource;
 
             String stem = CodeletUtilities.createStem();
-            String handle = String.format(path.concat("/").concat(stem));
+            String handle = String.format("%s/%s", path, stem);
 
             ohr.put(handle, stem);
 

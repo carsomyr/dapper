@@ -78,12 +78,12 @@ public class CodeletTree extends JTree implements DropTargetListener {
     /**
      * A {@link Pattern} for detecting binary class names.
      */
-    final public static Pattern BinaryNamePattern = Pattern.compile("(" //
+    final public static Pattern BinaryNamePattern = Pattern.compile("^(" //
             // Capture names of base classes.
-            + "(:?[a-zA-Z_][0-9a-zA-Z_]*/)*[a-zA-Z_][0-9a-zA-Z_]*"
+            + "(:?[a-zA-Z_][a-zA-Z_0-9]*/)*[a-zA-Z_][a-zA-Z_0-9]*"
             // Capture names of inner classes.
-            + "(:?\\$[0-9]+|\\$[a-zA-Z_][0-9a-zA-Z_]*)*" //
-            + ")\\.class");
+            + "(:?\\$[0-9]+|\\$[a-zA-Z_][a-zA-Z_0-9]*)*" //
+            + ")\\.class$");
 
     final MutableTreeNode rootNode;
     final DefaultTreeModel treeModel;

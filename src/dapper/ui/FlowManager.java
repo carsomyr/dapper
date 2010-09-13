@@ -86,7 +86,7 @@ import dapper.server.flow.Flow;
         @CLIOption(opt = "p", longOpt = "port", numArgs = 1, //
         description = "the listening port"), //
         //
-        @CLIOption(opt = "c", longOpt = "autocloseidle", numArgs = 0, //
+        @CLIOption(opt = "c", longOpt = "autoclose-idle", numArgs = 0, //
         description = "close idle clients automatically") //
 })
 @SuppressWarnings("serial")

@@ -297,8 +297,9 @@ public class LogicalNode implements Traversable<LogicalNode, LogicalEdge>, Clone
 
         if (!isSingleton) {
 
-            f.format("%nsubgraph cluster_%d {%n", this.order);
-            f.format("%n\tcolor = \"#%s\";%n", color);
+            f.format("%n");
+            f.format("subgraph cluster_%d {%n%n", this.order);
+            f.format("    color = \"#%s\";%n", color);
 
             for (FlowNode flowNode : flowNodes) {
                 flowNode.render(f);

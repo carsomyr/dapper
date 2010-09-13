@@ -30,16 +30,26 @@
 """A script for testing basic Dapper functionality.
 """
 
+__author__ = "Roy Liu <carsomyr@gmail.com>"
+
 import subprocess
 import sys
 import time
 from subprocess import Popen
 
+# Create facades to ensure compatibility with major versions 2 and 3.
+if sys.version_info[0] == 3:
+    stdin = getattr(sys.stdin, "buffer")
+    stdout = getattr(sys.stdout, "buffer")
+else:
+    stdin = sys.stdin
+    stdout = sys.stdout
+
 def main():
     """The main method body.
     """
 
-    subprocess.call(["make", "jars"])
+    subprocess.call(["make", "--", "jars"])
 
     java_cmd = ["java", "-ea", "-Xmx128M", "-cp", "dapper.jar"]
 
@@ -54,8 +64,12 @@ def main():
     for i in range(nclients):
         processes.append(Popen(java_cmd + ["dapper.client.ClientDriver", "--host", "localhost:12121"]))
 
-    while sys.stdin.read(1) != "\n":
-        pass
+    stdout.write(b"\nPress ENTER to exit this test.\n")
+
+    ch = None
+
+    while ch != b"\n" and ch != b"":
+        ch = stdin.read(1)
 
     for i in range(nclients, -1, -1):
         processes[i].kill()

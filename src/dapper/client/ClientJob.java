@@ -296,7 +296,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
     @Override
     protected void runCatch(Throwable t) {
 
-        ResetEvent resetEvent = new ResetEvent("Execution encountered an unexpected error", t, this.callback);
+        ResetEvent resetEvent = new ResetEvent("Execution encountered an unexpected exception", t, this.callback);
         resetEvent.set(this);
 
         this.callback.onLocal(resetEvent);

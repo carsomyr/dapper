@@ -69,7 +69,7 @@ abstract public class FlowUtilities {
 
             if (counter == null) {
 
-                counter = new AtomicInteger();
+                counter = new AtomicInteger(0);
                 CounterMap.put(clazz, counter);
             }
 

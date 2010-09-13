@@ -155,9 +155,10 @@ public class DummyEdge implements FlowEdge {
             break;
         }
 
-        f.format("%n\tnode_%d -> node_%d [%n", getU().getOrder(), getV().getOrder());
-        f.format("\t\tstyle = \"dotted\",%n");
-        f.format("\t\tcolor = \"#%s\",%n", color);
-        f.format("\t];%n");
+        f.format("%n");
+        f.format("    node_%d -> node_%d [%n", getU().getOrder(), getV().getOrder());
+        f.format("        style = \"dotted\",%n");
+        f.format("        color = \"#%s\",%n", color);
+        f.format("    ];%n");
     }
 }

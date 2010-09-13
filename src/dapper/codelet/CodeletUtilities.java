@@ -49,7 +49,7 @@ abstract public class CodeletUtilities {
     /**
      * A global request counter for {@link #createStem()}.
      */
-    final protected static AtomicInteger RequestCounter = new AtomicInteger();
+    final protected static AtomicInteger RequestCounter = new AtomicInteger(0);
 
     /**
      * A local thread variable for storing the {@link DataService} available to the {@link Codelet} being executed.
@@ -153,7 +153,7 @@ abstract public class CodeletUtilities {
         return Control.createDocument(new StringBuilder() //
                 .append("<parameters>") //
                 .append(content) //
-                .append("</parameters>").toString().getBytes()).getDocumentElement();
+                .append("</parameters>").toString()).getDocumentElement();
     }
 
     // Dummy constructor.
