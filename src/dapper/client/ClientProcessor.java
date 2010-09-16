@@ -112,7 +112,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
             break;
 
         default:
-            throw new AssertionError("Control should never reach here");
+            throw new IllegalArgumentException("Invalid source type");
         }
     }
 

@@ -303,7 +303,7 @@ public class ClientLogic {
 
         } else {
 
-            throw new AssertionError("Control should never reach here");
+            throw new IllegalArgumentException("Invalid source");
         }
     }
 }

@@ -98,7 +98,7 @@ public class Broadcast implements Codelet {
                     break;
 
                 default:
-                    throw new RuntimeException("Edge type not recognized");
+                    throw new IllegalArgumentException("Edge type not recognized");
                 }
             }
         }

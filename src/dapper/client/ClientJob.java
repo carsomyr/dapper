@@ -218,7 +218,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
         synchronized (this) {
 
             for (RequestFuture<byte[]> future : this.pending.values()) {
-                future.setException(new RuntimeException("The client job has been stopped"));
+                future.setException(new IllegalStateException("The client job has been stopped"));
             }
 
             this.pending = null;

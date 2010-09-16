@@ -160,7 +160,7 @@ public class ServerLogic {
                 flowNode.setClientState(null);
 
                 csh.getConnection().onRemote(new ResetEvent("One client failed in its execution", //
-                        new RuntimeException(), null));
+                        new IllegalStateException(), null));
                 csh.setStatus(ClientStatus.WAIT);
             }
         }
@@ -528,7 +528,7 @@ public class ServerLogic {
             break;
 
         default:
-            throw new AssertionError("Control should never reach here");
+            throw new IllegalArgumentException("Invalid event type");
         }
     }
 
@@ -609,7 +609,7 @@ public class ServerLogic {
             break;
 
         default:
-            throw new AssertionError("Control should never reach here");
+            throw new IllegalArgumentException("Invalid client status");
         }
     }
 
@@ -649,7 +649,7 @@ public class ServerLogic {
 
             } else {
 
-                throw new RuntimeException("Invalid request syntax");
+                throw new IllegalArgumentException("Invalid request syntax");
             }
 
             csh.getConnection().onRemote(new DataEvent(m.group(0), data, null));
