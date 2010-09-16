@@ -28,7 +28,6 @@
 
 package dapper;
 
-import static dapper.Constants.DEFAULT_BACKLOG_SIZE;
 import static dapper.Constants.DEFAULT_BUFFER_SIZE;
 import static dapper.Constants.TIMER_PURGE_INTERVAL_MILLIS;
 
@@ -73,7 +72,7 @@ public class AsynchronousBase implements Closeable {
      */
     public AsynchronousBase() {
 
-        this.manager = new ConnectionManager("CM", DEFAULT_BACKLOG_SIZE);
+        this.manager = new ConnectionManager("CM");
         this.timer = new Timer();
         this.timer.schedule(new TimerTask() {
 

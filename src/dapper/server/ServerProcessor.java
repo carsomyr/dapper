@@ -134,14 +134,6 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         this.status = ServerStatus.RUN;
     }
 
-    /**
-     * Delegates to the underlying {@link ServerLogic}'s {@link ServerLogic#toString()} method.
-     */
-    @Override
-    public String toString() {
-        return this.logic.toString();
-    }
-
     @Override
     public SourceType getType() {
         return PROCESSOR;

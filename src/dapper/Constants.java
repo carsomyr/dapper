@@ -46,11 +46,6 @@ public class Constants {
     final public static int DEFAULT_SERVER_PORT = 10101;
 
     /**
-     * The default backlog size of listening sockets.
-     */
-    final public static int DEFAULT_BACKLOG_SIZE = 128;
-
-    /**
      * The maximum allowable control message size.
      */
     final public static int MAX_CONTROL_MESSAGE_SIZE = 1 << 26;

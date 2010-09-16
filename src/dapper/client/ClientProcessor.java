@@ -39,7 +39,6 @@ import shared.event.StateProcessor;
 import shared.event.StateTable;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
-import shared.util.Control;
 import dapper.AsynchronousBase;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
@@ -192,15 +191,6 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
         @Override
         public void handle(ControlEvent evt) {
             ClientProcessor.this.logic.handleSuccessfulExecution((ExecuteAckEvent) evt);
-        }
-    };
-
-    @Transition(currentState = "SHUTDOWN", eventType = "SHUTDOWN", group = "internal")
-    final Handler<ControlEvent> shutdownHandler = new Handler<ControlEvent>() {
-
-        @Override
-        public void handle(ControlEvent evt) {
-            Control.close(ClientProcessor.this);
         }
     };
 

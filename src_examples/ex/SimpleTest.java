@@ -32,9 +32,6 @@ import static dapper.Constants.LOCAL;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dapper.server.flow.Flow;
 import dapper.server.flow.FlowBuilder;
 import dapper.server.flow.FlowEdge;
@@ -50,11 +47,6 @@ import dapper.ui.Program;
  */
 @Program
 public class SimpleTest implements FlowBuilder {
-
-    /**
-     * The static {@link Logger} instance.
-     */
-    final protected static Logger Log = LoggerFactory.getLogger(SimpleTest.class);
 
     /**
      * Default constructor.

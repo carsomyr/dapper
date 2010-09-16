@@ -75,17 +75,6 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
-         * Indicates a request to refresh the computation state and see if any work can be done.
-         */
-        REFRESH {
-
-            @Override
-            protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
-                throw new UnsupportedOperationException();
-            }
-        }, //
-
-        /**
          * Indicates a message from the server conveying a resource descriptor.
          */
         RESOURCE {
@@ -174,6 +163,11 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
         }, //
 
         /**
+         * Indicates a request to refresh the computation state and see if any work can be done.
+         */
+        REFRESH, //
+
+        /**
          * Indicates a connection end-of-stream notification.
          */
         END_OF_STREAM, //
@@ -192,11 +186,6 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
          * Indicates a timeout notification.
          */
         TIMEOUT, //
-
-        /**
-         * Indicates a request to shut down the processing thread.
-         */
-        SHUTDOWN, //
 
         /**
          * Indicates a request to create a new {@link Flow}.

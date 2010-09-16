@@ -28,11 +28,11 @@
 
 package dapper.client;
 
-import static dapper.Constants.DEFAULT_BACKLOG_SIZE;
 import static dapper.Constants.DEFAULT_SERVER_PORT;
 import static dapper.Constants.MAX_PENDING_ACCEPTS;
 import static dapper.Constants.REQUEST_TIMEOUT_MILLIS;
 import static dapper.event.ControlEvent.ControlEventType.INIT;
+import static shared.net.Constants.DEFAULT_BACKLOG_SIZE;
 
 import java.io.Closeable;
 import java.io.IOException;

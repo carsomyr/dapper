@@ -28,13 +28,13 @@
 
 package dapper.server;
 
-import static dapper.Constants.DEFAULT_BACKLOG_SIZE;
 import static dapper.Constants.DEFAULT_SERVER_PORT;
 import static dapper.event.ControlEvent.ControlEventType.CREATE_FLOW;
 import static dapper.event.ControlEvent.ControlEventType.CREATE_USER_QUEUE;
 import static dapper.event.ControlEvent.ControlEventType.GET_FLOW_PROXY;
 import static dapper.event.ControlEvent.ControlEventType.GET_PENDING_COUNT;
 import static dapper.event.ControlEvent.ControlEventType.SET_AUTOCLOSE_IDLE;
+import static shared.net.Constants.DEFAULT_BACKLOG_SIZE;
 
 import java.io.Closeable;
 import java.io.IOException;

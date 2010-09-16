@@ -31,7 +31,6 @@ package dapper.client;
 import static dapper.event.ControlEvent.ControlEventType.PREPARE_ACK;
 import static dapper.event.ControlEvent.ControlEventType.REFRESH;
 import static dapper.event.ControlEvent.ControlEventType.RESOURCE_ACK;
-import static dapper.event.ControlEvent.ControlEventType.SHUTDOWN;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -231,7 +230,7 @@ public class ClientLogic {
         Client.getLog().info(String.format("Received error from %s: %s. Shutting down.", //
                 evt.getSource(), evt.getError().getMessage()));
 
-        this.cp.onLocal(new ControlEvent(SHUTDOWN, this.cp));
+        Control.close(this.cp);
 
         this.cp.setStatus(ClientStatus.SHUTDOWN);
     }
