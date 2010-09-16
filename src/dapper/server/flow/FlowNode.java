@@ -136,6 +136,10 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
             return (Codelet) Thread.currentThread() //
                     .getContextClassLoader().loadClass(className).newInstance();
 
+        } catch (RuntimeException e) {
+
+            throw e;
+
         } catch (Exception e) {
 
             throw new RuntimeException(e);

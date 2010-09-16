@@ -171,9 +171,9 @@ public class CodeletTree extends JTree implements DropTargetListener {
                 registerJar(file, null, null);
             }
 
-        } catch (Throwable t) {
+        } catch (Exception e) {
 
-            FlowManager.getLog().info("Failed to import archive.", t);
+            FlowManager.getLog().info("Failed to import archive.", e);
         }
     }
 

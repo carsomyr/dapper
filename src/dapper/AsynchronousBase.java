@@ -33,6 +33,7 @@ import static dapper.Constants.DEFAULT_BUFFER_SIZE;
 import static dapper.Constants.TIMER_PURGE_INTERVAL_MILLIS;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
@@ -181,7 +182,7 @@ public class AsynchronousBase implements Closeable {
 
             return InetAddress.getLocalHost();
 
-        } catch (Exception e) {
+        } catch (IOException e) {
 
             throw new RuntimeException("Could not infer network address", e);
         }

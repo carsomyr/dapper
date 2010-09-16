@@ -98,6 +98,10 @@ public class FlowManagerDriver {
 
                     FlowManager.createUI(args);
 
+                } catch (RuntimeException e) {
+
+                    throw e;
+
                 } catch (Exception e) {
 
                     throw new RuntimeException(e);
