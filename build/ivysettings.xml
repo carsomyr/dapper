@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivysettings>
 
-    <property name="ivy.deliver.revision" value="${build.version}" />
-
     <resolvers>
         <chain name="public" returnFirst="true">
             <ibiblio name="first" m2compatible="true" />
             <ibiblio name="second" root="http://repository.jboss.org/nexus/content/groups/public-jboss/"
                 m2compatible="true" />
-            <url name="third">
-                <ivy pattern="http://shared.sourceforge.net/repository/[organisation]/[module]/[revision]/ivys/ivy.xml" />
+            <packager name="third" buildRoot="${ivy.home}/packager/build" resourceCache="${ivy.home}/packager/cache">
+                <ivy pattern="http://shared.googlecode.com/svn/trunk/repo/modules/[organisation]/[module]/[revision]/ivy.xml" />
                 <artifact
-                    pattern="http://shared.sourceforge.net/repository/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" />
-            </url>
+                    pattern="http://shared.googlecode.com/svn/trunk/repo/modules/[organisation]/[module]/[revision]/packager.xml" />
+            </packager>
         </chain>
     </resolvers>
 

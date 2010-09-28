@@ -5,12 +5,11 @@
     <info organisation="dapper" module="dapper" />
 
     <configurations>
-        <conf name="ant" />
-        <conf name="auxlib" />
         <conf name="base" />
-        <conf name="checkstyle" />
+        <conf name="bootstrap" />
+        <conf name="default" extends="base,ex" />
         <conf name="ex" extends="base" />
-        <conf name="lib" extends="base" />
+        <conf name="lib" visibility="private" />
     </configurations>
 
     <publications>
@@ -19,11 +18,10 @@
     </publications>
 
     <dependencies>
-        <dependency org="net.sf.jung" name="jung-algorithms" rev="2.0.1" conf="lib->default" />
-        <dependency org="net.sf.jung" name="jung-api" rev="2.0.1" conf="lib->default" />
-        <dependency org="net.sf.jung" name="jung-graph-impl" rev="2.0.1" conf="lib->default" />
-        <dependency org="shared" name="shared" rev="latest.integration"
-            conf="ant->ant; auxlib->base; auxlib->build-conf; base->base; base->commons; base->net; checkstyle->checkstyle"
+        <dependency org="net.sf.jung" name="jung-algorithms" rev="2.0.1" conf="base,lib->default" />
+        <dependency org="net.sf.jung" name="jung-api" rev="2.0.1" conf="base,lib->default" />
+        <dependency org="net.sf.jung" name="jung-graph-impl" rev="2.0.1" conf="base,lib->default" />
+        <dependency org="shared" name="shared" rev="latest.integration" conf="base,lib->default;bootstrap->base,bootstrap"
             changing="true" />
     </dependencies>
 

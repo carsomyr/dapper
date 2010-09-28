@@ -27,8 +27,6 @@
 
     <target name="init">
         <mkdir dir="bin" />
-        <mkdir dir="distrib/jars" />
-        <mkdir dir="distrib/sources" />
         <available file=".dependencies" property="build.dependencies" />
         <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="dapper.classpath" />
     </target>
@@ -37,23 +35,23 @@
         <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="build/ivy.jar" usetimestamp="true" />
     </target>
 
-    <target name="ivy-prepare" depends="ivy-install" unless="ivy.settings.file">
+    <target name="ivy-configure" depends="ivy-install" unless="ivy.settings.file">
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="dapper.classpath" />
         <ivy:configure file="build/ivysettings.xml" />
     </target>
 
-    <target name="ivy-resolve" depends="ivy-prepare" unless="ivy.module.dapper-dapper">
+    <target name="ivy-resolve" depends="ivy-configure" unless="ivy.module">
         <ivy:resolve />
     </target>
 
-    <target name="ivy-retrieve" depends="ivy-prepare" unless="build.dependencies">
+    <target name="ivy-retrieve" depends="ivy-configure" unless="build.dependencies">
+        <ivy:retrieve conf="bootstrap" />
         <!-- Some Jar artifacts are declared as having type bundle. -->
-        <ivy:retrieve conf="ant, checkstyle, lib" type="bundle, jar" />
-        <ivy:retrieve conf="auxlib" type="resource, source" />
-        <unzip src="build/auxlib/sst-build-conf.jar" dest="build">
+        <ivy:retrieve conf="lib" type="bundle, jar" />
+        <unzip src="build/bootstrap/sst-build-conf.jar" dest="build">
             <patternset includes="conf/**" />
         </unzip>
-        <unzip src="build/auxlib/sst-base-src.jar" dest="src">
+        <unzip src="build/bootstrap/sst-base-src.jar" dest="src">
             <patternset includes="shared/metaclass/*.java" />
         </unzip>
         <touch file=".dependencies" />
@@ -102,25 +100,25 @@
     </target>
 
     <target name="jar-base" depends="build-project, build-resource">
-        <jar destfile="distrib/jars/dapper-base-${build.version}.jar" basedir="bin" includes="dapper/**">
+        <jar destfile="${ivy.distrib.dir}/jars/dapper-base-${build.version}.jar" basedir="bin" includes="dapper/**">
             <metainf refid="dapper.metainf" />
         </jar>
     </target>
 
     <target name="jar-base-src" depends="build-project, build-resource">
-        <jar destfile="distrib/sources/dapper-base-src-${build.version}.jar" basedir="src" includes="dapper/**">
+        <jar destfile="${ivy.distrib.dir}/sources/dapper-base-src-${build.version}.jar" basedir="src" includes="dapper/**">
             <metainf refid="dapper.metainf" />
         </jar>
     </target>
 
     <target name="jar-ex" depends="build-project, build-resource">
-        <jar destfile="distrib/jars/dapper-ex-${build.version}.jar" basedir="bin" includes="ex/**">
+        <jar destfile="${ivy.distrib.dir}/jars/dapper-ex-${build.version}.jar" basedir="bin" includes="ex/**">
             <metainf refid="dapper.metainf" />
         </jar>
     </target>
 
     <target name="jar-ex-src" depends="build-project, build-resource">
-        <jar destfile="distrib/sources/dapper-ex-src-${build.version}.jar" basedir="src_examples" includes="ex/**">
+        <jar destfile="${ivy.distrib.dir}/sources/dapper-ex-src-${build.version}.jar" basedir="src_examples" includes="ex/**">
             <metainf refid="dapper.metainf" />
         </jar>
     </target>
@@ -128,7 +126,7 @@
     <!-- Publish Jars. -->
 
     <target name="ivy-publish" depends="ivy-resolve, jar-base, jar-base-src, jar-ex, jar-ex-src">
-        <ivy:publish resolver="local" overwrite="true" forcedeliver="true" />
+        <ivy:publish resolver="local" pubrevision="${build.version}" overwrite="true" forcedeliver="true" />
         <touch file=".publish" />
     </target>
 
@@ -138,8 +136,7 @@
         <javadoc access="protected" destdir="javadoc" packagenames="*" source="${source}" splitindex="true" failonerror="true" author="true" use="true" version="true">
             <sourcepath refid="dapper.sourcepath" />
             <classpath refid="dapper.classpath" />
-            <link href="http://java.sun.com/javase/6/docs/api/" />
-            <link href="http://shared.sourceforge.net/javadoc/" />
+            <link href="http://download.oracle.com/javase/6/docs/api/" />
             <doclet name="org.jboss.apiviz.APIviz" pathref="dapper.classpath" />
         </javadoc>
         <touch file=".javadoc" />
@@ -175,9 +172,7 @@
     <target name="distclean" depends="clean">
         <delete file=".dependencies" />
         <delete file="build/ivy.jar" />
-        <delete dir="build/ant" />
-        <delete dir="build/auxlib" />
-        <delete dir="build/checkstyle" />
+        <delete dir="build/bootstrap" />
         <delete dir="build/conf" />
         <delete dir="build/lib" />
         <delete dir="src/shared" />

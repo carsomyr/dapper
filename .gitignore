@@ -13,9 +13,7 @@
 /doxydoc/
 /javadoc/
 /build/ivy.jar
-/build/ant/
-/build/auxlib/
-/build/checkstyle/
+/build/bootstrap/
 /build/conf/
 /build/lib/
 /native/Darwin/
