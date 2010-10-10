@@ -38,7 +38,7 @@ import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import shared.codec.Hex;
+import shared.codec.Codecs;
 import shared.util.Arithmetic;
 import dapper.codelet.Codelet;
 import dapper.codelet.Resource;
@@ -62,7 +62,7 @@ public class CreateSortFile implements Codelet {
 
         for (int i = 0; i < nLines; i++) {
 
-            ps.printf(Hex.bytesToHex(Arithmetic.nextBytes(LINE_LENGTH >>> 1)) //
+            ps.printf(Codecs.bytesToHex(Arithmetic.nextBytes(LINE_LENGTH >>> 1)) //
                     .substring(0, LINE_LENGTH - 1));
             ps.printf("%n");
         }

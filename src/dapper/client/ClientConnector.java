@@ -43,7 +43,7 @@ import shared.net.Connection.InitializationType;
 import shared.net.SynchronousManagedConnection;
 import shared.util.Control;
 import shared.util.CoreThread;
-import dapper.AsynchronousBase;
+import dapper.DapperBase;
 import dapper.codelet.StreamResource;
 import dapper.event.ControlEvent;
 import dapper.event.ResetEvent;
@@ -60,14 +60,14 @@ public class ClientConnector extends CoreThread implements Closeable {
     final Set<StreamResource<?>> connectResources;
     final Map<String, SynchronousManagedConnection> connectionMap;
 
-    final AsynchronousBase base;
+    final DapperBase base;
     final Source<ControlEvent, SourceType> callback;
 
     /**
      * Default constructor.
      */
     public ClientConnector(Set<StreamResource<?>> connectResources, //
-            AsynchronousBase base, Source<ControlEvent, SourceType> callback) {
+            DapperBase base, Source<ControlEvent, SourceType> callback) {
         super("Connector Thread");
 
         this.base = base;
@@ -87,7 +87,7 @@ public class ClientConnector extends CoreThread implements Closeable {
     }
 
     @Override
-    protected void runUnchecked() throws Exception {
+    protected void doRun() throws Exception {
 
         // Before proceeding, schedule an interrupt.
         this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
@@ -123,7 +123,7 @@ public class ClientConnector extends CoreThread implements Closeable {
     }
 
     @Override
-    protected void runCatch(Throwable t) {
+    protected void doCatch(Throwable t) {
 
         // Close all connections.
         for (SynchronousManagedConnection smc : this.connectionMap.values()) {

@@ -34,7 +34,7 @@ import java.util.TimerTask;
 import shared.event.EnumStatus;
 import shared.event.Handler;
 import shared.parallel.Handle;
-import dapper.AsynchronousBase;
+import dapper.DapperBase;
 import dapper.client.ClientStatus;
 import dapper.codelet.Locatable;
 import dapper.event.ControlEvent;
@@ -53,7 +53,7 @@ public class ClientState //
 
     final ControlEventConnection connection;
     final Handler<ControlEvent> serverHandler;
-    final AsynchronousBase base;
+    final DapperBase base;
 
     InetSocketAddress address;
 
@@ -71,7 +71,7 @@ public class ClientState //
     /**
      * Default constructor.
      */
-    public ClientState(ControlEventConnection connection, Handler<ControlEvent> serverHandler, AsynchronousBase base) {
+    public ClientState(ControlEventConnection connection, Handler<ControlEvent> serverHandler, DapperBase base) {
 
         this.connection = connection;
         this.serverHandler = serverHandler;

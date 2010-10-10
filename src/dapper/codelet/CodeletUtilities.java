@@ -150,7 +150,7 @@ abstract public class CodeletUtilities {
      * given by a string.
      */
     final public static Element createElement(String content) {
-        return Control.createDocument(new StringBuilder() //
+        return Control.parse(new StringBuilder() //
                 .append("<parameters>") //
                 .append(content) //
                 .append("</parameters>").toString()).getDocumentElement();

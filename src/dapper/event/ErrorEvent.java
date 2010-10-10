@@ -52,7 +52,7 @@ public class ErrorEvent extends ControlEvent {
     /**
      * Gets the cause of the error.
      */
-    public Throwable getError() {
+    public Throwable getException() {
         return this.exception;
     }
 }

@@ -402,7 +402,7 @@ public class ServerLogic {
 
         Control.assertTrue(this.allFlowsMap.put(flow, fp) == null);
 
-        evt.setOutput(fp);
+        evt.set(fp);
 
         // Interrupt self.
         this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
@@ -420,7 +420,7 @@ public class ServerLogic {
         }
 
         // Notify the invoker of completion.
-        evt.setOutput(null);
+        evt.set(null);
 
         // Interrupt self.
         this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
@@ -443,7 +443,7 @@ public class ServerLogic {
         }
 
         // Notify the invoker of completion.
-        evt.setOutput(null);
+        evt.set(null);
 
         // Interrupt self.
         this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
@@ -466,7 +466,7 @@ public class ServerLogic {
 
                 fp.setFlow(f.clone());
 
-                evt.setOutput(null);
+                evt.set(null);
 
             } else {
 
@@ -490,7 +490,7 @@ public class ServerLogic {
                 }
             }
 
-            evt.setOutput(res);
+            evt.set(res);
         }
     }
 
@@ -498,7 +498,7 @@ public class ServerLogic {
      * Handles a request to get the number of additional clients required to saturate pending computations.
      */
     protected void handleGetPendingCount(RequestEvent<Object, Integer> evt) {
-        evt.setOutput(getPendingCount());
+        evt.set(getPendingCount());
     }
 
     /**
@@ -506,7 +506,7 @@ public class ServerLogic {
      * {@link Flow}.
      */
     protected void handleGetFlowPendingCount(RequestEvent<Flow, Integer> evt) {
-        evt.setOutput(getPendingCount(evt.getInput()));
+        evt.set(getPendingCount(evt.getInput()));
     }
 
     /**
@@ -548,7 +548,7 @@ public class ServerLogic {
 
         ClientState csh = (ClientState) evt.getSource().getHandler();
 
-        Throwable exception = evt.getError();
+        Throwable exception = evt.getException();
 
         Server.getLog().info(String.format("Received error from %s: %s.", evt.getSource(), exception.getMessage()));
 
@@ -844,7 +844,7 @@ public class ServerLogic {
                 if (flow.getFlowCountDown().countDown(n1)) {
 
                     fp.onFlowEnd(fp.getAttachment());
-                    fp.setOutput(null);
+                    fp.set(null);
 
                     flow.setStatus(FlowStatus.FINISHED);
                 }

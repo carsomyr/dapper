@@ -40,7 +40,7 @@ import shared.net.Connection.InitializationType;
 import shared.net.SynchronousManagedConnection;
 import shared.util.Control;
 import shared.util.CoreThread;
-import dapper.AsynchronousBase;
+import dapper.DapperBase;
 import dapper.event.AddressEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEventConnection;
@@ -61,7 +61,7 @@ import dapper.event.StreamReadyEvent;
  */
 public class ClientLogic {
 
-    final AsynchronousBase base;
+    final DapperBase base;
     final InetSocketAddress localAddress;
     final InetSocketAddress remoteAddress;
     final String domain;
@@ -75,7 +75,7 @@ public class ClientLogic {
     /**
      * Default constructor.
      */
-    public ClientLogic(AsynchronousBase base, //
+    public ClientLogic(DapperBase base, //
             InetSocketAddress localAddress, //
             InetSocketAddress remoteAddress, //
             String domain, //
@@ -150,7 +150,7 @@ public class ClientLogic {
         new CoreThread("Server Connector Thread") {
 
             @Override
-            protected void runUnchecked() throws Exception {
+            protected void doRun() throws Exception {
 
                 ClientLogic cl = ClientLogic.this;
 
@@ -162,7 +162,7 @@ public class ClientLogic {
             }
 
             @Override
-            protected void runCatch(Throwable t) {
+            protected void doCatch(Throwable t) {
                 // No need to handle -- Manager will signal client processor on failure.
             }
 
@@ -228,7 +228,7 @@ public class ClientLogic {
     protected void handleError(ErrorEvent evt) {
 
         Client.getLog().info(String.format("Received error from %s: %s. Shutting down.", //
-                evt.getSource(), evt.getError().getMessage()));
+                evt.getSource(), evt.getException().getMessage()));
 
         Control.close(this.cp);
 

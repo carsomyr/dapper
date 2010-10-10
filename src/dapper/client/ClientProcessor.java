@@ -39,7 +39,7 @@ import shared.event.StateProcessor;
 import shared.event.StateTable;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
-import dapper.AsynchronousBase;
+import dapper.DapperBase;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.ControlEventConnection;
@@ -70,7 +70,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     /**
      * Default constructor.
      */
-    public ClientProcessor(AsynchronousBase base, //
+    public ClientProcessor(DapperBase base, //
             InetSocketAddress localAddress, //
             InetSocketAddress remoteAddress, //
             String domain, //

@@ -152,9 +152,9 @@ public class FlowEvent<F, N> implements Event<FlowEvent<F, N>, FlowEvent.FlowEve
     }
 
     /**
-     * Gets the error that just occurred.
+     * Gets the exception that just occurred.
      */
-    public Throwable getError() {
+    public Throwable getException() {
         return this.exception;
     }
 }

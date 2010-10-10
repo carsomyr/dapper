@@ -262,7 +262,7 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
     @Override
     public Element toDOM() {
 
-        Document doc = Control.createDocument();
+        Document doc = Control.newDocument();
 
         Element rootElement = doc.createElement(XMLEvent.class.getName());
 

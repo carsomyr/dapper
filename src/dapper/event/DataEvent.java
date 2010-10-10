@@ -34,7 +34,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import shared.codec.Base64;
+import shared.codec.Codecs;
 import shared.event.Source;
 
 /**
@@ -66,7 +66,7 @@ public class DataEvent extends ControlEvent {
         NodeList nodeList = contentNode.getChildNodes();
 
         this.pathname = nodeList.item(0).getTextContent();
-        this.data = Base64.base64ToBytes(nodeList.item(1).getTextContent());
+        this.data = Codecs.base64ToBytes(nodeList.item(1).getTextContent());
     }
 
     /**
@@ -91,6 +91,6 @@ public class DataEvent extends ControlEvent {
         contentNode.appendChild(doc.createElement("pathname")) //
                 .setTextContent(this.pathname);
         contentNode.appendChild(doc.createElement("data")) //
-                .setTextContent(Base64.bytesToBase64(this.data));
+                .setTextContent(Codecs.bytesToBase64(this.data));
     }
 }

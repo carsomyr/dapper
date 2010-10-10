@@ -55,8 +55,8 @@ import org.slf4j.LoggerFactory;
 import shared.net.Connection.InitializationType;
 import shared.util.Control;
 import shared.util.CoreThread;
-import dapper.AsynchronousBase;
 import dapper.Constants;
+import dapper.DapperBase;
 import dapper.event.ControlEventConnection;
 import dapper.event.FlowEvent;
 import dapper.server.ServerProcessor.FlowBuildRequest;
@@ -85,7 +85,7 @@ public class Server extends CoreThread implements Closeable {
         return Log;
     }
 
-    final AsynchronousBase base;
+    final DapperBase base;
     final ServerProcessor processor;
     final ServerSocketChannel ssChannel;
 
@@ -107,9 +107,9 @@ public class Server extends CoreThread implements Closeable {
         this.ssChannel = ServerSocketChannel.open();
         this.ssChannel.socket().bind(new InetSocketAddress(port), DEFAULT_BACKLOG_SIZE);
 
-        this.base = new AsynchronousBase();
+        this.base = new DapperBase();
 
-        this.processor = new ServerProcessor(AsynchronousBase.inferAddress(), //
+        this.processor = new ServerProcessor(DapperBase.inferAddress(), //
                 //
                 new Runnable() {
 
@@ -251,7 +251,7 @@ public class Server extends CoreThread implements Closeable {
     }
 
     @Override
-    protected void runUnchecked() throws Exception {
+    protected void doRun() throws Exception {
 
         loop: for (; this.run;) {
 
@@ -275,7 +275,7 @@ public class Server extends CoreThread implements Closeable {
     }
 
     @Override
-    protected void runCatch(Throwable t) {
+    protected void doCatch(Throwable t) {
 
         // The close was deliberate, so ignore.
         if (t instanceof ClosedByInterruptException) {
@@ -286,7 +286,7 @@ public class Server extends CoreThread implements Closeable {
     }
 
     @Override
-    protected void runFinalizer() {
+    protected void doFinally() {
 
         Control.close(this.base);
         Control.close(this.processor);

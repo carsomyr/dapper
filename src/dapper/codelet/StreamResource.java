@@ -42,7 +42,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import shared.codec.Hex;
+import shared.codec.Codecs;
 import shared.parallel.Handle;
 import shared.util.Control;
 
@@ -111,7 +111,7 @@ public class StreamResource<T extends Closeable> implements Resource, Locatable,
         try {
 
             this.address = !addressContent.equals("") ? new InetSocketAddress( //
-                    InetAddress.getByAddress(Hex.hexToBytes(addressContent)), //
+                    InetAddress.getByAddress(Codecs.hexToBytes(addressContent)), //
                     Integer.parseInt(portNode.getTextContent())) : null;
 
         } catch (UnknownHostException e) {
@@ -190,7 +190,7 @@ public class StreamResource<T extends Closeable> implements Resource, Locatable,
         Document doc = contentNode.getOwnerDocument();
 
         contentNode.appendChild(doc.createElement("address")).setTextContent( //
-                (this.address != null) ? Hex.bytesToHex(this.address.getAddress().getAddress()) : "");
+                (this.address != null) ? Codecs.bytesToHex(this.address.getAddress().getAddress()) : "");
 
         contentNode.appendChild(doc.createElement("port")).setTextContent( //
                 (this.address != null) ? Integer.toString(this.address.getPort()) : "");

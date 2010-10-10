@@ -247,7 +247,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         @Override
         public void handle(ControlEvent evt) {
             ((RequestEvent<Flow, BlockingQueue<FlowEvent<Object, Object>>>) evt) //
-                    .setOutput(ServerProcessor.this.feb.createUserQueue());
+                    .set(ServerProcessor.this.feb.createUserQueue());
         }
     };
 
@@ -463,7 +463,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         /**
          * Sets the {@link RequestFuture} result.
          */
-        protected void setOutput(T value) {
+        protected void set(T value) {
             this.future.set(value);
         }
 
@@ -588,7 +588,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         /**
          * Sets the {@link RequestFuture} result.
          */
-        protected void setOutput(Object value) {
+        protected void set(Object value) {
             this.future.set(value);
         }
 

@@ -80,13 +80,13 @@ import dapper.server.flow.Flow;
  */
 @CLIOptions(options = {
 //
-        @CLIOption(opt = "a", longOpt = "archive", numArgs = -1, //
+        @CLIOption(opt = "a", longOpt = "archive", nArgs = -1, //
         description = "the execution archive to load"), //
         //
-        @CLIOption(opt = "p", longOpt = "port", numArgs = 1, //
+        @CLIOption(opt = "p", longOpt = "port", nArgs = 1, //
         description = "the listening port"), //
         //
-        @CLIOption(opt = "c", longOpt = "autoclose-idle", numArgs = 0, //
+        @CLIOption(opt = "c", longOpt = "autoclose-idle", nArgs = 0, //
         description = "close idle clients automatically") //
 })
 @SuppressWarnings("serial")

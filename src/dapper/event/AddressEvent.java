@@ -38,7 +38,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import shared.codec.Hex;
+import shared.codec.Codecs;
 import shared.event.Source;
 
 /**
@@ -72,7 +72,7 @@ public class AddressEvent extends ControlEvent {
         try {
 
             this.address = new InetSocketAddress( //
-                    InetAddress.getByAddress(Hex.hexToBytes(nodeList.item(0).getTextContent())), //
+                    InetAddress.getByAddress(Codecs.hexToBytes(nodeList.item(0).getTextContent())), //
                     Integer.parseInt(nodeList.item(1).getTextContent()));
 
         } catch (UnknownHostException e) {
@@ -103,7 +103,7 @@ public class AddressEvent extends ControlEvent {
         Document doc = contentNode.getOwnerDocument();
 
         contentNode.appendChild(doc.createElement("address")) //
-                .setTextContent(Hex.bytesToHex(this.address.getAddress().getAddress()));
+                .setTextContent(Codecs.bytesToHex(this.address.getAddress().getAddress()));
         contentNode.appendChild(doc.createElement("port")) //
                 .setTextContent(Integer.toString(this.address.getPort()));
         contentNode.appendChild(doc.createElement("domain")) //

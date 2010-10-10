@@ -95,12 +95,12 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
         new CoreThread("Flow Event Logger") {
 
             @Override
-            protected void runUnchecked() throws Exception {
+            protected void doRun() throws Exception {
 
                 BlockingQueue<FlowEvent<Object, Object>> queue = server.createFlowEventQueue();
 
                 for (FlowEvent<Object, Object> evt; (evt = queue.take()) != null;) {
-                    FlowManager.Log.info(evt.toString(), evt.getError());
+                    FlowManager.Log.info(evt.toString(), evt.getException());
                 }
             }
 

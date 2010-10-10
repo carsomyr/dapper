@@ -42,7 +42,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
-import shared.codec.Hex;
+import shared.codec.Codecs;
 import shared.event.Event;
 import shared.event.SourceLocal;
 import shared.net.ConnectionManager;
@@ -56,12 +56,12 @@ import dapper.event.ControlEventConnection;
  * 
  * @author Roy Liu
  */
-public class AsynchronousBase implements Closeable {
+public class DapperBase implements Closeable {
 
     /**
      * The address of the local host.
      */
-    final protected static byte[] LocalHost = Hex.hexToBytes("80000001");
+    final protected static byte[] LocalHost = Codecs.hexToBytes("80000001");
 
     final ConnectionManager manager;
     final Timer timer;
@@ -70,7 +70,7 @@ public class AsynchronousBase implements Closeable {
     /**
      * Default constructor.
      */
-    public AsynchronousBase() {
+    public DapperBase() {
 
         this.manager = new ConnectionManager("CM");
         this.timer = new Timer();
@@ -79,7 +79,7 @@ public class AsynchronousBase implements Closeable {
             @Override
             public void run() {
 
-                AsynchronousBase.this.timer.purge();
+                DapperBase.this.timer.purge();
                 System.gc();
             }
 

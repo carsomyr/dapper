@@ -55,7 +55,7 @@ import shared.net.Connection.InitializationType;
 import shared.net.SynchronousManagedConnection;
 import shared.util.Control;
 import shared.util.CoreThread;
-import dapper.AsynchronousBase;
+import dapper.DapperBase;
 import dapper.event.ControlEvent;
 import dapper.event.StreamReadyEvent;
 import dapper.server.flow.FlowUtilities;
@@ -69,8 +69,8 @@ import dapper.server.flow.StreamEdge;
  */
 @CLIOptions(options = {
 //
-        @CLIOption(opt = "h", longOpt = "host", numArgs = 1, description = "the server address"), //
-        @CLIOption(opt = "d", longOpt = "domain", numArgs = 1, description = "the execution domain") //
+        @CLIOption(opt = "h", longOpt = "host", nArgs = 1, description = "the server address"), //
+        @CLIOption(opt = "d", longOpt = "domain", nArgs = 1, description = "the execution domain") //
 })
 public class Client extends CoreThread implements Closeable {
 
@@ -96,7 +96,7 @@ public class Client extends CoreThread implements Closeable {
         return Log;
     }
 
-    final AsynchronousBase base;
+    final DapperBase base;
     final ClientProcessor processor;
     final InetSocketAddress localAddress;
     final ServerSocketChannel ssChannel;
@@ -109,7 +109,7 @@ public class Client extends CoreThread implements Closeable {
     public Client(InetSocketAddress address, String domain) {
         super("Client");
 
-        this.base = new AsynchronousBase();
+        this.base = new DapperBase();
 
         try {
 
@@ -161,7 +161,7 @@ public class Client extends CoreThread implements Closeable {
     }
 
     @Override
-    protected void runUnchecked() throws Exception {
+    protected void doRun() throws Exception {
 
         loop: for (; this.run;) {
 
@@ -184,7 +184,7 @@ public class Client extends CoreThread implements Closeable {
             new CoreThread("Accept Sync") {
 
                 @Override
-                protected void runUnchecked() throws IOException {
+                protected void doRun() throws IOException {
 
                     // Before proceeding, schedule an interrupt.
                     Client.this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
@@ -218,7 +218,7 @@ public class Client extends CoreThread implements Closeable {
                 }
 
                 @Override
-                protected void runCatch(Throwable t) {
+                protected void doCatch(Throwable t) {
 
                     Control.close(smc);
 
@@ -226,7 +226,7 @@ public class Client extends CoreThread implements Closeable {
                 }
 
                 @Override
-                protected void runFinalizer() {
+                protected void doFinally() {
                     Guard.release(1);
                 }
 
@@ -237,7 +237,7 @@ public class Client extends CoreThread implements Closeable {
     }
 
     @Override
-    protected void runCatch(Throwable t) {
+    protected void doCatch(Throwable t) {
 
         // The close was deliberate, so ignore.
         if (t instanceof ClosedByInterruptException) {
@@ -248,7 +248,7 @@ public class Client extends CoreThread implements Closeable {
     }
 
     @Override
-    protected void runFinalizer() {
+    protected void doFinally() {
 
         Control.close(this.base);
         Control.close(this.processor);

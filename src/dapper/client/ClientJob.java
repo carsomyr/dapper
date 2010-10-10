@@ -56,7 +56,7 @@ import shared.parallel.Handle;
 import shared.util.Control;
 import shared.util.CoreThread;
 import shared.util.RequestFuture;
-import dapper.AsynchronousBase;
+import dapper.DapperBase;
 import dapper.codelet.Codelet;
 import dapper.codelet.CodeletUtilities;
 import dapper.codelet.DataService;
@@ -80,7 +80,7 @@ import dapper.server.flow.FlowNode;
 public class ClientJob extends CoreThread implements Closeable, DataService {
 
     final ResourceEvent event;
-    final AsynchronousBase base;
+    final DapperBase base;
 
     final Map<String, StreamResource<?>> remaining;
     final Set<StreamResource<?>> connectResources;
@@ -91,7 +91,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
     /**
      * Default constructor.
      */
-    public ClientJob(ResourceEvent event, AsynchronousBase base, Source<ControlEvent, SourceType> callback) {
+    public ClientJob(ResourceEvent event, DapperBase base, Source<ControlEvent, SourceType> callback) {
         super("Job Thread");
 
         this.event = event;
@@ -226,7 +226,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
     }
 
     @Override
-    protected void runUnchecked() throws Exception {
+    protected void doRun() throws Exception {
 
         RegistryClassLoader rcl = new RegistryClassLoader();
         rcl.addRegistry(new ResourceRegistry() {
@@ -275,7 +275,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
         Control.checkTrue(embeddingParameters.getNodeName().equals("parameters"), //
                 "Invalid parameters node");
 
-        Document doc = Control.createDocument();
+        Document doc = Control.newDocument();
         Node edgeParameters = doc.createElement("edge_parameters");
 
         for (Resource outResource : outResources) {
@@ -294,7 +294,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
     }
 
     @Override
-    protected void runCatch(Throwable t) {
+    protected void doCatch(Throwable t) {
 
         ResetEvent resetEvent = new ResetEvent("Execution encountered an unexpected exception", t, this.callback);
         resetEvent.set(this);
