@@ -55,12 +55,12 @@ public enum FlowStatus {
     /**
      * The {@link EnumSet} of executing states.
      */
-    final protected static EnumSet<FlowStatus> ExecutingSet = EnumSet.of(EXECUTE);
+    final protected static EnumSet<FlowStatus> executingSet = EnumSet.of(EXECUTE);
 
     /**
      * Gets whether the {@link Flow} is executing.
      */
     public boolean isExecuting() {
-        return ExecutingSet.contains(this);
+        return executingSet.contains(this);
     }
 }

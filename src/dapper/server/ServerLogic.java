@@ -94,7 +94,7 @@ public class ServerLogic {
      * A {@link Comparator} for comparing {@link LogicalNode}s based on the sizes of the {@link FlowNode} equivalence
      * classes they represent.
      */
-    final protected static Comparator<LogicalNode> SizeComparator = new Comparator<LogicalNode>() {
+    final protected static Comparator<LogicalNode> sizeComparator = new Comparator<LogicalNode>() {
 
         @Override
         public int compare(LogicalNode l1, LogicalNode l2) {
@@ -105,7 +105,7 @@ public class ServerLogic {
     /**
      * A {@link Pattern} used to parse data requests.
      */
-    final protected static Pattern DataRequestPattern = Pattern.compile("^([a-zA-Z_0-9]+):(.*)$");
+    final protected static Pattern dataRequestPattern = Pattern.compile("^([a-zA-Z_0-9]+):(.*)$");
 
     final InetAddress address;
     final ServerProcessor sp;
@@ -293,7 +293,7 @@ public class ServerLogic {
         }
 
         // Greedily pick small equivalence classes by sorting with a size-based comparator.
-        Collections.sort(this.executeList, SizeComparator);
+        Collections.sort(this.executeList, sizeComparator);
 
         loop: for (Iterator<LogicalNode> itr = this.executeList.iterator(); itr.hasNext();) {
 
@@ -537,7 +537,7 @@ public class ServerLogic {
     /**
      * Handles a connection end-of-stream notification.
      */
-    protected void handleEOS(ControlEventConnection connection) {
+    protected void handleEos(ControlEventConnection connection) {
         handleError(new ErrorEvent(new IOException("End-of-stream encountered"), connection));
     }
 
@@ -626,7 +626,7 @@ public class ServerLogic {
 
         String identifier = evt.getPathname();
 
-        Matcher m = DataRequestPattern.matcher(identifier);
+        Matcher m = dataRequestPattern.matcher(identifier);
 
         try {
 

@@ -224,7 +224,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
         @Override
         public void handle(ControlEvent evt) {
-            ClientProcessor.this.logic.handleEOS((ControlEventConnection) evt.getSource());
+            ClientProcessor.this.logic.handleEos((ControlEventConnection) evt.getSource());
         }
     };
 

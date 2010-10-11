@@ -49,25 +49,25 @@ abstract public class CodeletUtilities {
     /**
      * A global request counter for {@link #createStem()}.
      */
-    final protected static AtomicInteger RequestCounter = new AtomicInteger(0);
+    final protected static AtomicInteger requestCounter = new AtomicInteger(0);
 
     /**
      * A local thread variable for storing the {@link DataService} available to the {@link Codelet} being executed.
      */
-    final protected static ThreadLocal<DataService> DSLocal = new ThreadLocal<DataService>();
+    final protected static ThreadLocal<DataService> dsLocal = new ThreadLocal<DataService>();
 
     /**
      * Requests a stem from the server that is unique over the server's lifetime.
      */
     final public static String createStem() {
-        return new String(DSLocal.get().getData(String.format("id:%08x", RequestCounter.getAndIncrement())));
+        return new String(dsLocal.get().getData(String.format("id:%08x", requestCounter.getAndIncrement())));
     }
 
     /**
      * Sets the local thread's {@link DataService}.
      */
     final public static void setDataService(DataService ds) {
-        DSLocal.set(ds);
+        dsLocal.set(ds);
     }
 
     /**

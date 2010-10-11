@@ -61,7 +61,7 @@ public class DapperBase implements Closeable {
     /**
      * The address of the local host.
      */
-    final protected static byte[] LocalHost = Codecs.hexToBytes("80000001");
+    final protected static byte[] localHost = Codecs.hexToBytes("80000001");
 
     final ConnectionManager manager;
     final Timer timer;
@@ -173,7 +173,7 @@ public class DapperBase implements Closeable {
                 for (InetAddress addr : Collections.list(iFace.getInetAddresses())) {
 
                     // Match the first address that isn't the local host.
-                    if (addr.getAddress().length == 4 && !Arrays.equals(LocalHost, addr.getAddress())) {
+                    if (addr.getAddress().length == 4 && !Arrays.equals(localHost, addr.getAddress())) {
                         return addr;
                     }
                 }

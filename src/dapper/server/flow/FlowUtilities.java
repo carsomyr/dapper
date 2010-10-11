@@ -56,21 +56,21 @@ abstract public class FlowUtilities {
     /**
      * A mapping of classes to unique identifier counters.
      */
-    final protected static Map<Class<?>, AtomicInteger> CounterMap = new WeakHashMap<Class<?>, AtomicInteger>();
+    final protected static Map<Class<?>, AtomicInteger> counterMap = new WeakHashMap<Class<?>, AtomicInteger>();
 
     /**
      * Creates a unique identifier for the given class.
      */
     final public static String createIdentifier(Class<?> clazz) {
 
-        synchronized (CounterMap) {
+        synchronized (counterMap) {
 
-            AtomicInteger counter = CounterMap.get(clazz);
+            AtomicInteger counter = counterMap.get(clazz);
 
             if (counter == null) {
 
                 counter = new AtomicInteger(0);
-                CounterMap.put(clazz, counter);
+                counterMap.put(clazz, counter);
             }
 
             return String.format("%08x", counter.getAndIncrement());
@@ -83,7 +83,7 @@ abstract public class FlowUtilities {
      * @param <T>
      *            the {@link Set} type.
      */
-    final public static <T extends Set<FlowNode>> T equivalenceClassDFS(FlowNode currentNode, T visitedNodes) {
+    final public static <T extends Set<FlowNode>> T equivalenceClassDfs(FlowNode currentNode, T visitedNodes) {
 
         // Mark the current node as visited.
         visitedNodes.add(currentNode);
@@ -135,7 +135,7 @@ abstract public class FlowUtilities {
             FlowEdgeType type = entry.getValue();
 
             if (!visitedNodes.contains(neighbor) && type == FlowEdgeType.STREAM) {
-                equivalenceClassDFS(neighbor, visitedNodes);
+                equivalenceClassDfs(neighbor, visitedNodes);
             }
 
             Control.checkTrue(!visitedNodes.contains(neighbor) || type == FlowEdgeType.STREAM, //

@@ -279,7 +279,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
         @Override
         public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleEOS((ControlEventConnection) evt.getSource());
+            ServerProcessor.this.logic.handleEos((ControlEventConnection) evt.getSource());
         }
     };
 

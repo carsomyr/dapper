@@ -62,9 +62,9 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import shared.cli.CLI;
-import shared.cli.CLIOptions;
-import shared.cli.CLIOptions.CLIOption;
+import shared.cli.Cli;
+import shared.cli.CliOptions;
+import shared.cli.CliOptions.CliOption;
 import shared.log.Logging;
 import dapper.event.FlowEvent;
 import dapper.server.Server;
@@ -78,15 +78,15 @@ import dapper.server.flow.Flow;
  * @apiviz.has dapper.ui.Program - - - argument
  * @author Roy Liu
  */
-@CLIOptions(options = {
+@CliOptions(options = {
 //
-        @CLIOption(opt = "a", longOpt = "archive", nArgs = -1, //
+        @CliOption(opt = "a", longOpt = "archive", nArgs = -1, //
         description = "the execution archive to load"), //
         //
-        @CLIOption(opt = "p", longOpt = "port", nArgs = 1, //
+        @CliOption(opt = "p", longOpt = "port", nArgs = 1, //
         description = "the listening port"), //
         //
-        @CLIOption(opt = "c", longOpt = "autoclose-idle", nArgs = 0, //
+        @CliOption(opt = "c", longOpt = "autoclose-idle", nArgs = 0, //
         description = "close idle clients automatically") //
 })
 @SuppressWarnings("serial")
@@ -95,7 +95,7 @@ public class FlowManager extends JFrame {
     /**
      * The instance used for logging.
      */
-    final protected static Logger Log = LoggerFactory.getLogger(FlowManager.class);
+    final protected static Logger log = LoggerFactory.getLogger(FlowManager.class);
 
     // Set up logs.
     static {
@@ -106,7 +106,7 @@ public class FlowManager extends JFrame {
      * Gets the static {@link Logger} instance.
      */
     final public static Logger getLog() {
-        return Log;
+        return log;
     }
 
     final CodeletTree codeletTree;
@@ -216,20 +216,20 @@ public class FlowManager extends JFrame {
         // Create the "Options" menu.
         JMenu optionsMenu = new JMenu("Options");
 
-        JMenuItem screenshotSVGItem = new JMenuItem("Take Screenshot (SVG)");
-        screenshotSVGItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
-        screenshotSVGItem.addActionListener(new ActionListener() {
+        JMenuItem screenshotSvgItem = new JMenuItem("Take Screenshot (SVG)");
+        screenshotSvgItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
+        screenshotSvgItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 FlowManager.this.flowPane.takeScreenshot();
             }
         });
-        optionsMenu.add(screenshotSVGItem);
+        optionsMenu.add(screenshotSvgItem);
 
-        JMenuItem screenshotPNGItem = new JMenuItem("Take Screenshot (PNG)");
-        screenshotPNGItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.ALT_MASK));
-        screenshotPNGItem.addActionListener(new ActionListener() {
+        JMenuItem screenshotPngItem = new JMenuItem("Take Screenshot (PNG)");
+        screenshotPngItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.ALT_MASK));
+        screenshotPngItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -248,7 +248,7 @@ public class FlowManager extends JFrame {
                 }
             }
         });
-        optionsMenu.add(screenshotPNGItem);
+        optionsMenu.add(screenshotPngItem);
 
         JMenuItem purgeItem = new JMenuItem("Purge Current Flow");
         purgeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
@@ -336,7 +336,7 @@ public class FlowManager extends JFrame {
      * @throws ParseException
      *             when the command-line arguments couldn't be parsed.
      */
-    protected static void createUI(String[] args) throws ParseException {
+    protected static void createUi(String[] args) throws ParseException {
 
         int port;
 
@@ -346,7 +346,7 @@ public class FlowManager extends JFrame {
 
         try {
 
-            CommandLine cmdLine = CLI.createCommandLine(FlowManager.class, args);
+            CommandLine cmdLine = Cli.createCommandLine(FlowManager.class, args);
 
             String portValue = cmdLine.getOptionValue("p");
             port = (portValue != null) ? Integer.parseInt(portValue) : DEFAULT_SERVER_PORT;
@@ -362,7 +362,7 @@ public class FlowManager extends JFrame {
 
         } catch (ParseException e) {
 
-            getLog().info(CLI.createHelp(FlowManager.class));
+            getLog().info(Cli.createHelp(FlowManager.class));
 
             throw e;
         }

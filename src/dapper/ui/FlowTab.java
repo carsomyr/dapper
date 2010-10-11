@@ -28,7 +28,7 @@
 
 package dapper.ui;
 
-import static shared.util.Control.NullOutputStream;
+import static shared.util.Control.nullOutputStream;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -55,17 +55,17 @@ public class FlowTab extends JLabel implements Closeable {
     /**
      * An array of operating system dependent arguments to execute Dot with PNG export.
      */
-    final protected static String[] DotExecArgsPNG;
+    final protected static String[] dotExecArgsPng;
 
     /**
      * An array of operating system dependent arguments to execute Dot with SVG export.
      */
-    final protected static String[] DotExecArgsSVG;
+    final protected static String[] dotExecArgsSvg;
 
     static {
 
-        DotExecArgsPNG = new String[] { "dot", "-T", "png" };
-        DotExecArgsSVG = new String[] { "dot", "-T", "svg" };
+        dotExecArgsPng = new String[] { "dot", "-T", "png" };
+        dotExecArgsSvg = new String[] { "dot", "-T", "svg" };
     }
 
     final FlowProxy fp;
@@ -98,8 +98,8 @@ public class FlowTab extends JLabel implements Closeable {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             Control.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
-                    out, NullOutputStream, //
-                    DotExecArgsPNG);
+                    out, nullOutputStream, //
+                    dotExecArgsPng);
 
             ((ImageIcon) getIcon()).setImage(ImageIO.read(new ByteArrayInputStream(out.toByteArray())));
 
@@ -112,7 +112,7 @@ public class FlowTab extends JLabel implements Closeable {
     /**
      * Renders the {@link Flow} as an SVG.
      */
-    protected void renderSVG(File f) {
+    protected void renderSvg(File f) {
 
         try {
 
@@ -121,8 +121,8 @@ public class FlowTab extends JLabel implements Closeable {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             Control.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
-                    out, NullOutputStream, //
-                    DotExecArgsSVG);
+                    out, nullOutputStream, //
+                    dotExecArgsSvg);
 
             Control.transfer(new ByteArrayInputStream(out.toByteArray()), f);
 

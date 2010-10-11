@@ -218,7 +218,7 @@ public class ClientLogic {
     /**
      * Handles a connection end-of-stream notification.
      */
-    protected void handleEOS(ControlEventConnection server) {
+    protected void handleEos(ControlEventConnection server) {
         handleError(new ErrorEvent(new IOException("End-of-stream encountered"), server));
     }
 

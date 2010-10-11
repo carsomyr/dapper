@@ -48,9 +48,9 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import shared.cli.CLI;
-import shared.cli.CLIOptions;
-import shared.cli.CLIOptions.CLIOption;
+import shared.cli.Cli;
+import shared.cli.CliOptions;
+import shared.cli.CliOptions.CliOption;
 import shared.net.Connection.InitializationType;
 import shared.net.SynchronousManagedConnection;
 import shared.util.Control;
@@ -67,17 +67,17 @@ import dapper.server.flow.StreamEdge;
  * @apiviz.composedOf dapper.client.ClientProcessor
  * @author Roy Liu
  */
-@CLIOptions(options = {
+@CliOptions(options = {
 //
-        @CLIOption(opt = "h", longOpt = "host", nArgs = 1, description = "the server address"), //
-        @CLIOption(opt = "d", longOpt = "domain", nArgs = 1, description = "the execution domain") //
+        @CliOption(opt = "h", longOpt = "host", nArgs = 1, description = "the server address"), //
+        @CliOption(opt = "d", longOpt = "domain", nArgs = 1, description = "the execution domain") //
 })
 public class Client extends CoreThread implements Closeable {
 
     /**
      * The instance used for logging.
      */
-    final protected static Logger Log = LoggerFactory.getLogger(Client.class);
+    final protected static Logger log = LoggerFactory.getLogger(Client.class);
 
     /**
      * The expected header length of an incoming stream.
@@ -87,13 +87,13 @@ public class Client extends CoreThread implements Closeable {
     /**
      * A guard against the creation of too many accept threads.
      */
-    final protected static Semaphore Guard = new Semaphore(MAX_PENDING_ACCEPTS);
+    final protected static Semaphore guard = new Semaphore(MAX_PENDING_ACCEPTS);
 
     /**
      * Gets the static {@link Logger} instance.
      */
     final public static Logger getLog() {
-        return Log;
+        return log;
     }
 
     final DapperBase base;
@@ -227,12 +227,12 @@ public class Client extends CoreThread implements Closeable {
 
                 @Override
                 protected void doFinally() {
-                    Guard.release(1);
+                    guard.release(1);
                 }
 
             }.run();
 
-            Guard.acquireUninterruptibly(1);
+            guard.acquireUninterruptibly(1);
         }
     }
 
@@ -267,7 +267,7 @@ public class Client extends CoreThread implements Closeable {
 
         try {
 
-            CommandLine cmdLine = CLI.createCommandLine(Client.class, args);
+            CommandLine cmdLine = Cli.createCommandLine(Client.class, args);
 
             host = cmdLine.getOptionValue("h");
 
@@ -283,7 +283,7 @@ public class Client extends CoreThread implements Closeable {
 
         } catch (ParseException e) {
 
-            getLog().info(CLI.createHelp(Client.class));
+            getLog().info(Cli.createHelp(Client.class));
 
             throw e;
         }

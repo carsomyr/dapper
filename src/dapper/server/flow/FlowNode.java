@@ -69,7 +69,7 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
     /**
      * An empty parameters DOM {@link Node}.
      */
-    final public static Node EmptyParameters = CodeletUtilities.createElement("");
+    final public static Node emptyParameters = CodeletUtilities.createElement("");
 
     final Codelet codelet;
 
@@ -108,7 +108,7 @@ public class FlowNode implements Traversable<FlowNode, FlowEdge>, ParameterMetad
         this.retries = MAX_CODELET_RETRIES;
         this.domainPattern = null;
         this.name = "";
-        this.parameters = EmptyParameters;
+        this.parameters = emptyParameters;
 
         //
 

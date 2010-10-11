@@ -100,7 +100,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
                 BlockingQueue<FlowEvent<Object, Object>> queue = server.createFlowEventQueue();
 
                 for (FlowEvent<Object, Object> evt; (evt = queue.take()) != null;) {
-                    FlowManager.Log.info(evt.toString(), evt.getException());
+                    FlowManager.log.info(evt.toString(), evt.getException());
                 }
             }
 
@@ -144,7 +144,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
         FlowTab ft = (FlowTab) getSelectedComponent();
 
         if (ft != null) {
-            ft.renderSVG(new File(String.format("screenshot-%d.svg", this.screenshotCounter++)));
+            ft.renderSvg(new File(String.format("screenshot-%d.svg", this.screenshotCounter++)));
         }
     }
 

@@ -270,7 +270,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
 
         Node embeddingParameters = (codelet instanceof EmbeddingCodelet) ? ((EmbeddingCodelet) codelet)
                 .getEmbeddingParameters() : null;
-        embeddingParameters = (embeddingParameters == null) ? FlowNode.EmptyParameters : embeddingParameters;
+        embeddingParameters = (embeddingParameters == null) ? FlowNode.emptyParameters : embeddingParameters;
 
         Control.checkTrue(embeddingParameters.getNodeName().equals("parameters"), //
                 "Invalid parameters node");

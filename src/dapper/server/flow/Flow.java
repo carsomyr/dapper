@@ -73,13 +73,13 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
     /**
      * A temporary mapping of {@link FlowNode} proxies to actuals local to the current thread.
      */
-    final protected static ThreadLocal<Map<FlowNode, FlowNode>> NodeMapLocal = //
+    final protected static ThreadLocal<Map<FlowNode, FlowNode>> nodeMapLocal = //
     new ThreadLocal<Map<FlowNode, FlowNode>>();
 
     /**
      * An empty {@link FlowEdge} list.
      */
-    final protected static List<FlowEdge> EmptyList = Collections.emptyList();
+    final protected static List<FlowEdge> emptyList = Collections.emptyList();
 
     //
 
@@ -124,7 +124,7 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
      */
     public FlowNode add(FlowNode node, FlowEdge... edgeDeps) {
 
-        Map<FlowNode, FlowNode> nodeMap = NodeMapLocal.get();
+        Map<FlowNode, FlowNode> nodeMap = nodeMapLocal.get();
 
         Control.checkTrue(nodeMap != null, //
                 "Node additions must be made from within build methods");
@@ -166,7 +166,7 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
      */
     public <T extends FlowEdge> T add(T edge) {
 
-        Map<FlowNode, FlowNode> nodeMap = NodeMapLocal.get();
+        Map<FlowNode, FlowNode> nodeMap = nodeMapLocal.get();
 
         Control.checkTrue(nodeMap != null, //
                 "Edge additions must be made from within build methods");
@@ -443,8 +443,8 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
 
             } else {
 
-                in = EmptyList;
-                out = EmptyList;
+                in = emptyList;
+                out = emptyList;
             }
 
             // Create edge and node proxies for safety.
@@ -479,13 +479,13 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
 
                     for (int k = 0; k < nEntries; k++) {
 
-                        HandleEdge newHE = he.clone().setHandleInformation( //
+                        HandleEdge newHe = he.clone().setHandleInformation( //
                                 handleArray.subarray(k, k + 1, 0, 2));
-                        newHE.setU(originalNode);
-                        newHE.setV(null);
+                        newHe.setU(originalNode);
+                        newHe.setV(null);
 
-                        in.add(j + k, newHE);
-                        neighborOut.add(outIndex + k, newHE);
+                        in.add(j + k, newHe);
+                        neighborOut.add(outIndex + k, newHe);
                     }
 
                     j += nEntries - 1;
@@ -524,14 +524,14 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
 
             Map<FlowNode, FlowNode> tmpMap = new HashMap<FlowNode, FlowNode>();
 
-            NodeMapLocal.set(tmpMap);
+            nodeMapLocal.set(tmpMap);
 
             for (FlowNode fn1 : newOut) {
                 add(fn1);
             }
 
             Thread th = Thread.currentThread();
-            ClassLoader prevCL = th.getContextClassLoader();
+            ClassLoader prevCl = th.getContextClassLoader();
             th.setContextClassLoader(this.cl);
 
             try {
@@ -567,10 +567,10 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
 
             } finally {
 
-                th.setContextClassLoader(prevCL);
+                th.setContextClassLoader(prevCl);
             }
 
-            NodeMapLocal.set(null);
+            nodeMapLocal.set(null);
 
             Map<FlowNode, FlowNode> tmpMapCopy = new HashMap<FlowNode, FlowNode>(tmpMap);
 
@@ -655,7 +655,7 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
 
         for (Set<FlowNode> equivalenceClass; !allFlowNodes.isEmpty(); allFlowNodes.removeAll(equivalenceClass)) {
 
-            equivalenceClass = FlowUtilities.equivalenceClassDFS(allFlowNodes.iterator().next(), //
+            equivalenceClass = FlowUtilities.equivalenceClassDfs(allFlowNodes.iterator().next(), //
                     new HashSet<FlowNode>());
 
             Set<FlowNode> unattachedFlowNodes = new HashSet<FlowNode>();

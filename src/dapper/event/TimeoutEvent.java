@@ -43,7 +43,7 @@ public class TimeoutEvent extends ControlEvent {
     /**
      * A {@link Handler} that does nothing.
      */
-    final protected static Handler<ControlEvent> EmptyHandler = new Handler<ControlEvent>() {
+    final protected static Handler<ControlEvent> emptyHandler = new Handler<ControlEvent>() {
 
         @Override
         public void handle(ControlEvent evt) {
@@ -74,7 +74,7 @@ public class TimeoutEvent extends ControlEvent {
 
             @Override
             public Handler<ControlEvent> getHandler() {
-                return (handle.get() == tag) ? source.getHandler() : EmptyHandler;
+                return (handle.get() == tag) ? source.getHandler() : emptyHandler;
             }
 
             @Override

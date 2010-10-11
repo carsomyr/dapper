@@ -51,7 +51,7 @@ public class ResetEvent extends ControlEvent implements Handle<Object> {
     /**
      * An empty array of {@link StackTraceElement}s.
      */
-    final protected static StackTraceElement[] EmptyStackTraceElements = new StackTraceElement[] {};
+    final protected static StackTraceElement[] emptyStackTraceElements = new StackTraceElement[] {};
 
     final DapperException exception;
 
@@ -119,7 +119,7 @@ public class ResetEvent extends ControlEvent implements Handle<Object> {
                     Integer.parseInt(l3.item(3).getTextContent())));
         }
 
-        cause.setStackTrace(tmpList.toArray(EmptyStackTraceElements));
+        cause.setStackTrace(tmpList.toArray(emptyStackTraceElements));
 
         this.exception = new DapperException(message, cause);
     }

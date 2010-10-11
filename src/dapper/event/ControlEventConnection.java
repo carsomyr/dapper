@@ -37,16 +37,16 @@ import org.w3c.dom.Element;
 
 import shared.event.SourceLocal;
 import shared.net.ConnectionManager;
-import shared.net.XMLConnection;
+import shared.net.XmlConnection;
 
 /**
- * A subclass of {@link XMLConnection} specialized for handling {@link ControlEvent}s.
+ * A subclass of {@link XmlConnection} specialized for handling {@link ControlEvent}s.
  * 
  * @apiviz.has dapper.event.ControlEvent - - - event
  * @apiviz.owns dapper.event.SourceType
  * @author Roy Liu
  */
-public class ControlEventConnection extends XMLConnection<ControlEventConnection, ControlEvent, SourceType> {
+public class ControlEventConnection extends XmlConnection<ControlEventConnection, ControlEvent, SourceType> {
 
     final SourceLocal<ControlEvent> delegate;
 

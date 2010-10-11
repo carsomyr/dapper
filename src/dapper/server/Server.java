@@ -76,13 +76,13 @@ public class Server extends CoreThread implements Closeable {
     /**
      * The instance used for logging.
      */
-    final protected static Logger Log = LoggerFactory.getLogger(Server.class);
+    final protected static Logger log = LoggerFactory.getLogger(Server.class);
 
     /**
      * Gets the static {@link Logger} instance.
      */
     final public static Logger getLog() {
-        return Log;
+        return log;
     }
 
     final DapperBase base;

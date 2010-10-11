@@ -54,21 +54,21 @@ PROCESS_INFORMATION BuildAndTest::exec(const TCHAR *cmd) {
 
 int _tmain(int argc, TCHAR *argv[]) {
 
-    PROCESS_INFORMATION antPI = BuildAndTest::exec("java -Xmx128M "
+    PROCESS_INFORMATION antPi = BuildAndTest::exec("java -Xmx128M "
             "-cp build/ant-launcher.jar "
             "org.apache.tools.ant.launch.Launcher jars");
 
-    if (antPI.hProcess == NULL) {
+    if (antPi.hProcess == NULL) {
 
         printf("Could not execute Ant.\n");
 
         return 0;
     }
 
-    WaitForSingleObject(antPI.hProcess, INFINITE);
+    WaitForSingleObject(antPi.hProcess, INFINITE);
 
-    CloseHandle(antPI.hProcess);
-    CloseHandle(antPI.hThread);
+    CloseHandle(antPi.hProcess);
+    CloseHandle(antPi.hThread);
 
     //
 

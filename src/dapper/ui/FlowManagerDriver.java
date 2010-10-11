@@ -96,7 +96,7 @@ public class FlowManagerDriver {
 
                 try {
 
-                    FlowManager.createUI(args);
+                    FlowManager.createUi(args);
 
                 } catch (RuntimeException e) {
 

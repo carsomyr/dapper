@@ -78,49 +78,49 @@ public enum LogicalNodeStatus {
     /**
      * The {@link EnumSet} of executable states.
      */
-    final protected static EnumSet<LogicalNodeStatus> ExecutableSet = EnumSet.of(PENDING_DEPENDENCY, PENDING_EXECUTE);
+    final protected static EnumSet<LogicalNodeStatus> executableSet = EnumSet.of(PENDING_DEPENDENCY, PENDING_EXECUTE);
 
     /**
      * The {@link EnumSet} of executing states.
      */
-    final protected static EnumSet<LogicalNodeStatus> ExecutingSet = EnumSet.of(RESOURCE, PREPARE, EXECUTE);
+    final protected static EnumSet<LogicalNodeStatus> executingSet = EnumSet.of(RESOURCE, PREPARE, EXECUTE);
 
     /**
      * The {@link EnumSet} of finished states.
      */
-    final protected static EnumSet<LogicalNodeStatus> FinishedSet = EnumSet.of(FINISHED);
+    final protected static EnumSet<LogicalNodeStatus> finishedSet = EnumSet.of(FINISHED);
 
     /**
      * The {@link EnumSet} of mergeable states used in bookkeeping for subflow embedding.
      */
-    final protected static EnumSet<LogicalNodeStatus> MergeableSet = EnumSet.of(PENDING_DEPENDENCY, PENDING_EXECUTE, //
+    final protected static EnumSet<LogicalNodeStatus> mergeableSet = EnumSet.of(PENDING_DEPENDENCY, PENDING_EXECUTE, //
             FINISHED);
 
     /**
      * Gets whether the computation is eligible for execution.
      */
     public boolean isExecutable() {
-        return ExecutableSet.contains(this);
+        return executableSet.contains(this);
     }
 
     /**
      * Gets whether the computation is executing.
      */
     public boolean isExecuting() {
-        return ExecutingSet.contains(this);
+        return executingSet.contains(this);
     }
 
     /**
      * Gets whether the computation is finished.
      */
     public boolean isFinished() {
-        return FinishedSet.contains(this);
+        return finishedSet.contains(this);
     }
 
     /**
      * Gets whether the computation can be merged with another for the purposes of subflow embedding.
      */
     public boolean isMergeable() {
-        return MergeableSet.contains(this);
+        return mergeableSet.contains(this);
     }
 }

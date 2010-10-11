@@ -34,7 +34,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import shared.event.Source;
-import shared.event.XMLEvent;
+import shared.event.XmlEvent;
 import shared.util.Control;
 import dapper.server.ServerProcessor.FlowProxy;
 import dapper.server.flow.Flow;
@@ -45,7 +45,7 @@ import dapper.server.flow.Flow;
  * @apiviz.owns dapper.event.ControlEvent.ControlEventType
  * @author Roy Liu
  */
-public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEventType, SourceType> {
+public class ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEventType, SourceType> {
 
     /**
      * An enumeration of {@link ControlEvent} types.
@@ -260,11 +260,11 @@ public class ControlEvent extends XMLEvent<ControlEvent, ControlEvent.ControlEve
     }
 
     @Override
-    public Element toDOM() {
+    public Element toDom() {
 
         Document doc = Control.newDocument();
 
-        Element rootElement = doc.createElement(XMLEvent.class.getName());
+        Element rootElement = doc.createElement(XmlEvent.class.getName());
 
         rootElement.appendChild(doc.createElement("type")) //
                 .setTextContent(getType().toString());
