@@ -58,7 +58,7 @@ import dapper.codelet.Codelet;
 import dapper.event.AddressEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
-import dapper.event.ControlEventConnection;
+import dapper.event.ControlEventHandler;
 import dapper.event.DataEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
@@ -159,7 +159,7 @@ public class ServerLogic {
                 csh.setFlowNode(null);
                 flowNode.setClientState(null);
 
-                csh.getConnection().onRemote(new ResetEvent("One client failed in its execution", //
+                csh.getControlHandler().onRemote(new ResetEvent("One client failed in its execution", //
                         new IllegalStateException(), null));
                 csh.setStatus(ClientStatus.WAIT);
             }
@@ -219,7 +219,7 @@ public class ServerLogic {
 
                 Control.assertTrue(csh2.getStatus() == assignedClientStatus);
 
-                csh2.getConnection().onRemote(new ControlEvent(eventType, null));
+                csh2.getControlHandler().onRemote(new ControlEvent(eventType, null));
                 csh2.setStatus(nextClientStatus);
                 csh2.timeout(timeout);
             }
@@ -241,7 +241,7 @@ public class ServerLogic {
 
             this.clientWaitSet.remove(csh);
 
-            Control.close(csh.getConnection());
+            Control.close(csh.getControlHandler());
             csh.untimeout();
             csh.setStatus(ClientStatus.INVALID);
         }
@@ -344,7 +344,7 @@ public class ServerLogic {
                 ClientState csh = matchEntry.getValue();
 
                 // Send over resource descriptors.
-                csh.getConnection().onRemote(flowNode.createResourceEvent());
+                csh.getControlHandler().onRemote(flowNode.createResourceEvent());
                 csh.setStatus(ClientStatus.RESOURCE);
                 csh.timeout(CLIENT_TIMEOUT_MILLIS);
             }
@@ -537,8 +537,8 @@ public class ServerLogic {
     /**
      * Handles a connection end-of-stream notification.
      */
-    protected void handleEos(ControlEventConnection connection) {
-        handleError(new ErrorEvent(new IOException("End-of-stream encountered"), connection));
+    protected void handleEos(ControlEventHandler<?> handler) {
+        handleError(new ErrorEvent(new IOException("End-of-stream encountered"), handler));
     }
 
     /**
@@ -575,7 +575,7 @@ public class ServerLogic {
         }
 
         // Close the connection and invalidate it, since the error could have resulted from a timeout.
-        Control.close(csh.getConnection());
+        Control.close(csh.getControlHandler());
         csh.untimeout();
         csh.setStatus(ClientStatus.INVALID);
 
@@ -652,7 +652,7 @@ public class ServerLogic {
                 throw new IllegalArgumentException("Invalid request syntax");
             }
 
-            csh.getConnection().onRemote(new DataEvent(m.group(0), data, null));
+            csh.getControlHandler().onRemote(new DataEvent(m.group(0), data, null));
 
         } catch (Exception e) {
 
@@ -714,7 +714,7 @@ public class ServerLogic {
         Control.assertTrue(this.clientWaitSet.add(csh));
 
         // Notify the client of connection establishment.
-        csh.getConnection().onRemote(new ControlEvent(INIT, null));
+        csh.getControlHandler().onRemote(new ControlEvent(INIT, null));
 
         // Set the address of the client for later reference.
         InetSocketAddress address = evt.getAddress();

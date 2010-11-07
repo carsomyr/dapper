@@ -30,17 +30,18 @@ package dapper.client;
 
 import static dapper.Constants.REQUEST_TIMEOUT_MILLIS;
 import static dapper.client.Client.HEADER_LENGTH;
+import static shared.net.ConnectionManager.InitializationType.CONNECT;
 
 import java.io.Closeable;
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Future;
 
 import shared.event.Source;
-import shared.net.Connection.InitializationType;
-import shared.net.SynchronousManagedConnection;
+import shared.net.SocketConnection;
+import shared.net.handler.SynchronousHandler;
 import shared.util.Control;
 import shared.util.CoreThread;
 import dapper.DapperBase;
@@ -58,7 +59,7 @@ import dapper.event.StreamReadyEvent;
 public class ClientConnector extends CoreThread implements Closeable {
 
     final Set<StreamResource<?>> connectResources;
-    final Map<String, SynchronousManagedConnection> connectionMap;
+    final Map<String, SynchronousHandler<SocketConnection>> handlerMap;
 
     final DapperBase base;
     final Source<ControlEvent, SourceType> callback;
@@ -73,7 +74,7 @@ public class ClientConnector extends CoreThread implements Closeable {
         this.base = base;
 
         this.connectResources = connectResources;
-        this.connectionMap = new HashMap<String, SynchronousManagedConnection>();
+        this.handlerMap = new HashMap<String, SynchronousHandler<SocketConnection>>();
 
         this.callback = callback;
     }
@@ -92,33 +93,35 @@ public class ClientConnector extends CoreThread implements Closeable {
         // Before proceeding, schedule an interrupt.
         this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
 
-        Map<String, Future<InetSocketAddress>> futureMap = new HashMap<String, Future<InetSocketAddress>>();
+        Map<String, Future<? extends SocketConnection>> futureMap = //
+        new HashMap<String, Future<? extends SocketConnection>>();
 
         for (StreamResource<?> connectResource : this.connectResources) {
 
             String identifier = connectResource.getIdentifier();
-            SynchronousManagedConnection smc = this.base.createStreamConnection();
+            SynchronousHandler<SocketConnection> sh = this.base.createStreamHandler();
 
-            Future<InetSocketAddress> fut = smc.init(InitializationType.CONNECT, connectResource.getAddress());
-            futureMap.put(identifier, fut);
+            futureMap.put(identifier, this.base.getManager().init(CONNECT, sh, connectResource.getAddress()));
 
             Client.getLog().debug(String.format("Connecting: %s.", connectResource.getAddress()));
 
-            this.connectionMap.put(identifier, smc);
+            this.handlerMap.put(identifier, sh);
         }
 
-        for (String identifier : this.connectionMap.keySet()) {
+        for (Entry<String, SynchronousHandler<SocketConnection>> entry : this.handlerMap.entrySet()) {
+
+            String identifier = entry.getKey();
+            SynchronousHandler<SocketConnection> sh = entry.getValue();
 
             Control.checkTrue(identifier.length() == HEADER_LENGTH);
 
-            SynchronousManagedConnection smc = this.connectionMap.get(identifier);
-            futureMap.get(identifier).get();
+            SocketConnection conn = futureMap.get(identifier).get();
 
-            smc.getOutputStream().write(identifier.getBytes());
+            sh.getOutputStream().write(identifier.getBytes());
 
-            Client.getLog().debug(String.format("Connected: %s.", smc.getRemoteAddress()));
+            Client.getLog().debug(String.format("Connected: %s.", conn.getRemoteAddress()));
 
-            this.callback.onLocal(new StreamReadyEvent(identifier, smc, this.callback));
+            this.callback.onLocal(new StreamReadyEvent<SocketConnection>(identifier, sh, this.callback));
         }
     }
 
@@ -126,8 +129,8 @@ public class ClientConnector extends CoreThread implements Closeable {
     protected void doCatch(Throwable t) {
 
         // Close all connections.
-        for (SynchronousManagedConnection smc : this.connectionMap.values()) {
-            Control.close(smc);
+        for (SynchronousHandler<?> handler : this.handlerMap.values()) {
+            Control.close(handler);
         }
 
         Client.getLog().info("Connect failure.", t);

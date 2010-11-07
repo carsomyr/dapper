@@ -38,7 +38,7 @@ import dapper.DapperBase;
 import dapper.client.ClientStatus;
 import dapper.codelet.Locatable;
 import dapper.event.ControlEvent;
-import dapper.event.ControlEventConnection;
+import dapper.event.ControlEventHandler;
 import dapper.event.TimeoutEvent;
 import dapper.server.flow.FlowNode;
 
@@ -51,7 +51,7 @@ import dapper.server.flow.FlowNode;
 public class ClientState //
         implements Handler<ControlEvent>, Locatable, Cloneable, EnumStatus<ClientStatus>, Handle<Object> {
 
-    final ControlEventConnection connection;
+    final ControlEventHandler<?> handler;
     final Handler<ControlEvent> serverHandler;
     final DapperBase base;
 
@@ -71,9 +71,9 @@ public class ClientState //
     /**
      * Default constructor.
      */
-    public ClientState(ControlEventConnection connection, Handler<ControlEvent> serverHandler, DapperBase base) {
+    public ClientState(ControlEventHandler<?> handler, Handler<ControlEvent> serverHandler, DapperBase base) {
 
-        this.connection = connection;
+        this.handler = handler;
         this.serverHandler = serverHandler;
         this.base = base;
 
@@ -183,7 +183,7 @@ public class ClientState //
 
         this.timeoutToken = new Object();
         this.timeoutTask = this.base.scheduleEvent( //
-                (ControlEvent) new TimeoutEvent(this, this.timeoutToken, this.connection), timeout);
+                (ControlEvent) new TimeoutEvent(this, this.timeoutToken, this.handler), timeout);
     }
 
     /**
@@ -200,9 +200,9 @@ public class ClientState //
     }
 
     /**
-     * Gets the {@link ControlEventConnection}.
+     * Gets the {@link ControlEventHandler}.
      */
-    public ControlEventConnection getConnection() {
-        return this.connection;
+    public ControlEventHandler<?> getControlHandler() {
+        return this.handler;
     }
 }

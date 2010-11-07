@@ -39,10 +39,11 @@ import shared.event.StateProcessor;
 import shared.event.StateTable;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
+import shared.net.SocketConnection;
 import dapper.DapperBase;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
-import dapper.event.ControlEventConnection;
+import dapper.event.ControlEventHandler;
 import dapper.event.DataEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
@@ -179,9 +180,10 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     })
     final Handler<ControlEvent> streamReadyHandler = new Handler<ControlEvent>() {
 
+        @SuppressWarnings("unchecked")
         @Override
         public void handle(ControlEvent evt) {
-            ClientProcessor.this.logic.handleStreamReady((StreamReadyEvent) evt);
+            ClientProcessor.this.logic.handleStreamReady((StreamReadyEvent<SocketConnection>) evt);
         }
     };
 
@@ -224,7 +226,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
         @Override
         public void handle(ControlEvent evt) {
-            ClientProcessor.this.logic.handleEos((ControlEventConnection) evt.getSource());
+            ClientProcessor.this.logic.handleEos((ControlEventHandler<?>) evt.getSource());
         }
     };
 
@@ -233,7 +235,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
         @Override
         public void handle(ControlEvent evt) {
-            ClientProcessor.this.logic.handleConnectToWait((ControlEventConnection) evt.getSource());
+            ClientProcessor.this.logic.handleConnectToWait((ControlEventHandler<?>) evt.getSource());
         }
     };
 

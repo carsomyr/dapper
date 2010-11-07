@@ -51,7 +51,8 @@ import org.w3c.dom.Node;
 import shared.event.Source;
 import shared.metaclass.RegistryClassLoader;
 import shared.metaclass.ResourceRegistry;
-import shared.net.SynchronousManagedConnection;
+import shared.net.SocketConnection;
+import shared.net.handler.SynchronousHandler;
 import shared.parallel.Handle;
 import shared.util.Control;
 import shared.util.CoreThread;
@@ -132,34 +133,36 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
      * Registers an input/output stream.
      */
     @SuppressWarnings("unchecked")
-    protected void registerStream(String identifier, SynchronousManagedConnection connection) {
+    protected void registerStream(String identifier, SynchronousHandler<? extends SocketConnection> handler) {
 
         StreamResource<?> res = this.remaining.remove(identifier);
+
+        SocketConnection conn = handler.getConnection();
 
         if (res != null) {
 
             switch (res.getType()) {
 
             case INPUT_STREAM:
-                ((Handle<InputStream>) res).set(connection.getInputStream());
-                res.setAddress(connection.getRemoteAddress());
+                ((Handle<InputStream>) res).set(handler.getInputStream());
+                res.setAddress(conn.getRemoteAddress());
                 break;
 
             case OUTPUT_STREAM:
-                ((Handle<OutputStream>) res).set(connection.getOutputStream());
-                res.setAddress(connection.getRemoteAddress());
+                ((Handle<OutputStream>) res).set(handler.getOutputStream());
+                res.setAddress(conn.getRemoteAddress());
                 break;
 
             // Huh? How could this even happen?
             default:
-                Control.close(connection);
+                Control.close(conn);
                 break;
             }
 
         } else {
 
             // If not found, then the connection must be erroneous.
-            Control.close(connection);
+            Control.close(conn);
         }
     }
 

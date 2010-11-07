@@ -36,17 +36,20 @@ import static dapper.event.SourceType.CONNECTION;
 import org.w3c.dom.Element;
 
 import shared.event.SourceLocal;
-import shared.net.ConnectionManager;
-import shared.net.XmlConnection;
+import shared.net.Connection;
+import shared.net.handler.XmlHandler;
 
 /**
- * A subclass of {@link XmlConnection} specialized for handling {@link ControlEvent}s.
+ * A subclass of {@link XmlHandler} specialized for handling {@link ControlEvent}s.
  * 
  * @apiviz.has dapper.event.ControlEvent - - - event
  * @apiviz.owns dapper.event.SourceType
+ * @param <C>
+ *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class ControlEventConnection extends XmlConnection<ControlEventConnection, ControlEvent, SourceType> {
+public class ControlEventHandler<C extends Connection> //
+        extends XmlHandler<ControlEventHandler<C>, C, ControlEvent, SourceType> {
 
     final SourceLocal<ControlEvent> delegate;
 
@@ -56,8 +59,8 @@ public class ControlEventConnection extends XmlConnection<ControlEventConnection
      * @param delegate
      *            the delegate to which events will be forwarded.
      */
-    public ControlEventConnection(String name, ConnectionManager manager, SourceLocal<ControlEvent> delegate) {
-        super(name, CONNECTION, DEFAULT_BUFFER_SIZE, MAX_CONTROL_MESSAGE_SIZE, manager);
+    public ControlEventHandler(String name, SourceLocal<ControlEvent> delegate) {
+        super(name, CONNECTION, DEFAULT_BUFFER_SIZE, MAX_CONTROL_MESSAGE_SIZE);
 
         this.delegate = delegate;
     }
@@ -69,7 +72,7 @@ public class ControlEventConnection extends XmlConnection<ControlEventConnection
 
     @Override
     protected void onError() {
-        onLocal(new ErrorEvent(getException(), this));
+        onLocal(new ErrorEvent(getConnection().getException(), this));
     }
 
     @Override

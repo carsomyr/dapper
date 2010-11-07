@@ -34,6 +34,7 @@ import static dapper.event.ControlEvent.ControlEventType.CREATE_USER_QUEUE;
 import static dapper.event.ControlEvent.ControlEventType.GET_FLOW_PROXY;
 import static dapper.event.ControlEvent.ControlEventType.GET_PENDING_COUNT;
 import static dapper.event.ControlEvent.ControlEventType.SET_AUTOCLOSE_IDLE;
+import static shared.net.ConnectionManager.InitializationType.REGISTER;
 import static shared.net.Constants.DEFAULT_BACKLOG_SIZE;
 
 import java.io.Closeable;
@@ -52,12 +53,12 @@ import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import shared.net.Connection.InitializationType;
+import shared.net.Connection;
 import shared.util.Control;
 import shared.util.CoreThread;
 import dapper.Constants;
 import dapper.DapperBase;
-import dapper.event.ControlEventConnection;
+import dapper.event.ControlEventHandler;
 import dapper.event.FlowEvent;
 import dapper.server.ServerProcessor.FlowBuildRequest;
 import dapper.server.ServerProcessor.FlowProxy;
@@ -256,14 +257,14 @@ public class Server extends CoreThread implements Closeable {
         loop: for (; this.run;) {
 
             // Attempt to accept a connection.
-            ControlEventConnection cec = this.base.createControlConnection(this.processor);
-            cec.setHandler(new ClientState(cec, this.processor, this.base));
+            ControlEventHandler<Connection> ceh = this.base.createControlHandler(this.processor);
+            ceh.setHandler(new ClientState(ceh, this.processor, this.base));
 
             SocketChannel sChannel = this.ssChannel.accept();
 
             try {
 
-                cec.init(InitializationType.REGISTER, sChannel).get();
+                this.base.getManager().init(REGISTER, ceh, sChannel).get();
 
             } catch (Exception e) {
 

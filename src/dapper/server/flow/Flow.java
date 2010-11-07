@@ -414,7 +414,7 @@ public class Flow implements Cloneable, Renderable, EnumStatus<FlowStatus>, Tagg
                 ClientState csh = flowNode.getClientState();
 
                 if (csh != null) {
-                    csh.getConnection().setHandler(csh);
+                    csh.getControlHandler().setHandler(csh);
                 }
             }
 

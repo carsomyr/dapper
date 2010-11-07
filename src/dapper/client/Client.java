@@ -32,6 +32,7 @@ import static dapper.Constants.DEFAULT_SERVER_PORT;
 import static dapper.Constants.MAX_PENDING_ACCEPTS;
 import static dapper.Constants.REQUEST_TIMEOUT_MILLIS;
 import static dapper.event.ControlEvent.ControlEventType.INIT;
+import static shared.net.ConnectionManager.InitializationType.REGISTER;
 import static shared.net.Constants.DEFAULT_BACKLOG_SIZE;
 
 import java.io.Closeable;
@@ -51,8 +52,8 @@ import org.slf4j.LoggerFactory;
 import shared.cli.Cli;
 import shared.cli.CliOptions;
 import shared.cli.CliOptions.CliOption;
-import shared.net.Connection.InitializationType;
-import shared.net.SynchronousManagedConnection;
+import shared.net.SocketConnection;
+import shared.net.handler.SynchronousHandler;
 import shared.util.Control;
 import shared.util.CoreThread;
 import dapper.DapperBase;
@@ -166,13 +167,15 @@ public class Client extends CoreThread implements Closeable {
         loop: for (; this.run;) {
 
             // Attempt to accept a connection.
-            final SynchronousManagedConnection smc = this.base.createStreamConnection();
+            final SynchronousHandler<SocketConnection> sh = this.base.createStreamHandler();
 
             SocketChannel sChannel = this.ssChannel.accept();
 
+            final SocketConnection conn;
+
             try {
 
-                smc.init(InitializationType.REGISTER, sChannel).get();
+                conn = this.base.getManager().init(REGISTER, sh, sChannel).get();
 
             } catch (Exception e) {
 
@@ -190,13 +193,13 @@ public class Client extends CoreThread implements Closeable {
                     Client.this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
 
                     getLog().debug(String.format("Accepting: %s.", //
-                            smc.getRemoteAddress()));
+                            conn.getRemoteAddress()));
 
                     // Attempt to read the header.
 
                     byte[] header = new byte[HEADER_LENGTH];
 
-                    InputStream in = smc.getInputStream();
+                    InputStream in = sh.getInputStream();
 
                     for (int size, offset = 0, length = header.length; //
                     length > 0; //
@@ -211,16 +214,17 @@ public class Client extends CoreThread implements Closeable {
 
                     // Success! Notify the server processor.
 
-                    Client.this.processor.onLocal(new StreamReadyEvent(new String(header), smc, Client.this.processor));
+                    Client.this.processor.onLocal( //
+                            new StreamReadyEvent<SocketConnection>(new String(header), sh, Client.this.processor));
 
                     getLog().debug(String.format("Accepted: %s.", //
-                            smc.getRemoteAddress()));
+                            conn.getRemoteAddress()));
                 }
 
                 @Override
                 protected void doCatch(Throwable t) {
 
-                    Control.close(smc);
+                    Control.close(conn);
 
                     getLog().info("Accept failure.", t);
                 }

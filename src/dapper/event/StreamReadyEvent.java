@@ -30,28 +30,30 @@ package dapper.event;
 
 import static dapper.event.ControlEvent.ControlEventType.STREAM_READY;
 import shared.event.Source;
-import shared.net.SynchronousManagedConnection;
+import shared.net.Connection;
+import shared.net.handler.SynchronousHandler;
 import dapper.codelet.Identified;
 
 /**
  * A subclass of {@link ControlEvent} for carrying ready input/output streams.
  * 
+ * @param <C>
+ *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class StreamReadyEvent extends ControlEvent implements Identified {
+public class StreamReadyEvent<C extends Connection> extends ControlEvent implements Identified {
 
     final String identifier;
-    final SynchronousManagedConnection connection;
+    final SynchronousHandler<C> handler;
 
     /**
      * Default constructor.
      */
-    public StreamReadyEvent(String identifier, SynchronousManagedConnection connection, //
-            Source<ControlEvent, SourceType> source) {
+    public StreamReadyEvent(String identifier, SynchronousHandler<C> handler, Source<ControlEvent, SourceType> source) {
         super(STREAM_READY, source);
 
         this.identifier = identifier;
-        this.connection = connection;
+        this.handler = handler;
     }
 
     @Override
@@ -60,9 +62,9 @@ public class StreamReadyEvent extends ControlEvent implements Identified {
     }
 
     /**
-     * Gets the newly accepted/connected {@link SynchronousManagedConnection}.
+     * Gets the newly accepted/connected {@link SynchronousHandler}.
      */
-    public SynchronousManagedConnection getConnection() {
-        return this.connection;
+    public SynchronousHandler<C> getStreamHandler() {
+        return this.handler;
     }
 }

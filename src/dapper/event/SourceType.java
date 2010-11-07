@@ -44,7 +44,7 @@ public enum SourceType {
     PROCESSOR, //
 
     /**
-     * Indicates a {@link ControlEventConnection}.
+     * Indicates a {@link ControlEventHandler}.
      */
     CONNECTION;
 }

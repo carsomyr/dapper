@@ -45,11 +45,15 @@ import java.util.concurrent.atomic.AtomicLong;
 import shared.codec.Codecs;
 import shared.event.Event;
 import shared.event.SourceLocal;
+import shared.net.Connection;
 import shared.net.ConnectionManager;
-import shared.net.SynchronousManagedConnection;
+import shared.net.SocketConnection;
+import shared.net.SocketManager;
+import shared.net.handler.SynchronousHandler;
+import shared.net.nio.NioManager;
 import shared.util.Control;
 import dapper.event.ControlEvent;
-import dapper.event.ControlEventConnection;
+import dapper.event.ControlEventHandler;
 
 /**
  * A utility class for common Dapper operations.
@@ -63,7 +67,7 @@ public class DapperBase implements Closeable {
      */
     final protected static byte[] localHost = Codecs.hexToBytes("80000001");
 
-    final ConnectionManager manager;
+    final SocketManager<?, ? extends SocketConnection> manager;
     final Timer timer;
     final AtomicLong counter;
 
@@ -72,7 +76,7 @@ public class DapperBase implements Closeable {
      */
     public DapperBase() {
 
-        this.manager = new ConnectionManager("CM");
+        this.manager = new NioManager("CM").setBufferSize(DEFAULT_BUFFER_SIZE);
         this.timer = new Timer();
         this.timer.schedule(new TimerTask() {
 
@@ -99,20 +103,30 @@ public class DapperBase implements Closeable {
     }
 
     /**
-     * Creates a {@link ControlEventConnection} for control messages.
+     * Creates a {@link ControlEventHandler} for control messages.
+     * 
+     * @param <C>
+     *            the {@link Connection} type.
      */
-    public ControlEventConnection createControlConnection(SourceLocal<ControlEvent> delegate) {
-        return new ControlEventConnection(String.format("EC_%d", this.counter.getAndIncrement()), //
-                this.manager, delegate);
+    public <C extends Connection> ControlEventHandler<C> createControlHandler(SourceLocal<ControlEvent> delegate) {
+        return new ControlEventHandler<C>(String.format("EC_%d", this.counter.getAndIncrement()), delegate);
     }
 
     /**
-     * Creates a {@link SynchronousManagedConnection} for TCP stream transfer.
+     * Creates a {@link SynchronousHandler} for TCP stream transfer.
+     * 
+     * @param <C>
+     *            the {@link Connection} type.
      */
-    public SynchronousManagedConnection createStreamConnection() {
-        return new SynchronousManagedConnection(String.format("SC_%d", this.counter.getAndIncrement()), //
-                this.manager) //
-                .setBufferSize(DEFAULT_BUFFER_SIZE);
+    public <C extends Connection> SynchronousHandler<C> createStreamHandler() {
+        return new SynchronousHandler<C>(String.format("SC_%d", this.counter.getAndIncrement()), DEFAULT_BUFFER_SIZE);
+    }
+
+    /**
+     * Gets the {@link SocketManager}.
+     */
+    public SocketManager<?, ? extends SocketConnection> getManager() {
+        return this.manager;
     }
 
     /**

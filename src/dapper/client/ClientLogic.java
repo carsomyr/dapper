@@ -31,19 +31,21 @@ package dapper.client;
 import static dapper.event.ControlEvent.ControlEventType.PREPARE_ACK;
 import static dapper.event.ControlEvent.ControlEventType.REFRESH;
 import static dapper.event.ControlEvent.ControlEventType.RESOURCE_ACK;
+import static shared.net.ConnectionManager.InitializationType.CONNECT;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import shared.event.Source;
-import shared.net.Connection.InitializationType;
-import shared.net.SynchronousManagedConnection;
+import shared.net.Connection;
+import shared.net.SocketConnection;
+import shared.net.handler.SynchronousHandler;
 import shared.util.Control;
 import shared.util.CoreThread;
 import dapper.DapperBase;
 import dapper.event.AddressEvent;
 import dapper.event.ControlEvent;
-import dapper.event.ControlEventConnection;
+import dapper.event.ControlEventHandler;
 import dapper.event.DataEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
@@ -67,7 +69,7 @@ public class ClientLogic {
     final String domain;
     final ClientProcessor cp;
 
-    ControlEventConnection server;
+    ControlEventHandler<?> server;
 
     ClientJob job;
     ClientConnector connector;
@@ -144,7 +146,7 @@ public class ClientLogic {
      */
     protected void handleIdleToConnect() {
 
-        final ControlEventConnection server = this.base.createControlConnection(this.cp);
+        final ControlEventHandler<Connection> server = this.base.createControlHandler(this.cp);
         server.setHandler(this.cp);
 
         new CoreThread("Server Connector Thread") {
@@ -154,9 +156,9 @@ public class ClientLogic {
 
                 ClientLogic cl = ClientLogic.this;
 
-                server.init(InitializationType.CONNECT, cl.remoteAddress).get();
+                SocketConnection conn = cl.base.getManager().init(CONNECT, server, cl.remoteAddress).get();
                 server.onRemote(new AddressEvent(new InetSocketAddress( //
-                        server.getLocalAddress().getAddress(), //
+                        conn.getLocalAddress().getAddress(), //
                         cl.localAddress.getPort()), //
                         cl.domain, null));
             }
@@ -174,19 +176,19 @@ public class ClientLogic {
     /**
      * Handles a stream readiness notification.
      */
-    protected void handleStreamReady(StreamReadyEvent evt) {
+    protected void handleStreamReady(StreamReadyEvent<SocketConnection> evt) {
 
-        SynchronousManagedConnection smc = evt.getConnection();
+        SynchronousHandler<SocketConnection> sh = evt.getStreamHandler();
 
         if (this.job != null) {
 
             // Register the connection with the current job.
-            this.job.registerStream(evt.getIdentifier(), smc);
+            this.job.registerStream(evt.getIdentifier(), sh);
 
         } else {
 
             // If the job doesn't exist, then the connection must be erroneous.
-            Control.close(smc);
+            Control.close(sh);
         }
 
         // Interrupt self.
@@ -218,7 +220,7 @@ public class ClientLogic {
     /**
      * Handles a connection end-of-stream notification.
      */
-    protected void handleEos(ControlEventConnection server) {
+    protected void handleEos(ControlEventHandler<?> server) {
         handleError(new ErrorEvent(new IOException("End-of-stream encountered"), server));
     }
 
@@ -238,7 +240,7 @@ public class ClientLogic {
     /**
      * Handles a transition from {@link ClientStatus#CONNECT} to {@link ClientStatus#WAIT}.
      */
-    protected void handleConnectToWait(ControlEventConnection server) {
+    protected void handleConnectToWait(ControlEventHandler<?> server) {
 
         // Maintain a reference to the server connection.
         this.server = server;

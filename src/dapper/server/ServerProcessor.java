@@ -56,7 +56,7 @@ import dapper.codelet.Taggable;
 import dapper.event.AddressEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
-import dapper.event.ControlEventConnection;
+import dapper.event.ControlEventHandler;
 import dapper.event.DataEvent;
 import dapper.event.ErrorEvent;
 import dapper.event.ExecuteAckEvent;
@@ -279,7 +279,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
         @Override
         public void handle(ControlEvent evt) {
-            ServerProcessor.this.logic.handleEos((ControlEventConnection) evt.getSource());
+            ServerProcessor.this.logic.handleEos((ControlEventHandler<?>) evt.getSource());
         }
     };
 
