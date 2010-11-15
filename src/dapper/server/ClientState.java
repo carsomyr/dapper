@@ -64,6 +64,8 @@ public class ClientState //
 
     String domain;
 
+    boolean idle;
+
     //
 
     FlowNode flowNode;
@@ -82,6 +84,7 @@ public class ClientState //
         this.timeoutToken = null;
         this.timeoutTask = null;
         this.domain = null;
+        this.idle = false;
 
         this.status = ClientStatus.IDLE;
     }
@@ -158,6 +161,20 @@ public class ClientState //
      */
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    /**
+     * Gets whether this client is idle.
+     */
+    public boolean isIdle() {
+        return this.idle;
+    }
+
+    /**
+     * Sets whether this client is idle.
+     */
+    public void setIdle(boolean idle) {
+        this.idle = idle;
     }
 
     /**

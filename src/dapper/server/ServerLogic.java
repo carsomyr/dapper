@@ -236,14 +236,16 @@ public class ServerLogic {
      */
     protected void closeIdleClients() {
 
-        for (ClientState csh : new ArrayList<ClientState>(this.clientWaitSet) //
-                .subList(0, Math.max(this.clientWaitSet.size() - getPendingCount(), 0))) {
+        for (ClientState csh : new HashSet<ClientState>(this.clientWaitSet)) {
 
-            this.clientWaitSet.remove(csh);
+            if (csh.isIdle()) {
 
-            Control.close(csh.getControlHandler());
-            csh.untimeout();
-            csh.setStatus(ClientStatus.INVALID);
+                this.clientWaitSet.remove(csh);
+
+                Control.close(csh.getControlHandler());
+                csh.untimeout();
+                csh.setStatus(ClientStatus.INVALID);
+            }
         }
     }
 
@@ -292,6 +294,11 @@ public class ServerLogic {
             return;
         }
 
+        // All waiting clients are considered idle until they are matched.
+        for (ClientState csh : this.clientWaitSet) {
+            csh.setIdle(true);
+        }
+
         // Greedily pick small equivalence classes by sorting with a size-based comparator.
         Collections.sort(this.executeList, sizeComparator);
 
@@ -301,13 +308,13 @@ public class ServerLogic {
 
             Set<FlowNode> flowNodes = node.getFlowNodes();
 
-            // Eject from the loop if the equivalence class size exceeds the number of available clients.
-            if (flowNodes.size() > this.clientWaitSet.size()) {
-                break loop;
-            }
-
             Set<Entry<FlowNode, ClientState>> matchEntries = //
             this.matching.match(flowNodes, this.clientWaitSet).entrySet();
+
+            // Matched clients are no longer considered idle.
+            for (Entry<FlowNode, ClientState> matchEntry : matchEntries) {
+                matchEntry.getValue().setIdle(false);
+            }
 
             // Skip the current iteration if not all requirements could be met.
             if (flowNodes.size() != matchEntries.size()) {
