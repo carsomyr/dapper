@@ -62,7 +62,7 @@ def main():
     nclients = 4
 
     for i in range(nclients):
-        processes.append(Popen(java_cmd + ["dapper.client.ClientDriver", "--host", "localhost:12121"]))
+        processes.append(Popen(java_cmd + ["dapper.client.ClientDriver", "--host", "127.0.0.1:12121"]))
 
     stdout.write(b"\nPress ENTER to exit this test.\n")
 

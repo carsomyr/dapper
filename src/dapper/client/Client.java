@@ -276,7 +276,7 @@ public class Client extends CoreThread implements Closeable {
             host = cmdLine.getOptionValue("h");
 
             if (host == null) {
-                host = "localhost";
+                host = "127.0.0.1";
             }
 
             domain = cmdLine.getOptionValue("d");

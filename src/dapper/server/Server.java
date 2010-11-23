@@ -95,6 +95,8 @@ public class Server extends CoreThread implements Closeable {
     /**
      * Default constructor.
      * 
+     * @param address
+     *            the server's {@link InetAddress} as it would appear to clients.
      * @param port
      *            the port to listen on.
      * @throws UnknownHostException
@@ -102,7 +104,7 @@ public class Server extends CoreThread implements Closeable {
      * @throws IOException
      *             when the underlying {@link ServerSocketChannel} could not be bound.
      */
-    public Server(int port) throws UnknownHostException, IOException {
+    public Server(InetAddress address, int port) throws UnknownHostException, IOException {
         super("Server");
 
         this.ssChannel = ServerSocketChannel.open();
@@ -110,7 +112,7 @@ public class Server extends CoreThread implements Closeable {
 
         this.base = new DapperBase();
 
-        this.processor = new ServerProcessor(DapperBase.inferAddress(), //
+        this.processor = new ServerProcessor((address != null) ? address : DapperBase.inferAddress(), //
                 //
                 new Runnable() {
 
@@ -135,7 +137,7 @@ public class Server extends CoreThread implements Closeable {
      *             when the underlying {@link ServerSocketChannel} could not be bound.
      */
     public Server() throws UnknownHostException, IOException {
-        this(DEFAULT_SERVER_PORT);
+        this(null, DEFAULT_SERVER_PORT);
     }
 
     /**

@@ -42,6 +42,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
@@ -83,6 +84,9 @@ import dapper.server.flow.Flow;
         @CliOption(opt = "a", longOpt = "archive", nArgs = -1, //
         description = "the execution archive to load"), //
         //
+        @CliOption(opt = "h", longOpt = "hostname", nArgs = 1, //
+        description = "the server's hostname as it would appear to clients"), //
+        //
         @CliOption(opt = "p", longOpt = "port", nArgs = 1, //
         description = "the listening port"), //
         //
@@ -121,10 +125,10 @@ public class FlowManager extends JFrame {
      * @throws IOException
      *             when the underlying {@link Server} instance could not be created.
      */
-    public FlowManager(int port) throws IOException {
+    public FlowManager(String hostname, int port) throws IOException {
         super("Flow Manager");
 
-        this.server = new Server(port);
+        this.server = new Server(InetAddress.getByName(hostname), port);
 
         JPanel main = new JPanel();
         main.setLayout(new GridBagLayout());
@@ -338,6 +342,7 @@ public class FlowManager extends JFrame {
      */
     protected static void createUi(String[] args) throws ParseException {
 
+        String hostname;
         int port;
 
         String[] archiveValues;
@@ -350,6 +355,8 @@ public class FlowManager extends JFrame {
 
             String portValue = cmdLine.getOptionValue("p");
             port = (portValue != null) ? Integer.parseInt(portValue) : DEFAULT_SERVER_PORT;
+
+            hostname = cmdLine.getOptionValue("h");
 
             archiveValues = cmdLine.getOptionValues("a");
 
@@ -371,7 +378,7 @@ public class FlowManager extends JFrame {
 
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-            FlowManager fm = new FlowManager(port);
+            FlowManager fm = new FlowManager(hostname, port);
 
             if (archiveValues != null) {
                 fm.getCodeletTree().registerJar(new File(archiveValues[0]), archiveValues[1], //
