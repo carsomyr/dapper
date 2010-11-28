@@ -34,6 +34,7 @@ import java.util.Random;
 import org.w3c.dom.Node;
 
 import shared.util.Control;
+import shared.util.XmlBase;
 import dapper.client.Client;
 import dapper.codelet.Codelet;
 import dapper.codelet.Resource;
@@ -51,7 +52,7 @@ public class Debug implements Codelet {
         Client.getLog().debug("");
         Client.getLog().debug(inResources.toString());
         Client.getLog().debug(outResources.toString());
-        Client.getLog().debug(Control.toString(parameters));
+        Client.getLog().debug(XmlBase.toString(parameters));
 
         Control.sleep(new Random().nextInt(2000));
     }

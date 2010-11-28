@@ -54,8 +54,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import shared.net.Connection;
-import shared.util.Control;
 import shared.util.CoreThread;
+import shared.util.IoBase;
 import dapper.Constants;
 import dapper.DapperBase;
 import dapper.event.ControlEventHandler;
@@ -118,7 +118,7 @@ public class Server extends CoreThread implements Closeable {
 
                     @Override
                     public void run() {
-                        Control.close(Server.this);
+                        IoBase.close(Server.this);
                     }
                 } //
         );
@@ -291,8 +291,8 @@ public class Server extends CoreThread implements Closeable {
     @Override
     protected void doFinally() {
 
-        Control.close(this.base);
-        Control.close(this.processor);
-        Control.close(this.ssChannel);
+        IoBase.close(this.base);
+        IoBase.close(this.processor);
+        IoBase.close(this.ssChannel);
     }
 }

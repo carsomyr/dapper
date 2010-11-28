@@ -35,7 +35,7 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
-import shared.util.Control;
+import shared.util.IoBase;
 import dapper.codelet.Codelet;
 import dapper.codelet.Resource;
 
@@ -50,8 +50,8 @@ public class Download implements Codelet {
     public void run(List<Resource> inResources, List<Resource> outResources, Node parameters) throws IOException {
 
         InputStream in = inResources.get(0).getInputStream();
-        Control.transfer(in, new File(parameters.getTextContent()));
-        Control.close(in);
+        IoBase.transfer(in, new File(parameters.getTextContent()));
+        IoBase.close(in);
     }
 
     /**

@@ -40,8 +40,8 @@ import shared.event.Source;
 import shared.net.Connection;
 import shared.net.SocketConnection;
 import shared.net.handler.SynchronousHandler;
-import shared.util.Control;
 import shared.util.CoreThread;
+import shared.util.IoBase;
 import dapper.DapperBase;
 import dapper.event.AddressEvent;
 import dapper.event.ControlEvent;
@@ -132,10 +132,10 @@ public class ClientLogic {
             return;
         }
 
-        Control.close(this.job);
+        IoBase.close(this.job);
         this.job = null;
 
-        Control.close(this.connector);
+        IoBase.close(this.connector);
         this.connector = null;
 
         this.cp.setStatus(ClientStatus.WAIT);
@@ -188,7 +188,7 @@ public class ClientLogic {
         } else {
 
             // If the job doesn't exist, then the connection must be erroneous.
-            Control.close(sh);
+            IoBase.close(sh);
         }
 
         // Interrupt self.
@@ -206,10 +206,10 @@ public class ClientLogic {
 
         this.server.onRemote(evt);
 
-        Control.close(this.job);
+        IoBase.close(this.job);
         this.job = null;
 
-        Control.close(this.connector);
+        IoBase.close(this.connector);
         this.connector = null;
 
         this.cp.setStatus(ClientStatus.WAIT);
@@ -232,7 +232,7 @@ public class ClientLogic {
         Client.getLog().info(String.format("Received error from %s: %s. Shutting down.", //
                 evt.getSource(), evt.getException().getMessage()));
 
-        Control.close(this.cp);
+        IoBase.close(this.cp);
 
         this.cp.setStatus(ClientStatus.SHUTDOWN);
     }

@@ -56,6 +56,7 @@ import shared.net.SocketConnection;
 import shared.net.handler.SynchronousHandler;
 import shared.util.Control;
 import shared.util.CoreThread;
+import shared.util.IoBase;
 import dapper.DapperBase;
 import dapper.event.ControlEvent;
 import dapper.event.StreamReadyEvent;
@@ -130,7 +131,7 @@ public class Client extends CoreThread implements Closeable {
 
                     @Override
                     public void run() {
-                        Control.close(Client.this);
+                        IoBase.close(Client.this);
                     }
                 } //
         );
@@ -224,7 +225,7 @@ public class Client extends CoreThread implements Closeable {
                 @Override
                 protected void doCatch(Throwable t) {
 
-                    Control.close(conn);
+                    IoBase.close(conn);
 
                     getLog().info("Accept failure.", t);
                 }
@@ -254,9 +255,9 @@ public class Client extends CoreThread implements Closeable {
     @Override
     protected void doFinally() {
 
-        Control.close(this.base);
-        Control.close(this.processor);
-        Control.close(this.ssChannel);
+        IoBase.close(this.base);
+        IoBase.close(this.processor);
+        IoBase.close(this.ssChannel);
     }
 
     /**

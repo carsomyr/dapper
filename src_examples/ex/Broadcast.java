@@ -37,7 +37,7 @@ import java.util.Map.Entry;
 
 import org.w3c.dom.Node;
 
-import shared.util.Control;
+import shared.util.IoBase;
 import dapper.codelet.Codelet;
 import dapper.codelet.CodeletUtilities;
 import dapper.codelet.InputHandleResource;
@@ -89,10 +89,10 @@ public class Broadcast implements Codelet {
                         InputStream in = isr.get();
                         OutputStream out = osr.get();
 
-                        Control.transfer(in, out);
+                        IoBase.transfer(in, out);
 
-                        Control.close(in);
-                        Control.close(out);
+                        IoBase.close(in);
+                        IoBase.close(out);
                     }
 
                     break;

@@ -50,6 +50,7 @@ import shared.event.StateTable;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
 import shared.util.Control;
+import shared.util.IoBase;
 import shared.util.RequestFuture;
 import dapper.client.ClientStatus;
 import dapper.codelet.Taggable;
@@ -114,7 +115,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
                     sp.notifyAll();
                 }
 
-                Control.close(sp.feb);
+                IoBase.close(sp.feb);
 
                 finalizer.run();
             }

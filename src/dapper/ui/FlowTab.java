@@ -28,7 +28,7 @@
 
 package dapper.ui;
 
-import static shared.util.Control.nullOutputStream;
+import static shared.util.IoBase.nullOutputStream;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -40,7 +40,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import shared.util.Control;
+import shared.util.IoBase;
 import dapper.server.ServerProcessor.FlowProxy;
 import dapper.server.flow.Flow;
 
@@ -97,7 +97,7 @@ public class FlowTab extends JLabel implements Closeable {
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            Control.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
+            IoBase.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
                     out, nullOutputStream, //
                     dotExecArgsPng);
 
@@ -120,11 +120,11 @@ public class FlowTab extends JLabel implements Closeable {
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            Control.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
+            IoBase.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
                     out, nullOutputStream, //
                     dotExecArgsSvg);
 
-            Control.transfer(new ByteArrayInputStream(out.toByteArray()), f);
+            IoBase.transfer(new ByteArrayInputStream(out.toByteArray()), f);
 
         } catch (Exception e) {
 

@@ -43,8 +43,8 @@ import java.util.concurrent.BlockingQueue;
 import javax.swing.JTabbedPane;
 import javax.swing.Timer;
 
-import shared.util.Control;
 import shared.util.CoreThread;
+import shared.util.IoBase;
 import dapper.event.FlowEvent;
 import dapper.server.Server;
 import dapper.server.ServerProcessor.FlowBuildRequest;
@@ -215,7 +215,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
 
         tryStopTimer();
 
-        Control.close((FlowTab) e.getChild());
+        IoBase.close((FlowTab) e.getChild());
     }
 
     /**
@@ -243,7 +243,7 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
      */
     @Override
     public void windowClosed(WindowEvent e) {
-        Control.close(this.server);
+        IoBase.close(this.server);
     }
 
     /**

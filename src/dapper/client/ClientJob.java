@@ -56,6 +56,7 @@ import shared.net.handler.SynchronousHandler;
 import shared.parallel.Handle;
 import shared.util.Control;
 import shared.util.CoreThread;
+import shared.util.IoBase;
 import shared.util.RequestFuture;
 import dapper.DapperBase;
 import dapper.codelet.Codelet;
@@ -155,14 +156,14 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
 
             // Huh? How could this even happen?
             default:
-                Control.close(conn);
+                IoBase.close(conn);
                 break;
             }
 
         } else {
 
             // If not found, then the connection must be erroneous.
-            Control.close(conn);
+            IoBase.close(conn);
         }
     }
 
@@ -213,7 +214,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
 
             case INPUT_STREAM:
             case OUTPUT_STREAM:
-                Control.close(((StreamResource<? extends Closeable>) resource).get());
+                IoBase.close(((StreamResource<? extends Closeable>) resource).get());
                 break;
             }
         }
@@ -278,7 +279,7 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
         Control.checkTrue(embeddingParameters.getNodeName().equals("parameters"), //
                 "Invalid parameters node");
 
-        Document doc = Control.newDocument();
+        Document doc = DapperBase.newDocument();
         Node edgeParameters = doc.createElement("edge_parameters");
 
         for (Resource outResource : outResources) {

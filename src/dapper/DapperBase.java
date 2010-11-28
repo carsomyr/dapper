@@ -30,9 +30,12 @@ package dapper;
 
 import static dapper.Constants.DEFAULT_BUFFER_SIZE;
 import static dapper.Constants.TIMER_PURGE_INTERVAL_MILLIS;
+import static shared.util.XmlBase.strictErrorHandler;
 
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
@@ -41,6 +44,12 @@ import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
 
 import shared.codec.Codecs;
 import shared.event.Event;
@@ -51,7 +60,7 @@ import shared.net.SocketConnection;
 import shared.net.SocketManager;
 import shared.net.handler.SynchronousHandler;
 import shared.net.nio.NioManager;
-import shared.util.Control;
+import shared.util.IoBase;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEventHandler;
 
@@ -66,6 +75,32 @@ public class DapperBase implements Closeable {
      * The address of the local host.
      */
     final protected static byte[] localHost = Codecs.hexToBytes("80000001");
+
+    /**
+     * A {@link DocumentBuilder} local to the current thread.
+     */
+    final protected static ThreadLocal<DocumentBuilder> builderLocal = new ThreadLocal<DocumentBuilder>() {
+
+        @Override
+        protected DocumentBuilder initialValue() {
+
+            try {
+
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setValidating(true);
+                dbf.setFeature("http://apache.org/xml/features/validation/dynamic", true);
+
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                db.setErrorHandler(strictErrorHandler);
+
+                return db;
+
+            } catch (ParserConfigurationException e) {
+
+                throw new RuntimeException(e);
+            }
+        }
+    };
 
     final SocketManager<?, ? extends SocketConnection> manager;
     final Timer timer;
@@ -98,7 +133,7 @@ public class DapperBase implements Closeable {
     @Override
     public void close() {
 
-        Control.close(this.manager);
+        IoBase.close(this.manager);
         this.timer.cancel();
     }
 
@@ -199,5 +234,38 @@ public class DapperBase implements Closeable {
 
             throw new RuntimeException("Could not infer network address", e);
         }
+    }
+
+    /**
+     * Creates a new {@link Document}.
+     */
+    final public static Document newDocument() {
+        return builderLocal.get().newDocument();
+    }
+
+    /**
+     * Parses a {@link Document} from the given {@link InputStream}.
+     */
+    final public static Document parse(InputStream in) {
+
+        try {
+
+            return builderLocal.get().parse(in);
+
+        } catch (RuntimeException e) {
+
+            throw e;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Parses a {@link Document} from the given string.
+     */
+    final public static Document parse(String s) {
+        return parse(new ByteArrayInputStream(s.getBytes()));
     }
 }

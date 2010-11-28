@@ -52,6 +52,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import shared.util.Control;
+import shared.util.IoBase;
 import dapper.DapperException;
 import dapper.client.ClientStatus;
 import dapper.codelet.Codelet;
@@ -242,7 +243,7 @@ public class ServerLogic {
 
                 this.clientWaitSet.remove(csh);
 
-                Control.close(csh.getControlHandler());
+                IoBase.close(csh.getControlHandler());
                 csh.untimeout();
                 csh.setStatus(ClientStatus.INVALID);
             }
@@ -582,7 +583,7 @@ public class ServerLogic {
         }
 
         // Close the connection and invalidate it, since the error could have resulted from a timeout.
-        Control.close(csh.getControlHandler());
+        IoBase.close(csh.getControlHandler());
         csh.untimeout();
         csh.setStatus(ClientStatus.INVALID);
 
@@ -647,7 +648,7 @@ public class ServerLogic {
 
             if (mode.equals("cp")) {
 
-                data = Control.getBytes(flowNode.getCodelet().getClass().getClassLoader() //
+                data = IoBase.getBytes(flowNode.getCodelet().getClass().getClassLoader() //
                         .getResourceAsStream(pathname));
 
             } else if (mode.equals("id")) {

@@ -35,7 +35,7 @@ import org.w3c.dom.NodeList;
 
 import shared.event.Source;
 import shared.event.XmlEvent;
-import shared.util.Control;
+import dapper.DapperBase;
 import dapper.server.ServerProcessor.FlowProxy;
 import dapper.server.flow.Flow;
 
@@ -262,7 +262,7 @@ public class ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEve
     @Override
     public Element toDom() {
 
-        Document doc = Control.newDocument();
+        Document doc = DapperBase.newDocument();
 
         Element rootElement = doc.createElement(XmlEvent.class.getName());
 

@@ -44,6 +44,7 @@ import shared.net.SocketConnection;
 import shared.net.handler.SynchronousHandler;
 import shared.util.Control;
 import shared.util.CoreThread;
+import shared.util.IoBase;
 import dapper.DapperBase;
 import dapper.codelet.StreamResource;
 import dapper.event.ControlEvent;
@@ -130,7 +131,7 @@ public class ClientConnector extends CoreThread implements Closeable {
 
         // Close all connections.
         for (SynchronousHandler<?> handler : this.handlerMap.values()) {
-            Control.close(handler);
+            IoBase.close(handler);
         }
 
         Client.getLog().info("Connect failure.", t);

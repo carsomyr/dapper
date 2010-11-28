@@ -33,7 +33,7 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
-import shared.util.Control;
+import shared.util.IoBase;
 import dapper.codelet.Codelet;
 import dapper.codelet.CodeletUtilities;
 import dapper.codelet.InputHandleResource;
@@ -52,7 +52,7 @@ public class Cleanup implements Codelet {
         for (InputHandleResource ihr : CodeletUtilities.filter(inResources, InputHandleResource.class)) {
 
             for (String handle : ihr) {
-                Control.delete(new File(handle));
+                IoBase.delete(new File(handle));
             }
         }
     }
