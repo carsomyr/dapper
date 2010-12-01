@@ -44,6 +44,7 @@ import shared.util.CoreThread;
 import shared.util.IoBase;
 import dapper.DapperBase;
 import dapper.event.AddressEvent;
+import dapper.event.BaseControlEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEventHandler;
 import dapper.event.DataEvent;
@@ -104,7 +105,7 @@ public class ClientLogic {
 
         // Acknowledge completion of preparations.
         if (this.job.isReady()) {
-            this.server.onRemote(new ControlEvent(PREPARE_ACK, null));
+            this.server.onRemote(new BaseControlEvent(PREPARE_ACK, null));
         }
     }
 
@@ -192,7 +193,7 @@ public class ClientLogic {
         }
 
         // Interrupt self.
-        this.cp.onLocal(new ControlEvent(REFRESH, this.cp));
+        this.cp.onLocal(new BaseControlEvent(REFRESH, this.cp));
     }
 
     /**
@@ -253,7 +254,7 @@ public class ClientLogic {
      */
     protected void handleWaitToResource(ResourceEvent evt) {
 
-        evt.getSource().onRemote(new ControlEvent(RESOURCE_ACK, null));
+        evt.getSource().onRemote(new BaseControlEvent(RESOURCE_ACK, null));
 
         // Allocate, but do not start, a job thread and a connector thread.
         this.job = new ClientJob(evt, this.base, this.cp);
@@ -271,7 +272,7 @@ public class ClientLogic {
         this.connector.start();
 
         // Interrupt self.
-        this.cp.onLocal(new ControlEvent(REFRESH, this.cp));
+        this.cp.onLocal(new BaseControlEvent(REFRESH, this.cp));
 
         this.cp.setStatus(ClientStatus.PREPARE);
     }

@@ -48,7 +48,7 @@ import dapper.codelet.Resource.ResourceType;
  * 
  * @author Roy Liu
  */
-public class ResourceEvent extends ControlEvent implements ParameterMetadata {
+public class ResourceEvent extends BaseControlEvent implements ParameterMetadata {
 
     final List<Resource> in, out;
     final String className;

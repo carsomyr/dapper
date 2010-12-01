@@ -108,7 +108,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
         if (this.eventCount > queueCount * this.backlog //
                 && this.eventCount - amount <= queueCount * this.backlog) {
-            this.processor.onLocal(new ControlEvent(SUSPEND, this.processor));
+            this.processor.onLocal(new BaseControlEvent(SUSPEND, this.processor));
         }
     }
 
@@ -123,7 +123,7 @@ public class FlowEventBroadcaster implements BlockingQueue<FlowEvent<?, ?>>, Clo
 
         if (this.eventCount + amount > queueCount * this.backlog //
                 && this.eventCount <= queueCount * this.backlog) {
-            this.processor.onLocal(new ControlEvent(RESUME, this.processor));
+            this.processor.onLocal(new BaseControlEvent(RESUME, this.processor));
         }
     }
 

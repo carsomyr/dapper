@@ -42,7 +42,7 @@ import shared.event.Source;
  * 
  * @author Roy Liu
  */
-public class DataEvent extends ControlEvent {
+public class DataEvent extends BaseControlEvent {
 
     final String pathname;
     final byte[] data;

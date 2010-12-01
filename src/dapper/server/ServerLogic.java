@@ -57,6 +57,7 @@ import dapper.DapperException;
 import dapper.client.ClientStatus;
 import dapper.codelet.Codelet;
 import dapper.event.AddressEvent;
+import dapper.event.BaseControlEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.ControlEventHandler;
@@ -220,7 +221,7 @@ public class ServerLogic {
 
                 Control.assertTrue(csh2.getStatus() == assignedClientStatus);
 
-                csh2.getControlHandler().onRemote(new ControlEvent(eventType, null));
+                csh2.getControlHandler().onRemote(new BaseControlEvent(eventType, null));
                 csh2.setStatus(nextClientStatus);
                 csh2.timeout(timeout);
             }
@@ -393,7 +394,7 @@ public class ServerLogic {
             // Signal failure.
             evt.setException(e);
 
-            this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+            this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
 
             return;
         }
@@ -413,7 +414,7 @@ public class ServerLogic {
         evt.set(fp);
 
         // Interrupt self.
-        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+        this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
     }
 
     /**
@@ -431,7 +432,7 @@ public class ServerLogic {
         evt.set(null);
 
         // Interrupt self.
-        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+        this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
     }
 
     /**
@@ -454,7 +455,7 @@ public class ServerLogic {
         evt.set(null);
 
         // Interrupt self.
-        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+        this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
     }
 
     /**
@@ -531,7 +532,7 @@ public class ServerLogic {
         case RESUME:
 
             this.suspended = false;
-            this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+            this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
 
             break;
 
@@ -588,7 +589,7 @@ public class ServerLogic {
         csh.setStatus(ClientStatus.INVALID);
 
         // Interrupt self.
-        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+        this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
     }
 
     /**
@@ -612,7 +613,7 @@ public class ServerLogic {
             purgeFlow(flowNode.getLogicalNode().getFlow(), new IllegalStateException(String.format("Maximum " //
                     + "execution time limit of %d milliseconds exceeded", flowNode.getTimeout())));
 
-            this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+            this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
 
             break;
 
@@ -708,7 +709,7 @@ public class ServerLogic {
         }
 
         // Interrupt self.
-        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+        this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
     }
 
     /**
@@ -722,7 +723,7 @@ public class ServerLogic {
         Control.assertTrue(this.clientWaitSet.add(csh));
 
         // Notify the client of connection establishment.
-        csh.getControlHandler().onRemote(new ControlEvent(INIT, null));
+        csh.getControlHandler().onRemote(new BaseControlEvent(INIT, null));
 
         // Set the address of the client for later reference.
         InetSocketAddress address = evt.getAddress();
@@ -747,7 +748,7 @@ public class ServerLogic {
         csh.setStatus(ClientStatus.WAIT);
 
         // Interrupt self.
-        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+        this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
     }
 
     /**
@@ -807,7 +808,7 @@ public class ServerLogic {
 
             handleReset(new ResetEvent("Failed to assign embedding parameters", e, evt.getSource()));
 
-            this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+            this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
 
             return;
         }
@@ -873,7 +874,7 @@ public class ServerLogic {
 
                     purgeFlow(flow, e);
 
-                    this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+                    this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
 
                     return;
                 }
@@ -901,6 +902,6 @@ public class ServerLogic {
         csh.setStatus(ClientStatus.WAIT);
 
         // Interrupt self.
-        this.sp.onLocal(new ControlEvent(REFRESH, this.sp));
+        this.sp.onLocal(new BaseControlEvent(REFRESH, this.sp));
     }
 }

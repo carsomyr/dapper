@@ -36,7 +36,7 @@ import shared.event.Source;
  * 
  * @author Roy Liu
  */
-public class ErrorEvent extends ControlEvent {
+public class ErrorEvent extends BaseControlEvent {
 
     final Throwable exception;
 

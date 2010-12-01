@@ -46,7 +46,7 @@ import dapper.DapperException;
  * 
  * @author Roy Liu
  */
-public class ResetEvent extends ControlEvent implements Handle<Object> {
+public class ResetEvent extends BaseControlEvent implements Handle<Object> {
 
     /**
      * An empty array of {@link StackTraceElement}s.

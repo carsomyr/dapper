@@ -55,6 +55,7 @@ import shared.util.RequestFuture;
 import dapper.client.ClientStatus;
 import dapper.codelet.Taggable;
 import dapper.event.AddressEvent;
+import dapper.event.BaseControlEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.ControlEventHandler;
@@ -439,7 +440,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
      * @param <T>
      *            the output type.
      */
-    protected class RequestEvent<S, T> extends ControlEvent {
+    protected class RequestEvent<S, T> extends BaseControlEvent {
 
         final S input;
         final RequestFuture<T> future;

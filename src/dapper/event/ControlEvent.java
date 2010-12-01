@@ -28,24 +28,20 @@
 
 package dapper.event;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import shared.event.Source;
 import shared.event.XmlEvent;
-import dapper.DapperBase;
 import dapper.server.ServerProcessor.FlowProxy;
 import dapper.server.flow.Flow;
 
 /**
- * A base class for all Dapper control messages.
+ * Defines a Dapper control message.
  * 
  * @apiviz.owns dapper.event.ControlEvent.ControlEventType
  * @author Roy Liu
  */
-public class ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEventType, SourceType> {
+public interface ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEventType, SourceType> {
 
     /**
      * An enumeration of {@link ControlEvent} types.
@@ -59,7 +55,7 @@ public class ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEve
 
             @Override
             protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
-                return new ControlEvent(this, source);
+                return new BaseControlEvent(this, source);
             }
         }, //
 
@@ -92,7 +88,7 @@ public class ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEve
 
             @Override
             protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
-                return new ControlEvent(this, source);
+                return new BaseControlEvent(this, source);
             }
         }, //
 
@@ -103,7 +99,7 @@ public class ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEve
 
             @Override
             protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
-                return new ControlEvent(this, source);
+                return new BaseControlEvent(this, source);
             }
         }, //
 
@@ -114,7 +110,7 @@ public class ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEve
 
             @Override
             protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
-                return new ControlEvent(this, source);
+                return new BaseControlEvent(this, source);
             }
         }, //
 
@@ -125,7 +121,7 @@ public class ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEve
 
             @Override
             protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
-                return new ControlEvent(this, source);
+                return new BaseControlEvent(this, source);
             }
         }, //
 
@@ -240,51 +236,5 @@ public class ControlEvent extends XmlEvent<ControlEvent, ControlEvent.ControlEve
         protected ControlEvent parse(Node contentNode, Source<ControlEvent, SourceType> source) {
             throw new UnsupportedOperationException("Parse method not defined");
         }
-    }
-
-    final Source<ControlEvent, SourceType> source;
-
-    /**
-     * Default constructor.
-     */
-    public ControlEvent(ControlEventType type, Source<ControlEvent, SourceType> source) {
-        super(type);
-
-        this.source = source;
-    }
-
-    /**
-     * Transfers the contents of this event into the given DOM {@link Node}.
-     */
-    protected void getContents(Node contentNode) {
-    }
-
-    @Override
-    public Element toDom() {
-
-        Document doc = DapperBase.newDocument();
-
-        Element rootElement = doc.createElement(XmlEvent.class.getName());
-
-        rootElement.appendChild(doc.createElement("type")) //
-                .setTextContent(getType().toString());
-
-        getContents(rootElement.appendChild(doc.createElement("content")));
-
-        return rootElement;
-    }
-
-    @Override
-    public Source<ControlEvent, SourceType> getSource() {
-        return this.source;
-    }
-
-    /**
-     * Parses a {@link ControlEvent} from the given root DOM {@link Element}.
-     */
-    public static ControlEvent parse(Node rootElement, Source<ControlEvent, SourceType> source) {
-
-        NodeList children = rootElement.getChildNodes();
-        return ControlEventType.valueOf(children.item(0).getTextContent()).parse(children.item(1), source);
     }
 }

@@ -44,7 +44,7 @@ import dapper.codelet.ParameterMetadata;
  * 
  * @author Roy Liu
  */
-public class ExecuteAckEvent extends ControlEvent implements ParameterMetadata, Handle<Object> {
+public class ExecuteAckEvent extends BaseControlEvent implements ParameterMetadata, Handle<Object> {
 
     final Node embeddingParameters, edgeParameters;
 

@@ -58,7 +58,7 @@ import shared.util.Control;
 import shared.util.CoreThread;
 import shared.util.IoBase;
 import dapper.DapperBase;
-import dapper.event.ControlEvent;
+import dapper.event.BaseControlEvent;
 import dapper.event.StreamReadyEvent;
 import dapper.server.flow.FlowUtilities;
 import dapper.server.flow.StreamEdge;
@@ -137,7 +137,7 @@ public class Client extends CoreThread implements Closeable {
         );
 
         // Prime the processor with an artificially generated event.
-        this.processor.onLocal(new ControlEvent(INIT, this.processor));
+        this.processor.onLocal(new BaseControlEvent(INIT, this.processor));
 
         this.run = true;
 

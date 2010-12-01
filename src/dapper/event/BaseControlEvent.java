@@ -28,69 +28,72 @@
 
 package dapper.event;
 
-import static dapper.event.ControlEvent.ControlEventType.TIMEOUT;
-import shared.event.Handler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import shared.event.Source;
-import shared.parallel.Handle;
+import shared.event.XmlEvent;
+import dapper.DapperBase;
 
 /**
- * A subclass of {@link ControlEvent} for delivering timeouts.
+ * An implementation of {@link ControlEvent} that can be subclassed into user-defined events.
  * 
+ * @apiviz.owns dapper.event.ControlEvent.ControlEventType
  * @author Roy Liu
  */
-public class TimeoutEvent extends BaseControlEvent {
+public class BaseControlEvent implements ControlEvent {
 
-    /**
-     * A {@link Handler} that does nothing.
-     */
-    final protected static Handler<ControlEvent> emptyHandler = new Handler<ControlEvent>() {
-
-        @Override
-        public void handle(ControlEvent evt) {
-            // Do nothing.
-        }
-    };
+    final ControlEventType type;
+    final Source<ControlEvent, SourceType> source;
 
     /**
      * Default constructor.
      */
-    public TimeoutEvent(final Handle<Object> handle, final Object tag, final Source<ControlEvent, SourceType> source) {
-        super(TIMEOUT, new Source<ControlEvent, SourceType>() {
+    public BaseControlEvent(ControlEventType type, Source<ControlEvent, SourceType> source) {
 
-            @Override
-            public SourceType getType() {
-                return source.getType();
-            }
+        this.type = type;
+        this.source = source;
+    }
 
-            @Override
-            public void onLocal(ControlEvent evt) {
-                source.onLocal(evt);
-            }
+    /**
+     * Transfers the contents of this event into the given DOM {@link Node}.
+     */
+    protected void getContents(Node contentNode) {
+    }
 
-            @Override
-            public void onRemote(ControlEvent evt) {
-                source.onRemote(evt);
-            }
+    @Override
+    public Element toDom() {
 
-            @Override
-            public Handler<ControlEvent> getHandler() {
-                return (handle.get() == tag) ? source.getHandler() : emptyHandler;
-            }
+        Document doc = DapperBase.newDocument();
 
-            @Override
-            public void setHandler(Handler<ControlEvent> handler) {
-                source.setHandler(handler);
-            }
+        Element rootElement = doc.createElement(XmlEvent.class.getName());
 
-            @Override
-            public void close() {
-                source.close();
-            }
+        rootElement.appendChild(doc.createElement("type")) //
+                .setTextContent(getType().toString());
 
-            @Override
-            public String toString() {
-                return source.toString();
-            }
-        });
+        getContents(rootElement.appendChild(doc.createElement("content")));
+
+        return rootElement;
+    }
+
+    @Override
+    public Source<ControlEvent, SourceType> getSource() {
+        return this.source;
+    }
+
+    @Override
+    public ControlEventType getType() {
+        return this.type;
+    }
+
+    /**
+     * Parses a {@link ControlEvent} from the given root DOM {@link Element}.
+     */
+    public static ControlEvent parse(Node rootElement, Source<ControlEvent, SourceType> source) {
+
+        NodeList children = rootElement.getChildNodes();
+        return ControlEventType.valueOf(children.item(0).getTextContent()).parse(children.item(1), source);
     }
 }

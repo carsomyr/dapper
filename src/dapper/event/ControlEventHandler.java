@@ -71,13 +71,17 @@ public class ControlEventHandler<C extends Connection> //
     }
 
     @Override
-    protected void onError() {
-        onLocal(new ErrorEvent(getConnection().getException(), this));
+    protected ControlEvent parse(Element rootElement) {
+        return BaseControlEvent.parse(rootElement, this);
     }
 
     @Override
-    protected ControlEvent parse(Element rootElement) {
-        return (rootElement == null) ? new ControlEvent(END_OF_STREAM, this) //
-                : ControlEvent.parse(rootElement, this);
+    protected ControlEvent createEos() {
+        return new BaseControlEvent(END_OF_STREAM, this);
+    }
+
+    @Override
+    protected ControlEvent createError() {
+        return new ErrorEvent(getConnection().getException(), this);
     }
 }

@@ -46,7 +46,7 @@ import shared.event.Source;
  * 
  * @author Roy Liu
  */
-public class AddressEvent extends ControlEvent {
+public class AddressEvent extends BaseControlEvent {
 
     final InetSocketAddress address;
     final String domain;

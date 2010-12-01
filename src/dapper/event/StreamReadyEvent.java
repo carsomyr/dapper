@@ -41,7 +41,7 @@ import dapper.codelet.Identified;
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class StreamReadyEvent<C extends Connection> extends ControlEvent implements Identified {
+public class StreamReadyEvent<C extends Connection> extends BaseControlEvent implements Identified {
 
     final String identifier;
     final SynchronousHandler<C> handler;
