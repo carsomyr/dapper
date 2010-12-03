@@ -43,7 +43,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -57,7 +59,6 @@ import shared.parallel.Handle;
 import shared.util.Control;
 import shared.util.CoreThread;
 import shared.util.IoBase;
-import shared.util.RequestFuture;
 import dapper.DapperBase;
 import dapper.codelet.Codelet;
 import dapper.codelet.CodeletUtilities;
@@ -73,6 +74,7 @@ import dapper.event.ResourceEvent;
 import dapper.event.SourceType;
 import dapper.server.flow.EmbeddingCodelet;
 import dapper.server.flow.FlowNode;
+import dapper.util.RequestFuture;
 
 /**
  * A client job thread class.
@@ -309,7 +311,104 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
     @Override
     public byte[] getData(String pathname) {
 
-        RequestFuture<byte[]> rf = new RequestFuture<byte[]>();
+        RequestFuture<byte[]> rf = new RequestFuture<byte[]>() {
+
+            byte[] data = null;
+            Throwable exception = null;
+
+            @Override
+            public void set(byte[] data) {
+
+                Control.checkTrue(data != null, //
+                        "Data cannot be null");
+
+                synchronized (this) {
+
+                    Control.checkTrue(this.data == null, //
+                            "Data is already set");
+
+                    this.data = data;
+                    notifyAll();
+                }
+            }
+
+            @Override
+            public void setException(Throwable exception) {
+
+                Control.checkTrue(exception != null, //
+                        "Exception cannot be null");
+
+                synchronized (this) {
+
+                    Control.checkTrue(this.exception == null, //
+                            "Exception is already set");
+
+                    this.exception = exception;
+                    notifyAll();
+                }
+            }
+
+            @Override
+            public byte[] get() throws InterruptedException, ExecutionException {
+
+                synchronized (this) {
+
+                    for (; !isDone();) {
+                        wait();
+                    }
+                }
+
+                if (this.exception != null) {
+                    throw new ExecutionException(this.exception);
+                }
+
+                return this.data;
+            }
+
+            @Override
+            public byte[] get(long timeout, TimeUnit unit) //
+                    throws InterruptedException, ExecutionException, TimeoutException {
+
+                long timeoutMillis = unit.toMillis(timeout);
+
+                synchronized (this) {
+
+                    for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
+                    !isDone() && remaining > 0; //
+                    remaining = end - System.currentTimeMillis()) {
+                        wait(remaining);
+                    }
+
+                    if (!isDone()) {
+                        throw new TimeoutException("Operation timed out");
+                    }
+                }
+
+                if (this.exception != null) {
+                    throw new ExecutionException(this.exception);
+                }
+
+                return this.data;
+            }
+
+            @Override
+            public boolean isDone() {
+
+                synchronized (this) {
+                    return this.data != null || this.exception != null;
+                }
+            }
+
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return false;
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+        };
 
         synchronized (this) {
 

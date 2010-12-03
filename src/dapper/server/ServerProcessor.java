@@ -42,20 +42,22 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+import org.w3c.dom.Element;
 
 import shared.event.EnumStatus;
 import shared.event.Handler;
+import shared.event.Source;
 import shared.event.StateProcessor;
 import shared.event.StateTable;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
 import shared.util.Control;
 import shared.util.IoBase;
-import shared.util.RequestFuture;
 import dapper.client.ClientStatus;
 import dapper.codelet.Taggable;
 import dapper.event.AddressEvent;
-import dapper.event.BaseControlEvent;
 import dapper.event.ControlEvent;
 import dapper.event.ControlEvent.ControlEventType;
 import dapper.event.ControlEventHandler;
@@ -71,6 +73,7 @@ import dapper.event.TimeoutEvent;
 import dapper.server.flow.Flow;
 import dapper.server.flow.FlowBuilder;
 import dapper.server.flow.FlowNode;
+import dapper.util.RequestFuture;
 
 /**
  * The Dapper server processor.
@@ -84,6 +87,16 @@ import dapper.server.flow.FlowNode;
  */
 public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventType, SourceType> //
         implements EnumStatus<ServerStatus> {
+
+    /**
+     * A null {@link Runnable} that has an empty {@link Runnable#run()} method.
+     */
+    final protected static Runnable nullRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+        }
+    };
 
     final ServerLogic logic;
     final StateTable<ServerStatus, ControlEventType, ControlEvent> fsmInternal;
@@ -395,28 +408,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         RequestEvent<S, T> evt = new RequestEvent<S, T>(type, input);
         onLocal(evt);
 
-        return evt.future.get();
-    }
-
-    /**
-     * Creates a {@link RequestFuture}.
-     * 
-     * @param <T>
-     *            the result type.
-     */
-    protected <T> RequestFuture<T> createFuture() {
-
-        RequestFuture<T> rf = new RequestFuture<T>();
-
-        synchronized (this) {
-
-            Control.checkTrue(getStatus() != ServerStatus.INVALID, //
-                    "The processing thread has exited");
-
-            this.futures.add(rf);
-        }
-
-        return rf;
+        return evt.get();
     }
 
     /**
@@ -440,64 +432,104 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
      * @param <T>
      *            the output type.
      */
-    protected class RequestEvent<S, T> extends BaseControlEvent {
+    protected class RequestEvent<S, T> extends FutureTask<T> implements RequestFuture<T>, ControlEvent {
 
+        final ControlEventType type;
         final S input;
-        final RequestFuture<T> future;
 
         /**
          * Default constructor.
          */
         protected RequestEvent(ControlEventType type, S input) {
-            super(type, ServerProcessor.this);
+            super(nullRunnable, null);
 
+            this.type = type;
             this.input = input;
-            this.future = createFuture();
+
+            ServerProcessor sp = ServerProcessor.this;
+
+            synchronized (sp) {
+
+                Control.checkTrue(sp.getStatus() != ServerStatus.INVALID, //
+                        "The processing thread has exited");
+
+                sp.futures.add(this);
+            }
+        }
+
+        @Override
+        public void set(T v) {
+            super.set(v);
+        }
+
+        @Override
+        public void setException(Throwable t) {
+            super.setException(t);
+        }
+
+        @Override
+        public Source<ControlEvent, SourceType> getSource() {
+            return ServerProcessor.this;
+        }
+
+        @Override
+        public ControlEventType getType() {
+            return this.type;
         }
 
         /**
          * Gets the input.
          */
-        protected S getInput() {
+        public S getInput() {
             return this.input;
         }
 
-        /**
-         * Sets the {@link RequestFuture} result.
-         */
-        protected void set(T value) {
-            this.future.set(value);
-        }
-
-        /**
-         * Sets a {@link RequestFuture} exception.
-         */
-        protected void setException(Throwable t) {
-            this.future.setException(t);
+        @Override
+        public Element toDom() {
+            throw new UnsupportedOperationException();
         }
     }
 
     /**
      * A wrapper for {@link Flow}s gotten from the server.
      */
-    public class FlowProxy implements Taggable<Object> {
+    public class FlowProxy extends FutureTask<Object> implements RequestFuture<Object>, Taggable<Object> {
 
         Flow flow;
 
         final Flow originalFlow;
         final int flowFlags;
-        final RequestFuture<Object> future;
 
         /**
          * Default constructor.
          */
         protected FlowProxy(Flow originalFlow, int flowFlags) {
+            super(nullRunnable, null);
 
             this.originalFlow = originalFlow;
             this.flowFlags = flowFlags;
 
             this.flow = originalFlow.clone();
-            this.future = createFuture();
+
+            ServerProcessor sp = ServerProcessor.this;
+
+            synchronized (sp) {
+
+                Control.checkTrue(sp.getStatus() != ServerStatus.INVALID, //
+                        "The processing thread has exited");
+
+                sp.futures.add(this);
+            }
+        }
+
+        @Override
+        public void set(Object v) {
+            super.set(v);
+        }
+
+        @Override
+        public void setException(Throwable t) {
+            super.setException(t);
         }
 
         @Override
@@ -584,21 +616,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
          *             when something goes awry.
          */
         public void await() throws InterruptedException, ExecutionException {
-            this.future.get();
-        }
-
-        /**
-         * Sets the {@link RequestFuture} result.
-         */
-        protected void set(Object value) {
-            this.future.set(value);
-        }
-
-        /**
-         * Sets a {@link RequestFuture} exception.
-         */
-        protected void setException(Throwable t) {
-            this.future.setException(t);
+            get();
         }
 
         /**
