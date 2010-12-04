@@ -57,7 +57,6 @@ import shared.net.SocketConnection;
 import shared.net.handler.SynchronousHandler;
 import shared.parallel.Handle;
 import shared.util.Control;
-import shared.util.CoreThread;
 import shared.util.IoBase;
 import dapper.DapperBase;
 import dapper.codelet.Codelet;
@@ -81,7 +80,7 @@ import dapper.util.RequestFuture;
  * 
  * @author Roy Liu
  */
-public class ClientJob extends CoreThread implements Closeable, DataService {
+public class ClientJob extends Thread implements Closeable, DataService {
 
     final ResourceEvent event;
     final DapperBase base;
@@ -231,81 +230,85 @@ public class ClientJob extends CoreThread implements Closeable, DataService {
         }
     }
 
+    /**
+     * Runs the job.
+     */
     @Override
-    protected void doRun() throws Exception {
-
-        RegistryClassLoader rcl = new RegistryClassLoader();
-        rcl.addRegistry(new ResourceRegistry() {
-
-            @Override
-            public URL getResource(String pathname) {
-                return null;
-            }
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public Enumeration<URL> getResources(String pathname) {
-                return Collections.enumeration(Collections.EMPTY_LIST);
-            }
-
-            @Override
-            public InputStream getResourceAsStream(String pathname) {
-
-                byte[] data = getData(String.format("cp:%s", pathname));
-                return (data != null) ? new ByteArrayInputStream(data) : null;
-            }
-        });
-
-        Codelet codelet = (Codelet) rcl.loadClass(this.event.getClassName()).newInstance();
-
-        List<Resource> outResources = this.event.getOut();
-
-        CodeletUtilities.setDataService(this);
+    public void run() {
 
         try {
 
-            codelet.run( //
-                    Collections.unmodifiableList(this.event.getIn()), //
-                    Collections.unmodifiableList(outResources), //
-                    this.event.getParameters());
+            RegistryClassLoader rcl = new RegistryClassLoader();
+            rcl.addRegistry(new ResourceRegistry() {
 
-        } finally {
+                @Override
+                public URL getResource(String pathname) {
+                    return null;
+                }
 
-            CodeletUtilities.setDataService(null);
-        }
+                @SuppressWarnings("unchecked")
+                @Override
+                public Enumeration<URL> getResources(String pathname) {
+                    return Collections.enumeration(Collections.EMPTY_LIST);
+                }
 
-        Node embeddingParameters = (codelet instanceof EmbeddingCodelet) ? ((EmbeddingCodelet) codelet)
-                .getEmbeddingParameters() : null;
-        embeddingParameters = (embeddingParameters == null) ? FlowNode.emptyParameters : embeddingParameters;
+                @Override
+                public InputStream getResourceAsStream(String pathname) {
 
-        Control.checkTrue(embeddingParameters.getNodeName().equals("parameters"), //
-                "Invalid parameters node");
+                    byte[] data = getData(String.format("cp:%s", pathname));
+                    return (data != null) ? new ByteArrayInputStream(data) : null;
+                }
+            });
 
-        Document doc = DapperBase.newDocument();
-        Node edgeParameters = doc.createElement("edge_parameters");
+            Codelet codelet = (Codelet) rcl.loadClass(this.event.getClassName()).newInstance();
 
-        for (Resource outResource : outResources) {
+            List<Resource> outResources = this.event.getOut();
 
-            Node edgeParameterNode = edgeParameters.appendChild(doc.createElement("edge_parameter"));
+            CodeletUtilities.setDataService(this);
 
-            if (outResource.getType() == OUTPUT_HANDLE) {
-                ((OutputHandleResource) outResource).getContents(edgeParameterNode);
+            try {
+
+                codelet.run( //
+                        Collections.unmodifiableList(this.event.getIn()), //
+                        Collections.unmodifiableList(outResources), //
+                        this.event.getParameters());
+
+            } finally {
+
+                CodeletUtilities.setDataService(null);
             }
+
+            Node embeddingParameters = (codelet instanceof EmbeddingCodelet) ? ((EmbeddingCodelet) codelet)
+                    .getEmbeddingParameters() : null;
+            embeddingParameters = (embeddingParameters == null) ? FlowNode.emptyParameters : embeddingParameters;
+
+            Control.checkTrue(embeddingParameters.getNodeName().equals("parameters"), //
+                    "Invalid parameters node");
+
+            Document doc = DapperBase.newDocument();
+            Node edgeParameters = doc.createElement("edge_parameters");
+
+            for (Resource outResource : outResources) {
+
+                Node edgeParameterNode = edgeParameters.appendChild(doc.createElement("edge_parameter"));
+
+                if (outResource.getType() == OUTPUT_HANDLE) {
+                    ((OutputHandleResource) outResource).getContents(edgeParameterNode);
+                }
+            }
+
+            ExecuteAckEvent executeAckEvent = new ExecuteAckEvent(embeddingParameters, edgeParameters, this.callback);
+            executeAckEvent.set(this);
+
+            this.callback.onLocal(executeAckEvent);
+
+        } catch (Throwable t) {
+
+            ResetEvent resetEvent = new ResetEvent("Execution encountered an unexpected exception", t, this.callback);
+            resetEvent.set(this);
+
+            this.callback.onLocal(resetEvent);
         }
-
-        ExecuteAckEvent executeAckEvent = new ExecuteAckEvent(embeddingParameters, edgeParameters, this.callback);
-        executeAckEvent.set(this);
-
-        this.callback.onLocal(executeAckEvent);
-    }
-
-    @Override
-    protected void doCatch(Throwable t) {
-
-        ResetEvent resetEvent = new ResetEvent("Execution encountered an unexpected exception", t, this.callback);
-        resetEvent.set(this);
-
-        this.callback.onLocal(resetEvent);
     }
 
     @Override

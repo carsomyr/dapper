@@ -40,7 +40,6 @@ import shared.event.Source;
 import shared.net.Connection;
 import shared.net.SocketConnection;
 import shared.net.handler.SynchronousHandler;
-import shared.util.CoreThread;
 import shared.util.IoBase;
 import dapper.DapperBase;
 import dapper.event.AddressEvent;
@@ -150,23 +149,29 @@ public class ClientLogic {
         final ControlEventHandler<Connection> server = this.base.createControlHandler(this.cp);
         server.setHandler(this.cp);
 
-        new CoreThread("Server Connector Thread") {
+        new Thread("Server Connector Thread") {
 
             @Override
-            protected void doRun() throws Exception {
+            public void run() {
 
-                ClientLogic cl = ClientLogic.this;
+                try {
 
-                SocketConnection conn = cl.base.getManager().init(CONNECT, server, cl.remoteAddress).get();
-                server.onRemote(new AddressEvent(new InetSocketAddress( //
-                        conn.getLocalAddress().getAddress(), //
-                        cl.localAddress.getPort()), //
-                        cl.domain, null));
-            }
+                    ClientLogic cl = ClientLogic.this;
 
-            @Override
-            protected void doCatch(Throwable t) {
-                // No need to handle -- Manager will signal client processor on failure.
+                    SocketConnection conn = cl.base.getManager().init(CONNECT, server, cl.remoteAddress).get();
+                    server.onRemote(new AddressEvent(new InetSocketAddress( //
+                            conn.getLocalAddress().getAddress(), //
+                            cl.localAddress.getPort()), //
+                            cl.domain, null));
+
+                } catch (RuntimeException e) {
+
+                    throw e;
+
+                } catch (Exception e) {
+
+                    throw new RuntimeException(e);
+                }
             }
 
         }.start();

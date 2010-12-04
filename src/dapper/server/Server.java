@@ -54,7 +54,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import shared.net.Connection;
-import shared.util.CoreThread;
 import shared.util.IoBase;
 import dapper.Constants;
 import dapper.DapperBase;
@@ -72,7 +71,7 @@ import dapper.server.flow.FlowNode;
  * @apiviz.composedOf dapper.server.ServerProcessor
  * @author Roy Liu
  */
-public class Server extends CoreThread implements Closeable {
+public class Server extends Thread implements Closeable {
 
     /**
      * The instance used for logging.
@@ -253,46 +252,48 @@ public class Server extends CoreThread implements Closeable {
         interrupt();
     }
 
+    /**
+     * Runs the connection creation loop.
+     */
     @Override
-    protected void doRun() throws Exception {
+    public void run() {
 
-        loop: for (; this.run;) {
+        try {
 
-            // Attempt to accept a connection.
-            ControlEventHandler<Connection> ceh = this.base.createControlHandler(this.processor);
-            ceh.setHandler(new ClientState(ceh, this.processor, this.base));
+            loop: for (; this.run;) {
 
-            SocketChannel sChannel = this.ssChannel.accept();
+                // Attempt to accept a connection.
+                ControlEventHandler<Connection> ceh = this.base.createControlHandler(this.processor);
+                ceh.setHandler(new ClientState(ceh, this.processor, this.base));
 
-            try {
+                SocketChannel sChannel = this.ssChannel.accept();
 
-                this.base.getManager().init(REGISTER, ceh, sChannel).get();
+                try {
 
-            } catch (Exception e) {
+                    this.base.getManager().init(REGISTER, ceh, sChannel).get();
 
-                getLog().info("The connection was closed prematurely.", e);
+                } catch (Exception e) {
 
-                continue loop;
+                    getLog().info("The connection was closed prematurely.", e);
+
+                    continue loop;
+                }
             }
+
+        } catch (Throwable t) {
+
+            // The close was deliberate, so ignore.
+            if (t instanceof ClosedByInterruptException) {
+                return;
+            }
+
+            getLog().info("Server accept thread encountered an unexpected exception.", t);
+
+        } finally {
+
+            IoBase.close(this.base);
+            IoBase.close(this.processor);
+            IoBase.close(this.ssChannel);
         }
-    }
-
-    @Override
-    protected void doCatch(Throwable t) {
-
-        // The close was deliberate, so ignore.
-        if (t instanceof ClosedByInterruptException) {
-            return;
-        }
-
-        getLog().info("Server accept thread encountered an unexpected exception.", t);
-    }
-
-    @Override
-    protected void doFinally() {
-
-        IoBase.close(this.base);
-        IoBase.close(this.processor);
-        IoBase.close(this.ssChannel);
     }
 }

@@ -55,7 +55,6 @@ import shared.cli.CliOptions.CliOption;
 import shared.net.SocketConnection;
 import shared.net.handler.SynchronousHandler;
 import shared.util.Control;
-import shared.util.CoreThread;
 import shared.util.IoBase;
 import dapper.DapperBase;
 import dapper.event.BaseControlEvent;
@@ -74,7 +73,7 @@ import dapper.server.flow.StreamEdge;
         @CliOption(opt = "h", longOpt = "host", nArgs = 1, description = "the server address"), //
         @CliOption(opt = "d", longOpt = "domain", nArgs = 1, description = "the execution domain") //
 })
-public class Client extends CoreThread implements Closeable {
+public class Client extends Thread implements Closeable {
 
     /**
      * The instance used for logging.
@@ -162,102 +161,105 @@ public class Client extends CoreThread implements Closeable {
         interrupt();
     }
 
+    /**
+     * Runs the connection creation loop.
+     */
     @Override
-    protected void doRun() throws Exception {
+    public void run() {
 
-        loop: for (; this.run;) {
+        try {
 
-            // Attempt to accept a connection.
-            final SynchronousHandler<SocketConnection> sh = this.base.createStreamHandler();
+            loop: for (; this.run;) {
 
-            SocketChannel sChannel = this.ssChannel.accept();
+                // Attempt to accept a connection.
+                final SynchronousHandler<SocketConnection> sh = this.base.createStreamHandler();
 
-            final SocketConnection conn;
+                SocketChannel sChannel = this.ssChannel.accept();
 
-            try {
+                final SocketConnection conn;
 
-                conn = this.base.getManager().init(REGISTER, sh, sChannel).get();
+                try {
 
-            } catch (Exception e) {
+                    conn = this.base.getManager().init(REGISTER, sh, sChannel).get();
 
-                getLog().info("The connection was closed prematurely.", e);
+                } catch (Exception e) {
 
-                continue loop;
-            }
+                    getLog().info("The connection was closed prematurely.", e);
 
-            new CoreThread("Accept Sync") {
+                    continue loop;
+                }
 
-                @Override
-                protected void doRun() throws IOException {
+                new Thread("Accept Sync") {
 
-                    // Before proceeding, schedule an interrupt.
-                    Client.this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
+                    @Override
+                    public void run() {
 
-                    getLog().debug(String.format("Accepting: %s.", //
-                            conn.getRemoteAddress()));
+                        try {
 
-                    // Attempt to read the header.
+                            // Before proceeding, schedule an interrupt.
+                            Client.this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
 
-                    byte[] header = new byte[HEADER_LENGTH];
+                            getLog().debug(String.format("Accepting: %s.", //
+                                    conn.getRemoteAddress()));
 
-                    InputStream in = sh.getInputStream();
+                            // Attempt to read the header.
 
-                    for (int size, offset = 0, length = header.length; //
-                    length > 0; //
-                    offset += size, length -= size) {
+                            byte[] header = new byte[HEADER_LENGTH];
 
-                        size = in.read(header, offset, length);
+                            InputStream in = sh.getInputStream();
 
-                        // If a complete header could not be read.
-                        Control.checkTrue(size != -1, //
-                                "Could not read a complete header");
+                            for (int size, offset = 0, length = header.length; //
+                            length > 0; //
+                            offset += size, length -= size) {
+
+                                size = in.read(header, offset, length);
+
+                                // If a complete header could not be read.
+                                Control.checkTrue(size != -1, //
+                                        "Could not read a complete header");
+                            }
+
+                            // Success! Notify the server processor.
+
+                            Client.this.processor.onLocal( //
+                                    new StreamReadyEvent<SocketConnection>(new String(header), sh,
+                                            Client.this.processor));
+
+                            getLog().debug(String.format("Accepted: %s.", //
+                                    conn.getRemoteAddress()));
+
+                        } catch (Throwable t) {
+
+                            IoBase.close(conn);
+
+                            getLog().info("Accept failure.", t);
+
+                        } finally {
+
+                            guard.release(1);
+                        }
                     }
 
-                    // Success! Notify the server processor.
+                }.run();
 
-                    Client.this.processor.onLocal( //
-                            new StreamReadyEvent<SocketConnection>(new String(header), sh, Client.this.processor));
+                guard.acquireUninterruptibly(1);
+            }
 
-                    getLog().debug(String.format("Accepted: %s.", //
-                            conn.getRemoteAddress()));
-                }
+        } catch (Throwable t) {
 
-                @Override
-                protected void doCatch(Throwable t) {
+            // The close was deliberate, so ignore.
+            if (t instanceof ClosedByInterruptException) {
+                return;
+            }
 
-                    IoBase.close(conn);
+            getLog().info("Client accept thread encountered an unexpected exception.", t);
 
-                    getLog().info("Accept failure.", t);
-                }
+        } finally {
 
-                @Override
-                protected void doFinally() {
-                    guard.release(1);
-                }
-
-            }.run();
-
-            guard.acquireUninterruptibly(1);
+            IoBase.close(this.base);
+            IoBase.close(this.processor);
+            IoBase.close(this.ssChannel);
         }
-    }
-
-    @Override
-    protected void doCatch(Throwable t) {
-
-        // The close was deliberate, so ignore.
-        if (t instanceof ClosedByInterruptException) {
-            return;
-        }
-
-        getLog().info("Client accept thread encountered an unexpected exception.", t);
-    }
-
-    @Override
-    protected void doFinally() {
-
-        IoBase.close(this.base);
-        IoBase.close(this.processor);
-        IoBase.close(this.ssChannel);
     }
 
     /**

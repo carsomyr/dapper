@@ -43,7 +43,6 @@ import java.util.concurrent.BlockingQueue;
 import javax.swing.JTabbedPane;
 import javax.swing.Timer;
 
-import shared.util.CoreThread;
 import shared.util.IoBase;
 import dapper.event.FlowEvent;
 import dapper.server.Server;
@@ -92,15 +91,26 @@ public class FlowPane extends JTabbedPane implements Observer, ContainerListener
 
         this.server = server;
 
-        new CoreThread("Flow Event Logger") {
+        new Thread("Flow Event Logger") {
 
             @Override
-            protected void doRun() throws Exception {
+            public void run() {
 
-                BlockingQueue<FlowEvent<Object, Object>> queue = server.createFlowEventQueue();
+                try {
 
-                for (FlowEvent<Object, Object> evt; (evt = queue.take()) != null;) {
-                    FlowManager.log.info(evt.toString(), evt.getException());
+                    BlockingQueue<FlowEvent<Object, Object>> queue = server.createFlowEventQueue();
+
+                    for (FlowEvent<Object, Object> evt; (evt = queue.take()) != null;) {
+                        FlowManager.log.info(evt.toString(), evt.getException());
+                    }
+
+                } catch (RuntimeException e) {
+
+                    throw e;
+
+                } catch (Exception e) {
+
+                    throw new RuntimeException(e);
                 }
             }
 

@@ -43,7 +43,6 @@ import shared.event.Source;
 import shared.net.SocketConnection;
 import shared.net.handler.SynchronousHandler;
 import shared.util.Control;
-import shared.util.CoreThread;
 import shared.util.IoBase;
 import dapper.DapperBase;
 import dapper.codelet.StreamResource;
@@ -57,7 +56,7 @@ import dapper.event.StreamReadyEvent;
  * 
  * @author Roy Liu
  */
-public class ClientConnector extends CoreThread implements Closeable {
+public class ClientConnector extends Thread implements Closeable {
 
     final Set<StreamResource<?>> connectResources;
     final Map<String, SynchronousHandler<SocketConnection>> handlerMap;
@@ -88,57 +87,61 @@ public class ClientConnector extends CoreThread implements Closeable {
         interrupt();
     }
 
+    /**
+     * Runs the connector.
+     */
     @Override
-    protected void doRun() throws Exception {
+    public void run() {
 
-        // Before proceeding, schedule an interrupt.
-        this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
+        try {
 
-        Map<String, Future<? extends SocketConnection>> futureMap = //
-        new HashMap<String, Future<? extends SocketConnection>>();
+            // Before proceeding, schedule an interrupt.
+            this.base.scheduleInterrupt(this, REQUEST_TIMEOUT_MILLIS);
 
-        for (StreamResource<?> connectResource : this.connectResources) {
+            Map<String, Future<? extends SocketConnection>> futureMap = //
+            new HashMap<String, Future<? extends SocketConnection>>();
 
-            String identifier = connectResource.getIdentifier();
-            SynchronousHandler<SocketConnection> sh = this.base.createStreamHandler();
+            for (StreamResource<?> connectResource : this.connectResources) {
 
-            futureMap.put(identifier, this.base.getManager().init(CONNECT, sh, connectResource.getAddress()));
+                String identifier = connectResource.getIdentifier();
+                SynchronousHandler<SocketConnection> sh = this.base.createStreamHandler();
 
-            Client.getLog().debug(String.format("Connecting: %s.", connectResource.getAddress()));
+                futureMap.put(identifier, this.base.getManager().init(CONNECT, sh, connectResource.getAddress()));
 
-            this.handlerMap.put(identifier, sh);
+                Client.getLog().debug(String.format("Connecting: %s.", connectResource.getAddress()));
+
+                this.handlerMap.put(identifier, sh);
+            }
+
+            for (Entry<String, SynchronousHandler<SocketConnection>> entry : this.handlerMap.entrySet()) {
+
+                String identifier = entry.getKey();
+                SynchronousHandler<SocketConnection> sh = entry.getValue();
+
+                Control.checkTrue(identifier.length() == HEADER_LENGTH);
+
+                SocketConnection conn = futureMap.get(identifier).get();
+
+                sh.getOutputStream().write(identifier.getBytes());
+
+                Client.getLog().debug(String.format("Connected: %s.", conn.getRemoteAddress()));
+
+                this.callback.onLocal(new StreamReadyEvent<SocketConnection>(identifier, sh, this.callback));
+            }
+
+        } catch (Throwable t) {
+
+            // Close all connections.
+            for (SynchronousHandler<?> handler : this.handlerMap.values()) {
+                IoBase.close(handler);
+            }
+
+            Client.getLog().info("Connect failure.", t);
+
+            ResetEvent resetEvent = new ResetEvent("Connect failure", t, this.callback);
+            resetEvent.set(this);
+
+            this.callback.onLocal(resetEvent);
         }
-
-        for (Entry<String, SynchronousHandler<SocketConnection>> entry : this.handlerMap.entrySet()) {
-
-            String identifier = entry.getKey();
-            SynchronousHandler<SocketConnection> sh = entry.getValue();
-
-            Control.checkTrue(identifier.length() == HEADER_LENGTH);
-
-            SocketConnection conn = futureMap.get(identifier).get();
-
-            sh.getOutputStream().write(identifier.getBytes());
-
-            Client.getLog().debug(String.format("Connected: %s.", conn.getRemoteAddress()));
-
-            this.callback.onLocal(new StreamReadyEvent<SocketConnection>(identifier, sh, this.callback));
-        }
-    }
-
-    @Override
-    protected void doCatch(Throwable t) {
-
-        // Close all connections.
-        for (SynchronousHandler<?> handler : this.handlerMap.values()) {
-            IoBase.close(handler);
-        }
-
-        Client.getLog().info("Connect failure.", t);
-
-        ResetEvent resetEvent = new ResetEvent("Connect failure", t, this.callback);
-        resetEvent.set(this);
-
-        this.callback.onLocal(resetEvent);
     }
 }
