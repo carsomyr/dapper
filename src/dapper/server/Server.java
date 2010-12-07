@@ -121,6 +121,7 @@ public class Server extends Thread implements Closeable {
                     }
                 } //
         );
+        this.processor.start();
 
         this.run = true;
 

@@ -98,7 +98,7 @@ public class FlowTab extends JLabel implements Closeable {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             IoBase.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
-                    out, nullOutputStream, //
+                    out, nullOutputStream, null, //
                     dotExecArgsPng);
 
             ((ImageIcon) getIcon()).setImage(ImageIO.read(new ByteArrayInputStream(out.toByteArray())));
@@ -121,7 +121,7 @@ public class FlowTab extends JLabel implements Closeable {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             IoBase.execAndWaitFor(new ByteArrayInputStream(this.fp.toString().getBytes()), //
-                    out, nullOutputStream, //
+                    out, nullOutputStream, null, //
                     dotExecArgsSvg);
 
             IoBase.transfer(new ByteArrayInputStream(out.toByteArray()), f);

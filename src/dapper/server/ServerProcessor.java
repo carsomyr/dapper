@@ -47,9 +47,9 @@ import java.util.concurrent.FutureTask;
 import org.w3c.dom.Element;
 
 import shared.event.EnumStatus;
+import shared.event.EventProcessor;
 import shared.event.Handler;
 import shared.event.Source;
-import shared.event.StateProcessor;
 import shared.event.StateTable;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
@@ -85,7 +85,7 @@ import dapper.util.RequestFuture;
  * @apiviz.has dapper.server.ServerProcessor.RequestEvent - - - event
  * @author Roy Liu
  */
-public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventType, SourceType> //
+public class ServerProcessor extends EventProcessor<ControlEvent, ControlEventType, SourceType> //
         implements EnumStatus<ServerStatus> {
 
     /**
@@ -98,6 +98,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
         }
     };
 
+    final Runnable finalizer;
     final ServerLogic logic;
     final StateTable<ServerStatus, ControlEventType, ControlEvent> fsmInternal;
     final StateTable<ClientStatus, ControlEventType, ControlEvent> fsmClient;
@@ -112,7 +113,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     public ServerProcessor(InetAddress address, final Runnable finalizer) {
         super("SEP");
 
-        setFinalizer(new Runnable() {
+        this.finalizer = new Runnable() {
 
             @Override
             public void run() {
@@ -133,7 +134,7 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
 
                 finalizer.run();
             }
-        });
+        };
 
         this.logic = new ServerLogic(address, this);
         this.fsmInternal = new StateTable<ServerStatus, ControlEventType, ControlEvent>(this, //
@@ -182,6 +183,11 @@ public class ServerProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Override
     public void setStatus(ServerStatus status) {
         this.status = status;
+    }
+
+    @Override
+    protected void doFinally() {
+        this.finalizer.run();
     }
 
     // INTERNAL LOGIC

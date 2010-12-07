@@ -28,8 +28,8 @@
 
 package dapper.event;
 
+import shared.event.EventProcessor;
 import shared.event.Source;
-import shared.event.StateProcessor;
 
 /**
  * An enumeration of Dapper {@link Source} types.
@@ -39,7 +39,7 @@ import shared.event.StateProcessor;
 public enum SourceType {
 
     /**
-     * Indicates a {@link StateProcessor}.
+     * Indicates an {@link EventProcessor}.
      */
     PROCESSOR, //
 

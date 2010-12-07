@@ -34,8 +34,8 @@ import static dapper.event.SourceType.PROCESSOR;
 import java.net.InetSocketAddress;
 
 import shared.event.EnumStatus;
+import shared.event.EventProcessor;
 import shared.event.Handler;
-import shared.event.StateProcessor;
 import shared.event.StateTable;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
@@ -59,9 +59,10 @@ import dapper.event.StreamReadyEvent;
  * @apiviz.owns dapper.client.ClientStatus
  * @author Roy Liu
  */
-public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventType, SourceType> //
+public class ClientProcessor extends EventProcessor<ControlEvent, ControlEventType, SourceType> //
         implements EnumStatus<ClientStatus> {
 
+    final Runnable finalizer;
     final ClientLogic logic;
     final StateTable<ClientStatus, ControlEventType, ControlEvent> fsmInternal;
     final StateTable<ClientStatus, ControlEventType, ControlEvent> fsmExternal;
@@ -78,7 +79,7 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
             Runnable finalizer) {
         super("CEP");
 
-        setFinalizer(finalizer);
+        this.finalizer = finalizer;
 
         this.logic = new ClientLogic(base, localAddress, remoteAddress, domain, this);
 
@@ -125,6 +126,11 @@ public class ClientProcessor extends StateProcessor<ControlEvent, ControlEventTy
     @Override
     public void setStatus(ClientStatus status) {
         this.status = status;
+    }
+
+    @Override
+    protected void doFinally() {
+        this.finalizer.run();
     }
 
     // INTERNAL LOGIC

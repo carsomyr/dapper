@@ -134,6 +134,7 @@ public class Client extends Thread implements Closeable {
                     }
                 } //
         );
+        this.processor.start();
 
         // Prime the processor with an artificially generated event.
         this.processor.onLocal(new BaseControlEvent(INIT, this.processor));
