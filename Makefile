@@ -49,12 +49,13 @@ all: java
 # Make the native libraries and executables.                                   #
 #------------------------------------------------------------------------------#
 
-# Windows 32-Bit Cross-Compile
+# Windows Build and Test Executable
 
-win32: OS = Windows
-win32: LIB_PREFIX =
-win32: LIB_SUFFIX = dll
-win32: buildandtest.exe
+buildandtest: OS = Windows
+buildandtest: WORD_SIZE = 32
+buildandtest: LIB_PREFIX =
+buildandtest: LIB_SUFFIX = dll
+buildandtest: buildandtest.exe
 
 buildandtest.exe: $(BUILD_TOKEN) $(CSRCS) $(CHEADERS)
 	$(MAKE_BUILD_AND_TEST)
