@@ -33,11 +33,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.Resource;
+import org.shared.util.IoBase;
 import org.w3c.dom.Node;
-
-import shared.util.IoBase;
-import dapper.codelet.Codelet;
-import dapper.codelet.Resource;
 
 /**
  * A {@link Codelet} that uploads its data to remote machines.

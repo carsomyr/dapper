@@ -35,13 +35,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.Resource;
+import org.shared.codec.Codecs;
+import org.shared.util.Arithmetic;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import shared.codec.Codecs;
-import shared.util.Arithmetic;
-import dapper.codelet.Codelet;
-import dapper.codelet.Resource;
 
 /**
  * A member of {@link MergeSortTest} that creates a file for sorting.

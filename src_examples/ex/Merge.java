@@ -37,10 +37,9 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.Resource;
 import org.w3c.dom.Node;
-
-import dapper.codelet.Codelet;
-import dapper.codelet.Resource;
 
 /**
  * A member of {@link MergeSortTest} that merges two {@link InputStream}s into a single {@link OutputStream}.

@@ -54,7 +54,7 @@ def main():
     java_cmd = ["java", "-ea", "-Xmx128M", "-cp", "dapper.jar"]
 
     processes = []
-    processes.append(Popen(java_cmd + ["dapper.ui.FlowManagerDriver", "--port", "12121",
+    processes.append(Popen(java_cmd + ["org.dapper.ui.FlowManagerDriver", "--port", "12121",
                                        "--archive", "dapper-ex.jar", "ex.SimpleTest"]))
 
     time.sleep(2)
@@ -62,7 +62,7 @@ def main():
     nclients = 4
 
     for i in range(nclients):
-        processes.append(Popen(java_cmd + ["dapper.client.ClientDriver", "--host", "127.0.0.1:12121"]))
+        processes.append(Popen(java_cmd + ["org.dapper.client.ClientDriver", "--host", "127.0.0.1:12121"]))
 
     stdout.write(b"\nPress ENTER to exit this test.\n")
 

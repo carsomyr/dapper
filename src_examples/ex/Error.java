@@ -30,12 +30,11 @@ package ex;
 
 import java.util.List;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.Resource;
+import org.shared.util.Arithmetic;
+import org.shared.util.Control;
 import org.w3c.dom.Node;
-
-import shared.util.Arithmetic;
-import shared.util.Control;
-import dapper.codelet.Codelet;
-import dapper.codelet.Resource;
 
 /**
  * A {@link Codelet} that flips a coin to see if an exception should be raised.

@@ -36,10 +36,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.Resource;
 import org.w3c.dom.Node;
-
-import dapper.codelet.Codelet;
-import dapper.codelet.Resource;
 
 /**
  * A member of {@link MergeSortTest} that sorts its single file input in-memory and has a single stream output.

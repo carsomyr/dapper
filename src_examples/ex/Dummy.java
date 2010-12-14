@@ -30,10 +30,9 @@ package ex;
 
 import java.util.List;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.Resource;
 import org.w3c.dom.Node;
-
-import dapper.codelet.Codelet;
-import dapper.codelet.Resource;
 
 /**
  * A {@link Codelet} that does nothing.

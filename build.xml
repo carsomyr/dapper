@@ -3,7 +3,7 @@
 <project basedir="." default="build" name="dapper" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
 
     <property environment="env" />
-    <property file="src/dapper/project.properties" />
+    <property file="src/org/dapper/project.properties" />
 
     <property name="target" value="1.6" />
     <property name="source" value="1.6" />
@@ -52,7 +52,7 @@
             <patternset includes="conf/**" />
         </unzip>
         <unzip src="build/bootstrap/sst-base-src.jar" dest="src">
-            <patternset includes="shared/metaclass/*.java" />
+            <patternset includes="org/shared/metaclass/*.java" />
         </unzip>
         <touch file=".dependencies" />
     </target>
@@ -88,9 +88,9 @@
     </fileset>
 
     <target name="jars" depends="build-project, build-resource">
-        <jar destfile="dapper.jar" basedir="bin" includes="dapper/**, shared/**, lib/**">
+        <jar destfile="dapper.jar" basedir="bin" includes="org/dapper/**, org/shared/**, lib/**">
             <manifest>
-                <attribute name="Main-Class" value="dapper.ui.FlowManagerDriver" />
+                <attribute name="Main-Class" value="org.dapper.ui.FlowManagerDriver" />
             </manifest>
             <metainf refid="dapper.metainf" />
         </jar>
@@ -100,13 +100,13 @@
     </target>
 
     <target name="jar-base" depends="build-project, build-resource">
-        <jar destfile="${ivy.distrib.dir}/jars/dapper-base-${build.version}.jar" basedir="bin" includes="dapper/**">
+        <jar destfile="${ivy.distrib.dir}/jars/dapper-base-${build.version}.jar" basedir="bin" includes="org/dapper/**">
             <metainf refid="dapper.metainf" />
         </jar>
     </target>
 
     <target name="jar-base-src" depends="build-project, build-resource">
-        <jar destfile="${ivy.distrib.dir}/sources/dapper-base-src-${build.version}.jar" basedir="src" includes="dapper/**">
+        <jar destfile="${ivy.distrib.dir}/sources/dapper-base-src-${build.version}.jar" basedir="src" includes="org/dapper/**">
             <metainf refid="dapper.metainf" />
         </jar>
     </target>
@@ -148,7 +148,7 @@
         <cs:checkstyle config="build/checkstyle.xml">
             <fileset dir="native/src" includes="**/*.cpp" />
             <fileset dir="native/include" includes="**/*.hpp" />
-            <fileset dir="src" includes="**/*.java" excludes="shared/**/*.java" />
+            <fileset dir="src" includes="**/*.java" excludes="org/shared/**/*.java" />
             <fileset dir="src_examples" includes="**/*.java" />
         </cs:checkstyle>
         <touch file=".checkstyle" />
@@ -175,7 +175,7 @@
         <delete dir="build/bootstrap" />
         <delete dir="build/conf" />
         <delete dir="build/lib" />
-        <delete dir="src/shared" />
+        <delete dir="src/org/shared" />
     </target>
 
 </project>

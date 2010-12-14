@@ -28,19 +28,18 @@
 
 package ex;
 
-import static dapper.Constants.LOCAL;
+import static org.dapper.Constants.LOCAL;
 
 import java.util.List;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.Resource;
+import org.dapper.server.flow.EmbeddingCodelet;
+import org.dapper.server.flow.Flow;
+import org.dapper.server.flow.FlowEdge;
+import org.dapper.server.flow.FlowNode;
+import org.dapper.server.flow.HandleEdge;
 import org.w3c.dom.Node;
-
-import dapper.codelet.Codelet;
-import dapper.codelet.Resource;
-import dapper.server.flow.EmbeddingCodelet;
-import dapper.server.flow.Flow;
-import dapper.server.flow.FlowEdge;
-import dapper.server.flow.FlowNode;
-import dapper.server.flow.HandleEdge;
 
 /**
  * An {@link EmbeddingCodelet} that embeds a fan-out followed by fan-in of size equal to the number of incoming

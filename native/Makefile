@@ -1,4 +1,4 @@
-include ../src/dapper/project.properties
+include ../src/org/dapper/project.properties
 
 #------------------------------------------------------------------------------#
 # Declare variables.                                                           #

@@ -32,5 +32,5 @@
 @Policy(recursive = true)
 package ex;
 
-import shared.metaclass.Policy;
+import org.shared.metaclass.Policy;
 

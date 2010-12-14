@@ -28,17 +28,17 @@
 
 package ex;
 
-import static dapper.Constants.LOCAL;
+import static org.dapper.Constants.LOCAL;
 
 import java.util.List;
 
-import dapper.server.flow.Flow;
-import dapper.server.flow.FlowBuilder;
-import dapper.server.flow.FlowEdge;
-import dapper.server.flow.FlowNode;
-import dapper.server.flow.HandleEdge;
-import dapper.server.flow.StreamEdge;
-import dapper.ui.Program;
+import org.dapper.server.flow.Flow;
+import org.dapper.server.flow.FlowBuilder;
+import org.dapper.server.flow.FlowEdge;
+import org.dapper.server.flow.FlowNode;
+import org.dapper.server.flow.HandleEdge;
+import org.dapper.server.flow.StreamEdge;
+import org.dapper.ui.Program;
 
 /**
  * A demonstration of simple Dapper functionality.

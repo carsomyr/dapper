@@ -28,22 +28,21 @@
 
 package ex;
 
-import static dapper.Constants.LOCAL;
+import static org.dapper.Constants.LOCAL;
 
 import java.util.List;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.CodeletUtilities;
+import org.dapper.codelet.Resource;
+import org.dapper.server.flow.EmbeddingCodelet;
+import org.dapper.server.flow.Flow;
+import org.dapper.server.flow.FlowEdge;
+import org.dapper.server.flow.FlowNode;
+import org.dapper.server.flow.HandleEdge;
+import org.dapper.server.flow.StreamEdge;
+import org.shared.util.Arithmetic;
 import org.w3c.dom.Node;
-
-import shared.util.Arithmetic;
-import dapper.codelet.Codelet;
-import dapper.codelet.CodeletUtilities;
-import dapper.codelet.Resource;
-import dapper.server.flow.EmbeddingCodelet;
-import dapper.server.flow.Flow;
-import dapper.server.flow.FlowEdge;
-import dapper.server.flow.FlowNode;
-import dapper.server.flow.HandleEdge;
-import dapper.server.flow.StreamEdge;
 
 /**
  * An {@link EmbeddingCodelet} that repeatedly embeds random numbers of copies of itself up to a fixed depth.

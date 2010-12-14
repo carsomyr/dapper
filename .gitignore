@@ -18,4 +18,4 @@
 /native/Darwin/
 /native/Linux/
 /native/include/win32/*.ico
-/src/shared/
+/src/org/shared/

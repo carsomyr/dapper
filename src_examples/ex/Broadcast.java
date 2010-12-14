@@ -35,15 +35,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.CodeletUtilities;
+import org.dapper.codelet.InputHandleResource;
+import org.dapper.codelet.OutputHandleResource;
+import org.dapper.codelet.Resource;
+import org.dapper.codelet.StreamResource;
+import org.shared.util.IoBase;
 import org.w3c.dom.Node;
-
-import shared.util.IoBase;
-import dapper.codelet.Codelet;
-import dapper.codelet.CodeletUtilities;
-import dapper.codelet.InputHandleResource;
-import dapper.codelet.OutputHandleResource;
-import dapper.codelet.Resource;
-import dapper.codelet.StreamResource;
 
 /**
  * A {@link Codelet} for broadcasting data from in-{@link Resource}s to all corresponding out-{@link Resource}s sharing

@@ -28,15 +28,15 @@
 
 package ex;
 
-import static dapper.Constants.LOCAL;
+import static org.dapper.Constants.LOCAL;
 
 import java.util.List;
 
-import dapper.server.flow.Flow;
-import dapper.server.flow.FlowBuilder;
-import dapper.server.flow.FlowEdge;
-import dapper.server.flow.FlowNode;
-import dapper.ui.Program;
+import org.dapper.server.flow.Flow;
+import org.dapper.server.flow.FlowBuilder;
+import org.dapper.server.flow.FlowEdge;
+import org.dapper.server.flow.FlowNode;
+import org.dapper.ui.Program;
 
 /**
  * A demonstration of a subflow that embeds itself repeatedly. Designed to black box and stress test the Dapper server

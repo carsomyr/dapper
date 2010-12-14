@@ -31,13 +31,12 @@ package ex;
 import java.io.File;
 import java.util.List;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.CodeletUtilities;
+import org.dapper.codelet.InputHandleResource;
+import org.dapper.codelet.Resource;
+import org.shared.util.IoBase;
 import org.w3c.dom.Node;
-
-import shared.util.IoBase;
-import dapper.codelet.Codelet;
-import dapper.codelet.CodeletUtilities;
-import dapper.codelet.InputHandleResource;
-import dapper.codelet.Resource;
 
 /**
  * A {@link Codelet} that cleans up all {@link InputHandleResource}s passed to it by interpreting handles as files.

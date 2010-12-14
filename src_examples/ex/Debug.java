@@ -31,13 +31,12 @@ package ex;
 import java.util.List;
 import java.util.Random;
 
+import org.dapper.client.Client;
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.Resource;
+import org.shared.util.Control;
+import org.shared.util.XmlBase;
 import org.w3c.dom.Node;
-
-import shared.util.Control;
-import shared.util.XmlBase;
-import dapper.client.Client;
-import dapper.codelet.Codelet;
-import dapper.codelet.Resource;
 
 /**
  * A {@link Codelet} used for debugging purposes that prints its input/output {@link Resource}s.

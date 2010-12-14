@@ -105,7 +105,7 @@ int _tmain(int argc, TCHAR *argv[]) {
     PROCESS_INFORMATION pis[N_CLIENTS + 1];
 
     pis[0] = BuildAndTest::exec("java -Xmx128M "
-            "-cp dapper.jar dapper.ui.FlowManagerDriver "
+            "-cp dapper.jar org.dapper.ui.FlowManagerDriver "
             "--port 12121 "
             "--archive dapper-ex.jar ex.SimpleTest");
 
@@ -113,7 +113,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 
     for (int i = 1; i <= N_CLIENTS; i++) {
         pis[i] = BuildAndTest::exec("java -Xmx128M "
-                "-cp dapper.jar dapper.client.ClientDriver "
+                "-cp dapper.jar org.dapper.client.ClientDriver "
                 "--host localhost:12121");
     }
 

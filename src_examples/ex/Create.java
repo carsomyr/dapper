@@ -30,15 +30,14 @@ package ex;
 
 import java.util.List;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.CodeletUtilities;
+import org.dapper.codelet.OutputHandleResource;
+import org.dapper.codelet.Resource;
+import org.shared.array.ObjectArray;
+import org.shared.util.Arithmetic;
+import org.shared.util.Control;
 import org.w3c.dom.Node;
-
-import shared.array.ObjectArray;
-import shared.util.Arithmetic;
-import shared.util.Control;
-import dapper.codelet.Codelet;
-import dapper.codelet.CodeletUtilities;
-import dapper.codelet.OutputHandleResource;
-import dapper.codelet.Resource;
 
 /**
  * A {@link Codelet} that simulates creation of random numbers of file handles along {@link OutputHandleResource}s.

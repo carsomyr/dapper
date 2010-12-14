@@ -36,12 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.dapper.codelet.Codelet;
+import org.dapper.codelet.CodeletUtilities;
+import org.dapper.codelet.OutputHandleResource;
+import org.dapper.codelet.Resource;
 import org.w3c.dom.Node;
-
-import dapper.codelet.Codelet;
-import dapper.codelet.CodeletUtilities;
-import dapper.codelet.OutputHandleResource;
-import dapper.codelet.Resource;
 
 /**
  * A member of {@link MergeSortTest} that splits its single {@link InputStream} among multiple file outputs.
